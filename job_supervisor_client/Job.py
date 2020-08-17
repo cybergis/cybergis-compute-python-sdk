@@ -1,13 +1,15 @@
-from Client import *
-from JAT import *
+from .Client import *
+from .JAT import *
 import time
 from os import system, name
+from tabulate import tabulate
 
 class Job:
     def __init__(self, destination, user=None, password=None, id=None, url="cglogger.cigi.illinois.edu", port=3030):
         self.client = Client(url, port)
         self.destination = destination
         self.id = id
+        self.url = url + ':' + str(port)
         self.JAT = JAT()
         if (user == None):
             out = self.client.request('POST', '/guard/secretToken', {
@@ -35,25 +37,29 @@ class Job:
 
         out = self.client.request('POST', '/supervisor', manifest)
 
-        print(out)
+        self.id = out['id']
 
-        print('job registered with ID: ' + str(out['id']))
-        print(out)
+        print('✅ job registered with ID: ' + str(out['id']))
 
         return self
 
-    def events(self, liveOutput=False):
+    def download(self, dir):
+        dir += '/' + self.id + '.zip'
+        self.client.download('GET', '/supervisor/download/' + self.id, {
+            "aT": self.JAT.getAccessToken()
+        }, dir)
 
+    def events(self, liveOutput=False):
         if liveOutput:
             events = []
             isEnd = False
             while (not isEnd):
                 out = self.status()['events']
-                startPos = len(events) - 1
+                startPos = len(events)
                 headers = ['types', 'message', 'time']
 
-                while (startPos < out):
-                    self.clear()
+                while (startPos < len(out)):
+                    self._clear()
                     o = out[startPos]
                     i = [
                         o['type'],
@@ -61,8 +67,12 @@ class Job:
                         o['at']
                     ]
                     events.append(i)
+                    print('📮Job ID: ' + self.id)
+                    print('📍Destination: ' + self.destination)
+                    print('')
                     print(tabulate(events, headers, tablefmt="presto"))
                     startPos += 1
+
                 endEventType = events[len(events)-1][0]
                 if (endEventType == 'JOB_ENDED' or endEventType == 'JOB_FAILED'):
                     isEnd = True
@@ -84,7 +94,5 @@ class Job:
         if name == 'nt': 
             _ = system('cls') 
         # for mac and linux(here, os.name is 'posix') 
-        else: 
+        else:
             _ = system('clear') 
-
-Job('summa', url='localhost', port=3000).submit()

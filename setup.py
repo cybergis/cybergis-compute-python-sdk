@@ -11,7 +11,7 @@ with open(path.join(pwd, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='job-supervisor-client',
+    name='job_supervisor_client',
 
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
@@ -84,7 +84,7 @@ setup(
     #    'cybot': ['qsub.template'],
     #},
     include_package_data=True,
-    package_data={'cybergis': ['templates/*.html']},
+    package_data={'job_supervisor_client': ['templates/*.html']},
 
     # Although 'package_data' is the preferred approach, in some case you may
     # need to place data files outside of your packages. See:

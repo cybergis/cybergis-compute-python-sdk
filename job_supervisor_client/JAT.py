@@ -18,11 +18,11 @@ class JAT:
 
     def hash(self, payload):
         h = hashlib.new(self.algorithm)
-        h.update(payload.encode('utf_8'))
+        h.update(self.secretToken.encode('utf_8') + payload.encode('utf_8'))
         return h.hexdigest()
 
     def getDate(self):
-        return int(datetime.now().strftime("%Y%m%d%H"))
+        return int(datetime.utcnow().strftime("%Y%m%d%H"))
 
     def getAccessToken(self):
         self._checkInit()
@@ -75,6 +75,7 @@ class JAT:
 
     def _clearCache(self):
         date = self.getDate()
-        for i in self.accessTokenCache:
+        keys = list(self.accessTokenCache.keys())
+        for i in keys:
             if (int(i) < date):
                 del self.accessTokenCache[i]

@@ -14,3 +14,14 @@ class Client:
         connection.request(method, uri, json.dumps(body), headers)
         response = connection.getresponse()
         return json.loads(response.read().decode())
+
+    def download(self, method, uri, body, localDir, protocol='HTTP'):
+        if protocol == 'HTTP':
+            connection = client.HTTPConnection(self.url)
+        else:
+            connection = client.HTTPSConnection(self.url)
+        headers = {'Content-type': 'application/json'}
+        connection.request(method, uri, json.dumps(body), headers)
+        response = connection.getresponse().read()
+        with open(localDir, "wb") as file:
+            file.write(response)
