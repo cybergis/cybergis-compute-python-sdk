@@ -16,7 +16,7 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.0.1',
+    version='0.0.2',
 
     description='HPC job submission client',
     long_description=long_description,
@@ -26,7 +26,7 @@ setup(
 
     # Author details
     author='CyberGIS Center',
-    author_email='',
+    author_email='zimox2@illinois.edu',
 
     # Choose your license
     license='MIT',
@@ -66,7 +66,7 @@ setup(
     # your project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=["hashlib", "tabulate"],
+    install_requires=["hashlib", "tabulate", "ipython"],
 
     # List additional groups of dependencies here (e.g. development
     # dependencies). You can install these using the following syntax,
@@ -84,7 +84,7 @@ setup(
     #    'cybot': ['qsub.template'],
     #},
     include_package_data=True,
-    package_data={'job_supervisor_client': ['templates/*.html']},
+    package_data={'job_supervisor_client': ['job_supervisor_client/*.py']},
 
     # Although 'package_data' is the preferred approach, in some case you may
     # need to place data files outside of your packages. See:

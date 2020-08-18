@@ -3,14 +3,17 @@ from .JAT import *
 import time
 from os import system, name
 from tabulate import tabulate
+from IPython.display import clear_output
+from IPython.display import HTML, display
 
 class Job:
-    def __init__(self, destination, user=None, password=None, id=None, url="cglogger.cigi.illinois.edu", port=3030):
+    def __init__(self, destination, user=None, password=None, id=None, url="cglogger.cigi.illinois.edu", port=3030, isJupyter = False):
         self.client = Client(url, port)
         self.destination = destination
         self.id = id
         self.url = url + ':' + str(port)
         self.JAT = JAT()
+        self.isJupyter = isJupyter
         if (user == None):
             out = self.client.request('POST', '/guard/secretToken', {
                 'destination': destination
@@ -70,7 +73,10 @@ class Job:
                     print('📮Job ID: ' + self.id)
                     print('📍Destination: ' + self.destination)
                     print('')
-                    print(tabulate(events, headers, tablefmt="presto"))
+                    if self.isJupyter:
+                        display(HTML(tabulate(events, headers, tablefmt='html')))
+                    else:
+                        print(tabulate(events, headers, tablefmt="presto"))
                     startPos += 1
 
                 endEventType = events[len(events)-1][0]
@@ -90,6 +96,8 @@ class Job:
         })
 
     def _clear(self):
+        if self.isJupyter:
+            clear_output(wait=True)
         # for windows 
         if name == 'nt': 
             _ = system('cls') 
