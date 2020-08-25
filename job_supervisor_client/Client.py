@@ -1,4 +1,5 @@
 import http.client as client
+import requests
 import json
 
 class Client:
@@ -25,3 +26,5 @@ class Client:
         response = connection.getresponse().read()
         with open(localDir, "wb") as file:
             file.write(response)
+    def upload(self, uri, body, file, protocol='HTTP'):
+        return json.loads(requests.post(protocol.lower() + '://' + self.url + uri, data=body, files={'file': file}).content.decode())
