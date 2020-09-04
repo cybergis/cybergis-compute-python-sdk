@@ -14,7 +14,12 @@ class Client:
         headers = {'Content-type': 'application/json'}
         connection.request(method, uri, json.dumps(body), headers)
         response = connection.getresponse()
-        return json.loads(response.read().decode())
+        data = json.loads(response.read().decode())
+
+        if 'error' in data:
+            raise Exception('server ' + self.url + ' responded with error "' + data['error'] + '"')
+
+        return data
 
     def download(self, method, uri, body, localDir, protocol='HTTP'):
         if protocol == 'HTTP':
@@ -26,5 +31,9 @@ class Client:
         response = connection.getresponse().read()
         with open(localDir, "wb") as file:
             file.write(response)
+
     def upload(self, uri, body, file, protocol='HTTP'):
-        return json.loads(requests.post(protocol.lower() + '://' + self.url + uri, data=body, files={'file': file}).content.decode())
+        data = json.loads(requests.post(protocol.lower() + '://' + self.url + uri, data=body, files={'file': file}).content.decode())
+        if 'error' in data:
+            raise Exception('server ' + self.url + ' responded with error "' + data['error'] + '"')
+        return data

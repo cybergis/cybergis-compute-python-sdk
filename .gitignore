@@ -135,3 +135,5 @@ build/*
 
 example/*
 !example/.gitkeep
+
+spark

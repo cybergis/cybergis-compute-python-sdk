@@ -7,8 +7,7 @@ import os
 import mmap
 from os import system, name
 from tabulate import tabulate
-from IPython.display import clear_output
-from IPython.display import HTML, display
+from IPython.display import HTML, display, clear_output
 
 class Job:
     def __init__(self, user, jobID=None):
@@ -44,7 +43,7 @@ class Job:
         return self
 
     def upload(self, model_dir):
-        model_dir = '/' + model_dir.strip('/')
+        model_dir = os.path.abspath(model_dir)
 
         if self.destination.lower() == "summa":
             for root, dirs, files in os.walk(model_dir):
@@ -124,6 +123,41 @@ class Job:
                     time.sleep(1)
         else:
             return self.status()['events']
+
+    def logs(self, liveOutput=False):
+        if liveOutput:
+            logs = []
+            isEnd = False
+            while (not isEnd):
+                status = self.status()
+                
+                startPos = len(logs)
+                headers = ['message', 'time']
+
+                while (startPos < len(status['logs'])):
+                    self._clear()
+                    o = status['logs'][startPos]
+                    i = [
+                        o['message'],
+                        o['at']
+                    ]
+                    logs.append(i)
+                    print('📮Job ID: ' + self.id)
+                    print('📍Destination: ' + self.destination)
+                    print('')
+                    if self.isJupyter:
+                        display(HTML(tabulate(logs, headers, numalign = 'left', stralign='left', colalign=('left','left'), tablefmt='html').replace('<td>', '<td style="text-align:left">').replace('<th>', '<th style="text-align:left">')))
+                    else:
+                        print(tabulate(logs, headers, tablefmt="presto"))
+                    startPos += 1
+
+                endEventType = status['events'][len(status['events'])-1]['type']
+                if (endEventType == 'JOB_ENDED' or endEventType == 'JOB_FAILED'):
+                    isEnd = True
+                else:
+                    time.sleep(1)
+        else:
+            return self.status()['logs']
 
     def status(self):
         if self.id == None:
