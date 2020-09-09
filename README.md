@@ -12,7 +12,7 @@ cd job-supervisor-python-sdk
 python3 setup.py install
 ```
 
-2. Create An User Object
+2. Create A User Object
 
 > 👩‍💻 A user owns HPC jobs on the Job Supervisor, certified by a `secretToken`. 
 > 
