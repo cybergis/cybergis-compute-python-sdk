@@ -12,7 +12,52 @@ cd job-supervisor-python-sdk
 python3 setup.py install
 ```
 
-2. Initialize a Job
+2. Create An User Object
+
+> 👩‍💻 A user owns HPC jobs on the Job Supervisor, certified by a `secretToken`. 
+> 
+> A `User` object interface can submit new jobs or create `Job` objects for already submitted jobs. There are several ways to initialize an `User` object interface. 
+```python
+from job_supervisor_client import *
+
+# create a new user object
+
+# 1. init user using community account
+destinationName = "summa" # can fetch from User.destinations()
+communitySummaUser = User(destinationName)
+
+# 2. init user using personal account
+personalSummaUser = User('summa', user="zimox2", password="password")
+```
+> ⚠️ For security reasons, after initialization, this SDK will generate a `job_supervisor_constructor_*.json ` constructor file that can be used to recreate the same `User` object. 
+> 
+> After initializing a new user, please change your code to use the constructor file for regenerating the `User` object, especially when you entered your personal account's password. 
+
+```python
+# 3. recreate the User object using constructor file
+recreatedSummaUser = User('summa', useFileConstructor=True)
+```
+
+```python
+# other options:
+
+# Jupyter styling options
+demoUser = User('spark', isJupyter=True, useFileConstructor=True)
+
+# change Job Supervisor server destination
+demoUser = User('spark', url="localhost", port=3000, useFileConstructor=True)
+
+# other usages:
+
+# fetch events/logs all running jobs under this user
+demoUser.events()
+demoUser.logs()
+
+# fetch destination information
+demoUser.destinations()
+```
+
+3. Initialize a Job
 ```python
 from job_supervisor_client import *
 
