@@ -136,4 +136,6 @@ build/*
 example/*
 !example/.gitkeep
 
+job_supervisor_constructor_summa.json
+
 spark

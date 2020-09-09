@@ -167,6 +167,33 @@ class Job:
             "aT": self.JAT.getAccessToken()
         })
 
+    def destinations(self):
+        dest = self.client.request('GET', '/supervisor/destination', {})['destinations']
+        headers = ['name', 'ip', 'port', 'isCommunityAccount', 'useUploadedFile', 'uploadedFileMustHave']
+        data = []
+
+        for i in dest.keys():
+            d = dest[i]
+
+            uploadedFileMustHave = 'not specified'
+            if 'uploadFileConfig' in d:
+                if 'mustHave' in d['uploadFileConfig']:
+                    uploadedFileMustHave = d['uploadFileConfig']['mustHave']
+
+            data.append([
+                i,
+                d['ip'],
+                d['port'],
+                d['isCommunityAccount'],
+                d['useUploadedFile'],
+                uploadedFileMustHave
+            ])
+
+        if self.isJupyter:
+            display(HTML(tabulate(data, headers, numalign = 'left', stralign='left', colalign=('left','left'), tablefmt='html').replace('<td>', '<td style="text-align:left">').replace('<th>', '<th style="text-align:left">')))
+        else:
+            print(tabulate(data, headers, tablefmt="presto"))
+
     def _clear(self):
         if self.isJupyter:
             clear_output(wait=True)

@@ -19,7 +19,7 @@ class User:
         else:
             self.client = Client(url, port)
             if (user == None):
-                    out = self.client.request('POST', '/guard/secretToken', {
+                out = self.client.request('POST', '/guard/secretToken', {
                     'destination': destination
                 })
             else:
@@ -60,7 +60,37 @@ class User:
     def events(self):
         return self.status()['events']
 
+    def logs(self):
+        return self.status()['logs']
+
     def status(self):
         return self.client.request('GET', '/supervisor', {
             "aT": self.JAT.getAccessToken()
         })
+
+    def destinations(self):
+        dest = self.client.request('GET', '/supervisor/destination', {})['destinations']
+        headers = ['name', 'ip', 'port', 'isCommunityAccount', 'useUploadedFile', 'uploadedFileMustHave']
+        data = []
+
+        for i in dest.keys():
+            d = dest[i]
+
+            uploadedFileMustHave = 'not specified'
+            if 'uploadFileConfig' in d:
+                if 'mustHave' in d['uploadFileConfig']:
+                    uploadedFileMustHave = d['uploadFileConfig']['mustHave']
+
+            data.append([
+                i,
+                d['ip'],
+                d['port'],
+                d['isCommunityAccount'],
+                d['useUploadedFile'],
+                uploadedFileMustHave
+            ])
+
+        if self.isJupyter:
+            display(HTML(tabulate(data, headers, numalign = 'left', stralign='left', colalign=('left','left'), tablefmt='html').replace('<td>', '<td style="text-align:left">').replace('<th>', '<th style="text-align:left">')))
+        else:
+            print(tabulate(data, headers, tablefmt="presto"))
