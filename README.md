@@ -57,25 +57,32 @@ demoUser.logs()
 demoUser.destinations()
 ```
 
-3. Initialize a Job
+3. Initialize A Job
 ```python
-from job_supervisor_client import *
+# create a new job
+demoJob = demoUser.job()
 
-# init job using community account
-communitySummaJob = Job('summa')
-
-# init job using personal account
-personalSummaJob = Job('summa', user="zimox2", password="password")
-
-# set job submission destination
-summaJob = Job('summa', url="localhost", port=3000)
-
-# if a job is already submitted, you can initialize 
+# if a job is already submitted to the Job Supervisor server
+# enter its JobID to recreate the same job
+# you can check all your jobs using User.events()
+recreateJob = demoUser.job("1599621894O9Op")
 ```
 
-3. Submit Job
+4. Upload Your Code/Model
+> 📃 Please place all your files under a folder. Different destinations (services) have different requirements for uploaded files. You can use `User.destinations()` to check upload requirements.
+
 ```python
-summaJob.submit(env={
+folder_path = '/path/to/your/file_folder'
+demoJob.upload(folder_path)
+```
+
+1. Submit A New Job
+```python
+# simple submission
+demoJob.submit()
+
+# full submission
+demoJob.submit(env={
     A: 1,
     B: 2
 }, payload={
@@ -86,7 +93,8 @@ summaJob.submit(env={
 4. Query Job Events
 ```python
 # onetime check
-result = summaJob.events()
+events = demoJob.events()
+logs = demoJob.logs()
 
 """
 result returns an array of events, example:
@@ -101,16 +109,18 @@ result returns an array of events, example:
 """
 
 # live output
-summaJob.events(liveOutput=True)
+demoJob.events(liveOutput=True)
 
 """
  types                      | message                                                                            | time
 ----------------------------+------------------------------------------------------------------------------------+--------------------------
  JOB_QUEUED                 | job [1597698079eu9N] is queued, waiting for registration                           | 2020-08-17T21:01:19.081Z
 """
+
+demoJob.logs(liveOutput=True)
 ```
 
 5. Download Job Output as Zip File
 ```python
-summaJob.download(dir='/dir/to/download')
+demoJob.download(dir='/dir/to/download_folder')
 ```
