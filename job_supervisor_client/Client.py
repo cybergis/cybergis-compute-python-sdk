@@ -17,7 +17,10 @@ class Client:
         data = json.loads(response.read().decode())
 
         if 'error' in data:
-            raise Exception('server ' + self.url + ' responded with error "' + data['error'] + '"')
+            msg = ''
+            if 'messages' in data:
+                msg = str(data['messages'])
+            raise Exception('server ' + self.url + ' responded with error "' + data['error'] + msg + '"')
 
         return data
 

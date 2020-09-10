@@ -133,9 +133,12 @@ build/*
 
 *.zip
 
-example/*
-!example/.gitkeep
+examples/*
+!examples/.gitkeep
+!examples/pyspark
 
 job_supervisor_constructor_summa.json
 
-spark
+
+job_supervisor_constructor_spark.json
+

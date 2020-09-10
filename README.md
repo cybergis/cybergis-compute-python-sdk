@@ -12,64 +12,64 @@ cd job-supervisor-python-sdk
 python3 setup.py install
 ```
 
-2. Create A User Object
+2. Create A Session Object
 
-> 👩‍💻 A user owns HPC jobs on the Job Supervisor, certified by a `secretToken`. 
+> 👩‍💻 A session owns HPC jobs on the Job Supervisor, certified by a `secretToken`. 
 > 
-> A `User` object interface can submit new jobs or create `Job` objects for already submitted jobs. There are several ways to initialize an `User` object interface. 
+> A `Session` object interface can submit new jobs or create `Job` objects for already submitted jobs. There are several ways to initialize an `Session` object interface. 
 ```python
 from job_supervisor_client import *
 
-# create a new user object
+# create a new Session object
 
-# 1. init user using community account
-destinationName = "summa" # can fetch from User.destinations()
-communitySummaUser = User(destinationName)
+# 1. init session using community account
+destinationName = "summa" # can fetch from Session.destinations()
+communitySummaSession = Session(destinationName)
 
-# 2. init user using personal account
-personalSummaUser = User('summa', user="zimox2", password="password")
+# 2. init session using personal account
+personalSummaSession = Session('summa', user="zimox2", password="password")
 ```
-> ⚠️ For security reasons, after initialization, this SDK will generate a `job_supervisor_constructor_*.json ` constructor file that can be used to recreate the same `User` object. 
+> ⚠️ For security reasons, after initialization, this SDK will generate a `job_supervisor_constructor_*.json ` constructor file that can be used to recreate the same `Session` object. 
 > 
-> After initializing a new user, please change your code to use the constructor file for regenerating the `User` object, especially when you entered your personal account's password. 
+> After initializing a new session, please change your code to use the constructor file for regenerating the `Session` object, especially when you entered your personal account's password. 
 
 ```python
-# 3. recreate the User object using constructor file
-recreatedSummaUser = User('summa', useFileConstructor=True)
+# 3. recreate the Session object using constructor file
+recreatedSummaSession = Session('summa', useFileConstructor=True)
 ```
 
 ```python
 # other options:
 
 # Jupyter styling options
-demoUser = User('spark', isJupyter=True, useFileConstructor=True)
+demoSession = Session('spark', isJupyter=True, useFileConstructor=True)
 
 # change Job Supervisor server destination
-demoUser = User('spark', url="localhost", port=3000, useFileConstructor=True)
+demoSession = Session('spark', url="localhost", port=3000, useFileConstructor=True)
 
 # other usages:
 
-# fetch events/logs all running jobs under this user
-demoUser.events()
-demoUser.logs()
+# fetch events/logs all running jobs under this Session
+demoSession.events()
+demoSession.logs()
 
 # fetch destination information
-demoUser.destinations()
+demoSession.destinations()
 ```
 
 3. Initialize A Job
 ```python
 # create a new job
-demoJob = demoUser.job()
+demoJob = demoSession.job()
 
 # if a job is already submitted to the Job Supervisor server
 # enter its JobID to recreate the same job
-# you can check all your jobs using User.events()
-recreateJob = demoUser.job("1599621894O9Op")
+# you can check all your jobs using Session.events()
+recreateJob = demoSession.job("1599621894O9Op")
 ```
 
 4. Upload Your Code/Model
-> 📃 Please place all your files under a folder. Different destinations (services) have different requirements for uploaded files. You can use `User.destinations()` to check upload requirements.
+> 📃 Please place all your files under a folder. Different destinations (services) have different requirements for uploaded files. You can use `Session.destinations()` to check upload requirements.
 
 ```python
 folder_path = '/path/to/your/file_folder'

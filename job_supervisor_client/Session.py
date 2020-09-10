@@ -4,7 +4,7 @@ from .JAT import *
 import json
 import os
 
-class User:
+class Session:
     def __init__(self, destination, user=None, password=None, url="cgjobsup.cigi.illinois.edu", port=3000, isJupyter=False, useFileConstructor = False):
         self.destination = destination
         self.isJupyter = isJupyter
@@ -31,20 +31,23 @@ class User:
 
             sT = out['secretToken']
 
-            with open('job_supervisor_constructor_' + destination + '.json', 'w') as json_file:
+            if os.path.exists('./job_supervisor_constructor_' + destination + '.json'):
+                raise Exception('⚠️ session constructor file [job_supervisor_constructor_' + destination + '.json] exists. Please delete it or use "useFileConstructor=True" to recreate session from it.')
+
+            with open('./job_supervisor_constructor_' + destination + '.json', 'w') as json_file:
                 json.dump({
                     "url": url,
                     "port": port,
                     "sT": sT
                 }, json_file)
 
-            print('📃 created constructor file [job_supervisor_constructor_' + destination + '.json]')
-            print('👉 use [User("' + destination + '", useFileConstructor=True)] to create User interface from constructor file')
+            print('📃 created session constructor file [job_supervisor_constructor_' + destination + '.json]')
+            print('👉 use [Session("' + destination + '", useFileConstructor=True)] to create Session interface from constructor file')
 
             if (password != None):
                 print('')
                 print('⚠️ delete password from your code/notebook')
-                print('👉 use useFileConstructor option to create a safe User interface')
+                print('👉 use useFileConstructor option to create a safe Session interface')
 
         self.url = url + ':' + str(port)
         self.sT = sT
