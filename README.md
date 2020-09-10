@@ -16,7 +16,7 @@ python3 setup.py install
 
 > 👩‍💻 A session owns HPC jobs on the Job Supervisor, certified by a `secretToken`. 
 > 
-> A `Session` object interface can submit new jobs or create `Job` objects for already submitted jobs. There are several ways to initialize an `Session` object interface. 
+> A `Session` object interface can submit new jobs or create `Job` objects for already submitted jobs. There are several ways to initialize a `Session` object interface. 
 ```python
 from job_supervisor_client import *
 
