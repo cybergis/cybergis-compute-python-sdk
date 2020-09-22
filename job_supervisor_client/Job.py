@@ -88,6 +88,7 @@ class Job:
         self.client.download('GET', '/supervisor/download/' + self.id, {
             "aT": self.JAT.getAccessToken()
         }, dir)
+        print('file successfully downloaded under: ' + dir)
 
     def events(self, liveOutput=False):
         if liveOutput:
