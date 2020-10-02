@@ -3,10 +3,10 @@ import requests
 import json
 
 class Client:
-    def __init__(self, url="cglogger.cigi.illinois.edu", port=3030):
+    def __init__(self, url="cglogger.cigi.illinois.edu", port=443):
         self.url = url + ':' + str(port)
 
-    def request(self, method, uri, body, protocol='HTTP'):
+    def request(self, method, uri, body, protocol='HTTPS'):
         if protocol == 'HTTP':
             connection = client.HTTPConnection(self.url)
         else:
@@ -24,7 +24,7 @@ class Client:
 
         return data
 
-    def download(self, method, uri, body, localDir, protocol='HTTP'):
+    def download(self, method, uri, body, localDir, protocol='HTTPS'):
         if protocol == 'HTTP':
             connection = client.HTTPConnection(self.url)
         else:
@@ -35,7 +35,7 @@ class Client:
         with open(localDir, "wb") as file:
             file.write(response)
 
-    def upload(self, uri, body, file, protocol='HTTP'):
+    def upload(self, uri, body, file, protocol='HTTPS'):
         data = json.loads(requests.post(protocol.lower() + '://' + self.url + uri, data=body, files={'file': file}).content.decode())
         if 'error' in data:
             raise Exception('server ' + self.url + ' responded with error "' + data['error'] + '"')

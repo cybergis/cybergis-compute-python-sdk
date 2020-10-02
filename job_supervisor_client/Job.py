@@ -13,6 +13,7 @@ class Job:
     def __init__(self, user, jobID=None):
         self.client = user.client
         self.destination = user.destination
+        self.protocol = user.protocol
         self.id = jobID
         self.url = user.url
         self.JAT = user.JAT
@@ -34,7 +35,7 @@ class Job:
         if (self.file != None):
             manifest['file'] = self.file
 
-        out = self.client.request('POST', '/supervisor', manifest)
+        out = self.client.request('POST', '/supervisor', manifest, self.protocol)
 
         self.id = out['id']
 
@@ -166,10 +167,10 @@ class Job:
 
         return self.client.request('GET', '/supervisor/' + str(self.id), {
             "aT": self.JAT.getAccessToken()
-        })
+        }, self.protocol)
 
     def destinations(self):
-        dest = self.client.request('GET', '/supervisor/destination', {})['destinations']
+        dest = self.client.request('GET', '/supervisor/destination', {}, self.protocol)['destinations']
         headers = ['name', 'ip', 'port', 'isCommunityAccount', 'useUploadedFile', 'uploadedFileMustHave']
         data = []
 

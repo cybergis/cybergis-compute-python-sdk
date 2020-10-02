@@ -5,9 +5,10 @@ import json
 import os
 
 class Session:
-    def __init__(self, destination, user=None, password=None, url="cgjobsup.cigi.illinois.edu", port=3000, isJupyter=False, useFileConstructor = False):
+    def __init__(self, destination, user=None, password=None, url="cgjobsup.cigi.illinois.edu", port=443, isJupyter=False, useFileConstructor = False, protocol = 'HTTPS'):
         self.destination = destination
         self.isJupyter = isJupyter
+        self.protocol = protocol
 
         if useFileConstructor:
             with open(os.path.abspath('job_supervisor_constructor_' + destination + '.json')) as f:
@@ -21,13 +22,13 @@ class Session:
             if (user == None):
                 out = self.client.request('POST', '/guard/secretToken', {
                     'destination': destination
-                })
+                }, protocol = protocol)
             else:
                 out = self.client.request('POST', '/guard/secretToken', {
                     'destination': destination,
                     'user': user,
                     'password': password
-                })
+                }, protocol = protocol)
 
             sT = out['secretToken']
 
@@ -69,10 +70,10 @@ class Session:
     def status(self):
         return self.client.request('GET', '/supervisor', {
             "aT": self.JAT.getAccessToken()
-        })
+        }, protocol = self.protocol)
 
     def destinations(self):
-        dest = self.client.request('GET', '/supervisor/destination', {})['destinations']
+        dest = self.client.request('GET', '/supervisor/destination', {}, protocol = self.protocol)['destinations']
         headers = ['name', 'ip', 'port', 'isCommunityAccount', 'useUploadedFile', 'uploadedFileMustHave']
         data = []
 
