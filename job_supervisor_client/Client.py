@@ -46,6 +46,8 @@ class Client:
         if 'tar' in contentType:
             localDir += '.tar'
 
+        print(contentType)
+
         if 'zip' in contentType:
             localDir += '.zip'
 
