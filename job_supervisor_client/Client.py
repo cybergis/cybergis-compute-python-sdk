@@ -31,9 +31,28 @@ class Client:
             connection = client.HTTPSConnection(self.url)
         headers = {'Content-type': 'application/json'}
         connection.request(method, uri, json.dumps(body), headers)
-        response = connection.getresponse().read()
+        response = connection.getresponse()
+        body = response.read()
+        contentType = response.getheader('Content-Type')
+
+        if 'json' in contentType:
+            data = json.loads(body.decode())
+            if 'error' in data:
+                msg = ''
+                if 'messages' in data:
+                    msg = str(data['messages'])
+                raise Exception('server ' + self.url + ' responded with error "' + data['error'] + msg + '"')
+
+        if 'tar' in contentType:
+            localDir += '.tar'
+
+        if 'zip' in contentType:
+            localDir += '.zip'
+
         with open(localDir, "wb") as file:
-            file.write(response)
+            file.write(body)
+
+        return localDir
 
     def upload(self, uri, body, file, protocol='HTTPS'):
         data = json.loads(requests.post(protocol.lower() + '://' + self.url + uri, data=body, files={'file': file}).content.decode())

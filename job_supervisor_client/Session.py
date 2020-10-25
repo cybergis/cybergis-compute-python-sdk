@@ -18,6 +18,9 @@ class Session:
             sT = constructor['sT']
             self.client = Client(url, port)
         else:
+            if os.path.exists('./job_supervisor_constructor_' + destination + '.json'):
+                raise Exception('⚠️ session constructor file [job_supervisor_constructor_' + destination + '.json] exists. Please delete it or use "useFileConstructor=True" to recreate session from it.')
+
             self.client = Client(url, port)
             if (user == None):
                 out = self.client.request('POST', '/guard/secretToken', {
@@ -31,9 +34,6 @@ class Session:
                 }, protocol = protocol)
 
             sT = out['secretToken']
-
-            if os.path.exists('./job_supervisor_constructor_' + destination + '.json'):
-                raise Exception('⚠️ session constructor file [job_supervisor_constructor_' + destination + '.json] exists. Please delete it or use "useFileConstructor=True" to recreate session from it.')
 
             with open('./job_supervisor_constructor_' + destination + '.json', 'w') as json_file:
                 json.dump({

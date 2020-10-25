@@ -132,6 +132,7 @@ dmypy.json
 build/*
 
 *.zip
+*.tar
 
 examples/*
 !examples/.gitkeep

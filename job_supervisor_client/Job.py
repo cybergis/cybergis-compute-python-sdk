@@ -79,17 +79,21 @@ class Job:
 
         response = self.client.upload('/supervisor/upload', {
             "aT": self.JAT.getAccessToken()
-        }, zip.read())
+        }, zip.read(), self.protocol)
 
         self.file = response['file']
         return response
 
     def download(self, dir):
-        dir += '/' + self.id + '.zip'
-        self.client.download('GET', '/supervisor/download/' + self.id, {
+        if self.id == None:
+            raise Exception('missing job ID, submit/register job first')
+
+        dir += '/' + self.id
+        dir = self.client.download('GET', '/supervisor/download/' + self.id, {
             "aT": self.JAT.getAccessToken()
-        }, dir)
+        }, dir, self.protocol)
         print('file successfully downloaded under: ' + dir)
+        return dir
 
     def events(self, liveOutput=False):
         if liveOutput:
