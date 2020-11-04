@@ -46,7 +46,7 @@ class Job:
     def upload(self, model_dir):
         model_dir = os.path.abspath(model_dir)
 
-        if self.destination.lower() == "summa":
+        if self.destination.lower() == "summa" or self.destination.lower() == "wrfhydro":
             for root, dirs, files in os.walk(model_dir):
                 for f in files:
                     with open(os.path.join(root, f), 'rb') as i:
