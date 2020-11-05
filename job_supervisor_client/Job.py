@@ -47,7 +47,7 @@ class Job:
         model_dir = os.path.abspath(model_dir)
 
         if self.destination.lower() == "summa":
-            for root, dirs, files in os.walk(model_dir):
+            for root, dirs, files in os.walk(model_dir, followlinks=True):
                 for f in files:
                     with open(os.path.join(root, f), 'rb') as i:
                         s = mmap.mmap(i.fileno(), 0, access=mmap.ACCESS_READ)
@@ -67,7 +67,7 @@ class Job:
                             fin.close()
 
         zip = Zip()
-        for root, dirs, files in os.walk(model_dir):
+        for root, dirs, files in os.walk(model_dir, followlinks=True):
             for d in dirs:
                 p = os.path.join(root.replace(model_dir, self.destination.lower()), d)
                 zip.mkdir(p)

@@ -5,23 +5,19 @@ import json
 import os
 
 class Session:
-    def __init__(self, destination, user=None, password=None, url="cgjobsup.cigi.illinois.edu", port=443, isJupyter=False, useFileConstructor = False, protocol = 'HTTPS'):
+    def __init__(self, destination, user=None, password=None, url="cgjobsup.cigi.illinois.edu", port=443, isJupyter=False, resetFileConstructor = False, protocol = 'HTTPS'):
         self.destination = destination
         self.isJupyter = isJupyter
         self.protocol = protocol
+        self.client = Client(url, port)
 
-        if useFileConstructor:
+        if os.path.exists('./job_supervisor_constructor_' + destination + '.json') and (not resetFileConstructor):
             with open(os.path.abspath('job_supervisor_constructor_' + destination + '.json')) as f:
                 constructor = json.load(f)
             url = constructor['url']
             port = constructor['port']
             sT = constructor['sT']
-            self.client = Client(url, port)
         else:
-            if os.path.exists('./job_supervisor_constructor_' + destination + '.json'):
-                raise Exception('⚠️ session constructor file [job_supervisor_constructor_' + destination + '.json] exists. Please delete it or use "useFileConstructor=True" to recreate session from it.')
-
-            self.client = Client(url, port)
             if (user == None):
                 out = self.client.request('POST', '/guard/secretToken', {
                     'destination': destination
@@ -43,12 +39,12 @@ class Session:
                 }, json_file)
 
             print('📃 created session constructor file [job_supervisor_constructor_' + destination + '.json]')
-            print('👉 use [Session("' + destination + '", useFileConstructor=True)] to create Session interface from constructor file')
 
-            if (password != None):
-                print('')
-                print('⚠️ delete password from your code/notebook')
-                print('👉 use useFileConstructor option to create a safe Session interface')
+        if (password != None):
+            print('')
+            print('⚠️ please delete password from your code/notebook')
+            print('🙅‍♂️ not safe to distribute code with login credentials')
+            print('📃 share session constructor file [job_supervisor_constructor_' + destination + '.json] instead')
 
         self.url = url + ':' + str(port)
         self.sT = sT
