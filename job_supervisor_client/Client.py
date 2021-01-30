@@ -1,6 +1,8 @@
 import http.client as client
 import requests
 import json
+import shutil
+import os
 
 class Client:
     def __init__(self, url="cglogger.cigi.illinois.edu", port=443):
@@ -32,11 +34,12 @@ class Client:
         headers = {'Content-type': 'application/json'}
         connection.request(method, uri, json.dumps(body), headers)
         response = connection.getresponse()
-        body = response.read()
         contentType = response.getheader('Content-Type')
 
         if 'json' in contentType:
-            data = json.loads(body.decode())
+            data = json.loads(response.read().decode())
+            localDir += '.json'
+            # handel file not found error which is returned as a JSON
             if 'error' in data:
                 msg = ''
                 if 'messages' in data:
@@ -49,9 +52,12 @@ class Client:
         if 'zip' in contentType:
             localDir += '.zip'
 
-        with open(localDir, "wb") as file:
-            file.write(body)
+        with open(localDir, "wb") as d:
+            with os.fdopen(response.fileno(), "r") as s:
+                # stream socket to file
+                shutil.copyfileobj(s, d)
 
+        response.close()
         return localDir
 
     def upload(self, uri, body, file, protocol='HTTPS'):
