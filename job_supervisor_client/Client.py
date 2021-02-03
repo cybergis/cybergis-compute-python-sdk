@@ -28,7 +28,7 @@ class Client:
 
     def download(self, method, uri, body, localDir, protocol='HTTPS'):
         url = protocol.lower() + '://' + self.url + uri
-        response = requests.get(url, data=body)
+        response = requests.get(url, data=body, stream=True)
         contentType = response.headers['Content-Type']
 
         if response.encoding is None:
