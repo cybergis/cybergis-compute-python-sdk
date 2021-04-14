@@ -1,0 +1,22 @@
+name: Python Code Quality
+
+on: [push]
+
+jobs:
+  flake8-lint:
+    runs-on: ubuntu-latest
+    name: Python Code Quality
+    steps:
+      - name: Check out source repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python environment
+        uses: actions/setup-python@v1
+        with:
+          python-version: "3.x"
+
+      - name: flake8 Lint Check
+        uses: py-actions/flake8@v1
+        with:
+          path: "job_supervisor_client"
+          args: "--ignore=E501"  # ignore error for too long line 
