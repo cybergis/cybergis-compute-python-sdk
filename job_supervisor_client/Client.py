@@ -1,8 +1,7 @@
 import http.client as client
 import requests
 import json
-import shutil
-import os
+
 
 class Client:
     def __init__(self, url="cglogger.cigi.illinois.edu", port=443):

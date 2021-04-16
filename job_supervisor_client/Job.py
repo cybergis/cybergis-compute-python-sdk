@@ -2,12 +2,12 @@ from .Client import *
 from .JAT import *
 from .Zip import *
 import time
-import zipfile
 import os
 import mmap
 from os import system, name
 from tabulate import tabulate
 from IPython.display import HTML, display, clear_output
+
 
 class Job:
     def __init__(self, user, jobID=None):
@@ -21,8 +21,8 @@ class Job:
         self.isJupyter = user.isJupyter
         self.sT = user.sT
 
-    def submit(self, env = {}, payload = {}):
-        if self.id != None:
+    def submit(self, env={}, payload={}):
+        if self.id is not None:
             raise Exception('cannot submit the same job twice')
 
         manifest = {
@@ -32,7 +32,7 @@ class Job:
             "payload": payload
         }
 
-        if (self.file != None):
+        if (self.file is not None):
             manifest['file'] = self.file
 
         out = self.client.request('POST', '/supervisor', manifest, self.protocol)
@@ -53,17 +53,17 @@ class Job:
                         s = mmap.mmap(i.fileno(), 0, access=mmap.ACCESS_READ)
                         if s.find(model_dir.encode('utf-8')) != -1:
                             fin = open(os.path.join(root, f), "rt")
-                            #read file contents to string
+                            # read file contents to string
                             data = fin.read()
-                            #replace all occurrences of the required string
+                            # replace all occurrences of the required string
                             data = data.replace(model_dir, '<BASEDIR>')
-                            #close the input file
+                            # close the input file
                             fin.close()
-                            #open the input file in write mode
+                            # open the input file in write mode
                             fin = open(os.path.join(root, f), "wt")
-                            #overrite the input file with the resulting data
+                            # overrite the input file with the resulting data
                             fin.write(data)
-                            #close the file
+                            # close the file
                             fin.close()
 
         zip = Zip()
@@ -85,7 +85,7 @@ class Job:
         return response
 
     def download(self, dir):
-        if self.id == None:
+        if self.id is not None:
             raise Exception('missing job ID, submit/register job first')
 
         dir += '/' + self.id
@@ -122,7 +122,7 @@ class Job:
                         print(tabulate(events, headers, tablefmt="presto"))
                     startPos += 1
 
-                endEventType = events[len(events)-1][0]
+                endEventType = events[len(events) - 1][0]
                 if (endEventType == 'JOB_ENDED' or endEventType == 'JOB_FAILED'):
                     isEnd = True
                 else:
@@ -136,7 +136,6 @@ class Job:
             isEnd = False
             while (not isEnd):
                 status = self.status()
-                
                 startPos = len(logs)
                 headers = ['message', 'time']
 
@@ -152,12 +151,12 @@ class Job:
                     print('📍Destination: ' + self.destination)
                     print('')
                     if self.isJupyter:
-                        display(HTML(tabulate(logs, headers, numalign = 'left', stralign='left', colalign=('left','left'), tablefmt='html').replace('<td>', '<td style="text-align:left">').replace('<th>', '<th style="text-align:left">')))
+                        display(HTML(tabulate(logs, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', '<td style="text-align:left">').replace('<th>', '<th style="text-align:left">')))
                     else:
                         print(tabulate(logs, headers, tablefmt="presto"))
                     startPos += 1
 
-                endEventType = status['events'][len(status['events'])-1]['type']
+                endEventType = status['events'][len(status['events']) - 1]['type']
                 if (endEventType == 'JOB_ENDED' or endEventType == 'JOB_FAILED'):
                     isEnd = True
                 else:
@@ -166,7 +165,7 @@ class Job:
             return self.status()['logs']
 
     def status(self):
-        if self.id == None:
+        if self.id is not None:
             raise Exception('missing job ID, submit/register job first')
 
         return self.client.request('GET', '/supervisor/' + str(self.id), {
@@ -196,16 +195,16 @@ class Job:
             ])
 
         if self.isJupyter:
-            display(HTML(tabulate(data, headers, numalign = 'left', stralign='left', colalign=('left','left'), tablefmt='html').replace('<td>', '<td style="text-align:left">').replace('<th>', '<th style="text-align:left">')))
+            display(HTML(tabulate(data, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', '<td style="text-align:left">').replace('<th>', '<th style="text-align:left">')))
         else:
             print(tabulate(data, headers, tablefmt="presto"))
 
     def _clear(self):
         if self.isJupyter:
             clear_output(wait=True)
-        # for windows 
-        if name == 'nt': 
-            _ = system('cls') 
-        # for mac and linux(here, os.name is 'posix') 
+        # for windows
+        if name == 'nt':
+            _ = system('cls')
+        # for mac and linux(here, os.name is 'posix')
         else:
-            _ = system('clear') 
+            _ = system('clear')
