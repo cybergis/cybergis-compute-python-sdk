@@ -1,6 +1,7 @@
 # Job Supervisor Python SDK
 
 [![PythonCodeQuality](https://github.com/cybergis/job-supervisor-python-sdk/workflows/Python%20Code%20Quality/badge.svg)](https://github.com/cybergis/job-supervisor-python-sdk/actions)
+![GitHub](https://img.shields.io/github/license/cybergis/job-supervisor-python-sdk)
 
 Python SDK client for submitting HPC job to CyberGIS Job Supervisor
 
