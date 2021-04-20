@@ -3,6 +3,7 @@ from datetime import datetime
 from json import dumps, loads
 import hashlib
 
+
 class JAT:
     def __init__(self):
         self.accessTokenCache = {}
@@ -64,13 +65,13 @@ class JAT:
         return loads(b64decode(target.encode('ascii')).decode('ascii'))
 
     def _encodeString(self, target):
-            return b64encode(target.encode('ascii')).decode('ascii')
+        return b64encode(target.encode('ascii')).decode('ascii')
 
     def _decodeString(self, target):
         return b64decode(target.encode('ascii')).decode('ascii')
-        
+
     def _checkInit(self):
-        if (self.algorithm == None or self.secretToken == None):
+        if (self.algorithm is None or self.secretToken is None):
             raise Exception("please init object before getting accessToken")
 
     def _clearCache(self):

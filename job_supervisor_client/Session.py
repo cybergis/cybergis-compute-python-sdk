@@ -4,8 +4,9 @@ from .JAT import *
 import json
 import os
 
+
 class Session:
-    def __init__(self, destination, user=None, password=None, url="cgjobsup.cigi.illinois.edu", port=443, isJupyter=False, resetFileConstructor = False, protocol = 'HTTPS'):
+    def __init__(self, destination, user=None, password=None, url="cgjobsup.cigi.illinois.edu", port=443, isJupyter=False, resetFileConstructor=False, protocol='HTTPS'):
         self.destination = destination
         self.isJupyter = isJupyter
         self.protocol = protocol
@@ -18,16 +19,16 @@ class Session:
             port = constructor['port']
             sT = constructor['sT']
         else:
-            if (user == None):
+            if (user is not None):
                 out = self.client.request('POST', '/guard/secretToken', {
                     'destination': destination
-                }, protocol = protocol)
+                }, protocol=protocol)
             else:
                 out = self.client.request('POST', '/guard/secretToken', {
                     'destination': destination,
                     'user': user,
                     'password': password
-                }, protocol = protocol)
+                }, protocol=protocol)
 
             sT = out['secretToken']
 
@@ -40,7 +41,7 @@ class Session:
 
             print('📃 created session constructor file [job_supervisor_constructor_' + destination + '.json]')
 
-        if (password != None):
+        if (password is not None):
             print('')
             print('⚠️ please delete password from your code/notebook')
             print('🙅‍♂️ not safe to distribute code with login credentials')
@@ -52,7 +53,7 @@ class Session:
         self.JAT.init('md5', self.sT)
 
     def job(self, jobID=None):
-        if jobID == None:
+        if jobID is None:
             return Job(self)
         else:
             return Job(self, jobID)
@@ -66,10 +67,10 @@ class Session:
     def status(self):
         return self.client.request('GET', '/supervisor', {
             "aT": self.JAT.getAccessToken()
-        }, protocol = self.protocol)
+        }, protocol=self.protocol)
 
     def destinations(self):
-        dest = self.client.request('GET', '/supervisor/destination', {}, protocol = self.protocol)['destinations']
+        dest = self.client.request('GET', '/supervisor/destination', {}, protocol=self.protocol)['destinations']
         headers = ['name', 'ip', 'port', 'isCommunityAccount', 'useUploadedFile', 'uploadedFileMustHave']
         data = []
 
@@ -91,6 +92,6 @@ class Session:
             ])
 
         if self.isJupyter:
-            display(HTML(tabulate(data, headers, numalign = 'left', stralign='left', colalign=('left','left'), tablefmt='html').replace('<td>', '<td style="text-align:left">').replace('<th>', '<th style="text-align:left">')))
+            display(HTML(tabulate(data, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', '<td style="text-align:left">').replace('<th>', '<th style="text-align:left">')))
         else:
             print(tabulate(data, headers, tablefmt="presto"))

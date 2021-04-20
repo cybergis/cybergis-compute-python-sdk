@@ -19,4 +19,4 @@ jobs:
         uses: py-actions/flake8@v1
         with:
           path: "job_supervisor_client"
-          args: "--ignore=E501"  # ignore error for too long line 
+          args: "--ignore=E501,F403,F405"  # ignore error for too long line 

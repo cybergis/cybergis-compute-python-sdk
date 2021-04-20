@@ -1,6 +1,7 @@
 import zipfile
 from io import BytesIO
 
+
 class Zip(object):
     def __init__(self):
         # Create the in-memory file-like object
@@ -14,12 +15,12 @@ class Zip(object):
         # Mark the files as having been created on Windows so that
         # Unix permissions are not inferred as 0000
         for zfile in zf.filelist:
-            zfile.create_system = 0        
+            zfile.create_system = 0
 
         return self
 
     def append(self, filename_in_zip, file_contents):
-        '''Appends a file with name filename_in_zip and contents of 
+        '''Appends a file with name filename_in_zip and contents of
         file_contents to the in-memory zip.'''
         # Get a handle to the in-memory zip in append mode
         zf = zipfile.ZipFile(self.in_memory_zip, "a", zipfile.ZIP_DEFLATED, False)
@@ -30,7 +31,7 @@ class Zip(object):
         # Mark the files as having been created on Windows so that
         # Unix permissions are not inferred as 0000
         for zfile in zf.filelist:
-            zfile.create_system = 0        
+            zfile.create_system = 0
 
         return self
 
@@ -40,7 +41,7 @@ class Zip(object):
         return self.in_memory_zip.read()
 
     def write(self, filename):
-            '''Writes the in-memory zip to a file.'''
-            f = open(filename, "wb")
-            f.write(self.read())
-            f.close()
+        '''Writes the in-memory zip to a file.'''
+        f = open(filename, "wb")
+        f.write(self.read())
+        f.close()
