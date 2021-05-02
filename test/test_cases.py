@@ -3,7 +3,6 @@ import sys
 from unittest.mock import patch
 
 from job_supervisor_client import Session, Job
-# import Session
 
 
 def test_Session_event(mocker):
