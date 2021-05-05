@@ -4,96 +4,106 @@ from .Zip import *
 import time
 import os
 import mmap
-from os import system, name
+from os import system, name, path
 from tabulate import tabulate
 from IPython.display import HTML, display, clear_output
 
 
 class Job:
-    def __init__(self, user, jobID=None):
-        self.client = user.client
-        self.destination = user.destination
-        self.protocol = user.protocol
-        self.id = jobID
-        self.url = user.url
-        self.JAT = user.JAT
-        self.file = None
-        self.isJupyter = user.isJupyter
-        self.sT = user.sT
+    def __init__(self, hpc=None, maintainer=None, id=None, user=None, password=None, url="cgjobsup.cigi.illinois.edu", port=443, isJupyter=False, protocol='HTTPS'):
+        self.protocol = protocol
+        self.JAT = JAT()
+        self.client = Client(url, port)
+        self.url = url + ':' + str(port)
+        self.hpc = hpc
+        self.maintainer = maintainer
+        self.file = None            
 
-    def submit(self, env={}, payload={}):
-        if self.id is not None:
-            raise Exception('cannot submit the same job twice')
+        if id != None:
+            if path.exists('./job_constructor_' + id + '.json'):
+                with open(os.path.abspath('job_constructor_' + id + '.json')) as f:
+                    constructor = json.load(f)
+                url = constructor['url']
+                port = constructor['port']
+                sT = constructor['sT']
+            else:
+                raise Exception('jobID provided but constructor file [job_constructor_' + id + '.json] not found')
+        else:
+            if maintainer == None:
+                raise Exception('maintainer cannot by NoneType')
 
+            if (user is None):
+                out = self.client.request('POST', '/auth/job', {
+                    'dest': maintainer if hpc == None else maintainer + '@' + hpc
+                }, protocol=protocol)
+            else:
+                out = self.client.request('POST', '/auth/job', {
+                    'dest': maintainer if hpc == None else maintainer + '@' + hpc,
+                    'user': user,
+                    'password': password
+                }, protocol=protocol)
+
+            sT = out['sT']
+            id = out['id']
+            with open('./job_constructor_' + id + '.json', 'w') as json_file:
+                json.dump({
+                    "url": url,
+                    "port": port,
+                    "sT": sT,
+                    "id": id
+                }, json_file)
+            print('📃 created constructor file [job_constructor_' + id + '.json]')
+
+        if (password is not None):
+            print('')
+            print('⚠️ password input detected, change your code to use Job(id="' + id + '") instead')
+            print('🙅‍♂️ it\'s not safe to distribute code with login credentials')
+            print('📃 share constructor file [job_constructor_' + id + '.json] instead')
+
+        self.sT = sT
+        self.id = id
+        self.JAT.init('md5', self.sT)
+
+    def submit(self, env={}, app={}):
         manifest = {
             "aT": self.JAT.getAccessToken(),
-            "dest": self.destination,
             "env": env,
-            "payload": payload
+            "app": app
         }
 
         if (self.file is not None):
             manifest['file'] = self.file
 
-        out = self.client.request('POST', '/supervisor', manifest, self.protocol)
-
-        self.id = out['id']
-
-        print('✅ job registered with ID: ' + str(out['id']))
-
+        self.client.request('POST', '/job', manifest, self.protocol)
+        print('✅ job submitted')
         return self
 
-    def upload(self, model_dir):
-        model_dir = os.path.abspath(model_dir)
-
-        if self.destination.lower() == "summa":
-            for root, dirs, files in os.walk(model_dir, followlinks=True):
-                for f in files:
-                    with open(os.path.join(root, f), 'rb') as i:
-                        s = mmap.mmap(i.fileno(), 0, access=mmap.ACCESS_READ)
-                        if s.find(model_dir.encode('utf-8')) != -1:
-                            fin = open(os.path.join(root, f), "rt")
-                            # read file contents to string
-                            data = fin.read()
-                            # replace all occurrences of the required string
-                            data = data.replace(model_dir, '<BASEDIR>')
-                            # close the input file
-                            fin.close()
-                            # open the input file in write mode
-                            fin = open(os.path.join(root, f), "wt")
-                            # overrite the input file with the resulting data
-                            fin.write(data)
-                            # close the file
-                            fin.close()
+    def upload(self, file_path):
+        file_path = os.path.abspath(file_path)
 
         zip = Zip()
-        for root, dirs, files in os.walk(model_dir, followlinks=True):
-            for d in dirs:
-                p = os.path.join(root.replace(model_dir, self.destination.lower()), d)
-                zip.mkdir(p)
-
+        for root, dirs, files in os.walk(file_path, followlinks=True):
             for f in files:
                 with open(os.path.join(root, f), 'rb') as i:
-                    p = os.path.join(root.replace(model_dir, self.destination.lower()), f)
+                    p = os.path.join(root.replace(file_path, ''), f)
                     zip.append(p, i.read())
 
-        response = self.client.upload('/supervisor/upload', {
+        response = self.client.upload('/job/upload', {
             "aT": self.JAT.getAccessToken()
         }, zip.read(), self.protocol)
-
         self.file = response['file']
         return response
 
-    def download(self, dir):
+    def download(self, target_path):
         if self.id is not None:
             raise Exception('missing job ID, submit/register job first')
 
-        dir += '/' + self.id
-        dir = self.client.download('GET', '/supervisor/download/' + self.id, {
+        target_path += '/' + self.id
+        target_path = self.client.download('GET', '/job/download', {
             "aT": self.JAT.getAccessToken()
-        }, dir, self.protocol)
-        print('file successfully downloaded under: ' + dir)
-        return dir
+        }, target_path, self.protocol)
+        print('file successfully downloaded under: ' + target_path)
+        return target_path
 
     def events(self, liveOutput=False):
         if liveOutput:
@@ -114,7 +124,8 @@ class Job:
                     ]
                     events.append(i)
                     print('📮Job ID: ' + self.id)
-                    print('📍Destination: ' + self.destination)
+                    print('💻HPC: ' + self.hpc)
+                    print('🤖Maintainer: ' + self.maintainer)
                     print('')
                     if self.isJupyter:
                         display(HTML(tabulate(events, headers, tablefmt='html')))
@@ -148,7 +159,8 @@ class Job:
                     ]
                     logs.append(i)
                     print('📮Job ID: ' + self.id)
-                    print('📍Destination: ' + self.destination)
+                    print('💻HPC: ' + self.hpc)
+                    print('🤖Maintainer: ' + self.maintainer)
                     print('')
                     if self.isJupyter:
                         display(HTML(tabulate(logs, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', '<td style="text-align:left">').replace('<th>', '<th style="text-align:left">')))
@@ -165,39 +177,12 @@ class Job:
             return self.status()['logs']
 
     def status(self):
-        if self.id is not None:
+        if self.id is None:
             raise Exception('missing job ID, submit/register job first')
 
-        return self.client.request('GET', '/supervisor/' + str(self.id), {
+        return self.client.request('GET', '/job/status', {
             "aT": self.JAT.getAccessToken()
         }, self.protocol)
-
-    def destinations(self):
-        dest = self.client.request('GET', '/supervisor/destination', {}, self.protocol)['destinations']
-        headers = ['name', 'ip', 'port', 'isCommunityAccount', 'useUploadedFile', 'uploadedFileMustHave']
-        data = []
-
-        for i in dest.keys():
-            d = dest[i]
-
-            uploadedFileMustHave = 'not specified'
-            if 'uploadFileConfig' in d:
-                if 'mustHave' in d['uploadFileConfig']:
-                    uploadedFileMustHave = d['uploadFileConfig']['mustHave']
-
-            data.append([
-                i,
-                d['ip'],
-                d['port'],
-                d['isCommunityAccount'],
-                d['useUploadedFile'],
-                uploadedFileMustHave
-            ])
-
-        if self.isJupyter:
-            display(HTML(tabulate(data, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', '<td style="text-align:left">').replace('<th>', '<th style="text-align:left">')))
-        else:
-            print(tabulate(data, headers, tablefmt="presto"))
 
     def _clear(self):
         if self.isJupyter:
