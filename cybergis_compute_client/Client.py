@@ -4,11 +4,12 @@ import json
 
 
 class Client:
-    def __init__(self, url="cglogger.cigi.illinois.edu", port=443):
+    def __init__(self, url="cglogger.cigi.illinois.edu", port=443, protocol="HTTPS"):
         self.url = url + ':' + str(port)
+        self.protocol = protocol
 
-    def request(self, method, uri, body, protocol='HTTPS'):
-        if protocol == 'HTTP':
+    def request(self, method, uri, body={}):
+        if self.protocol == 'HTTP':
             connection = client.HTTPConnection(self.url)
         else:
             connection = client.HTTPSConnection(self.url)
@@ -25,8 +26,8 @@ class Client:
 
         return data
 
-    def download(self, method, uri, body, localDir, protocol='HTTPS'):
-        url = protocol.lower() + '://' + self.url + uri
+    def download(self, method, uri, body, localDir):
+        url = self.protocol.lower() + '://' + self.url + uri
         response = requests.get(url, data=body, stream=True)
         contentType = response.headers['Content-Type']
 
@@ -56,8 +57,8 @@ class Client:
         response.close()
         return localDir
 
-    def upload(self, uri, body, file, protocol='HTTPS'):
-        url = protocol.lower() + '://' + self.url + uri
+    def upload(self, uri, body, file,):
+        url = self.protocol.lower() + '://' + self.url + uri
         data = json.loads(requests.post(url, data=body, files={'file': file}).content.decode())
         if 'error' in data:
             raise Exception('server ' + self.url + ' responded with error "' + data['error'] + '"')

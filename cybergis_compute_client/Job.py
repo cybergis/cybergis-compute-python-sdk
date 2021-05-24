@@ -10,22 +10,19 @@ from IPython.display import HTML, display, clear_output
 
 
 class Job:
-    def __init__(self, hpc=None, maintainer=None, id=None, user=None, password=None, url="cgjobsup.cigi.illinois.edu", port=443, isJupyter=False, protocol='HTTPS'):
-        self.protocol = protocol
+    def __init__(self, maintainer=None, hpc=None, id=None, user=None, password=None, client=None, isJupyter=None):
         self.JAT = JAT()
-        self.client = Client(url, port)
-        self.url = url + ':' + str(port)
-        self.hpc = hpc
+        self.client = client
         self.maintainer = maintainer
-        self.file = None            
+        self.file = None
+        self.isJupyter = isJupyter
 
         if id != None:
             if path.exists('./job_constructor_' + id + '.json'):
                 with open(os.path.abspath('job_constructor_' + id + '.json')) as f:
                     constructor = json.load(f)
-                url = constructor['url']
-                port = constructor['port']
                 sT = constructor['sT']
+                hpc = constructor['hpc']
             else:
                 raise Exception('jobID provided but constructor file [job_constructor_' + id + '.json] not found')
         else:
@@ -35,34 +32,29 @@ class Job:
             if (user is None):
                 out = self.client.request('POST', '/auth/job', {
                     'dest': maintainer if hpc == None else maintainer + '@' + hpc
-                }, protocol=protocol)
+                })
             else:
                 out = self.client.request('POST', '/auth/job', {
                     'dest': maintainer if hpc == None else maintainer + '@' + hpc,
                     'user': user,
                     'password': password
-                }, protocol=protocol)
+                })
 
+            hpc = out['hpc']
             sT = out['sT']
             id = out['id']
             with open('./job_constructor_' + id + '.json', 'w') as json_file:
-                json.dump({
-                    "url": url,
-                    "port": port,
-                    "sT": sT,
-                    "id": id
-                }, json_file)
+                json.dump({ "sT": sT, "id": id, "hpc": hpc }, json_file)
             print('📃 created constructor file [job_constructor_' + id + '.json]')
 
         if (password is not None):
-            print('')
             print('⚠️ password input detected, change your code to use Job(id="' + id + '") instead')
             print('🙅‍♂️ it\'s not safe to distribute code with login credentials')
             print('📃 share constructor file [job_constructor_' + id + '.json] instead')
 
-        self.sT = sT
         self.id = id
-        self.JAT.init('md5', self.sT)
+        self.hpc = hpc
+        self.JAT.init('md5', sT)
 
     def submit(self, env={}, app={}):
         manifest = {
@@ -74,7 +66,7 @@ class Job:
         if (self.file is not None):
             manifest['file'] = self.file
 
-        self.client.request('POST', '/job', manifest, self.protocol)
+        self.client.request('POST', '/job', manifest)
         print('✅ job submitted')
         return self
 
@@ -88,9 +80,9 @@ class Job:
                     p = os.path.join(root.replace(file_path, ''), f)
                     zip.append(p, i.read())
 
-        response = self.client.upload('/job/upload', {
+        response = self.client.upload('/file/upload', {
             "aT": self.JAT.getAccessToken()
-        }, zip.read(), self.protocol)
+        }, zip.read())
         self.file = response['file']
         return response
 
@@ -99,9 +91,9 @@ class Job:
             raise Exception('missing job ID, submit/register job first')
 
         target_path += '/' + self.id
-        target_path = self.client.download('GET', '/job/download', {
+        target_path = self.client.download('GET', '/job/' + self.id + '/download', {
             "aT": self.JAT.getAccessToken()
-        }, target_path, self.protocol)
+        }, target_path)
         print('file successfully downloaded under: ' + target_path)
         return target_path
 
@@ -123,10 +115,9 @@ class Job:
                         o['at']
                     ]
                     events.append(i)
-                    print('📮Job ID: ' + self.id)
-                    print('💻HPC: ' + self.hpc)
-                    print('🤖Maintainer: ' + self.maintainer)
-                    print('')
+                    print('📮 Job ID: ' + self.id)
+                    print('💻 HPC: ' + self.hpc)
+                    print('🤖 Maintainer: ' + self.maintainer)
                     if self.isJupyter:
                         display(HTML(tabulate(events, headers, tablefmt='html')))
                     else:
@@ -137,7 +128,7 @@ class Job:
                 if (endEventType == 'JOB_ENDED' or endEventType == 'JOB_FAILED'):
                     isEnd = True
                 else:
-                    time.sleep(1)
+                    time.sleep(3)
         else:
             return self.status()['events']
 
@@ -158,10 +149,9 @@ class Job:
                         o['at']
                     ]
                     logs.append(i)
-                    print('📮Job ID: ' + self.id)
-                    print('💻HPC: ' + self.hpc)
-                    print('🤖Maintainer: ' + self.maintainer)
-                    print('')
+                    print('📮 Job ID: ' + self.id)
+                    print('💻 HPC: ' + self.hpc)
+                    print('🤖 Maintainer: ' + self.maintainer)
                     if self.isJupyter:
                         display(HTML(tabulate(logs, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', '<td style="text-align:left">').replace('<th>', '<th style="text-align:left">')))
                     else:
@@ -172,7 +162,7 @@ class Job:
                 if (endEventType == 'JOB_ENDED' or endEventType == 'JOB_FAILED'):
                     isEnd = True
                 else:
-                    time.sleep(1)
+                    time.sleep(3)
         else:
             return self.status()['logs']
 
@@ -180,9 +170,10 @@ class Job:
         if self.id is None:
             raise Exception('missing job ID, submit/register job first')
 
-        return self.client.request('GET', '/job/status', {
+        a =  self.client.request('GET', '/job/' + self.id + '/status', {
             "aT": self.JAT.getAccessToken()
-        }, self.protocol)
+        })
+        return a
 
     def _clear(self):
         if self.isJupyter:
