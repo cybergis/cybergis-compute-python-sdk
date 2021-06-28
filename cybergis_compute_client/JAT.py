@@ -7,19 +7,22 @@ import hashlib
 class JAT:
     def __init__(self):
         self.accessTokenCache = {}
+        self.id = None
         self.secretToken = None
         self.algorithm = None
 
-    def init(self, algorithm, secretToken):
+    def init(self, algorithm, id, secretToken):
         if (algorithm not in hashlib.algorithms_available):
             raise Exception('encryption algorithm not supported by hashlib library')
+        self.id = id
         self.secretToken = secretToken
         self.algorithm = algorithm
         return self
 
     def hash(self, payload):
+        self._checkInit()
         h = hashlib.new(self.algorithm)
-        h.update(self.secretToken.encode('utf_8') + payload.encode('utf_8'))
+        h.update(self.secretToken.encode('utf_8') + self.id.encode('utf_8') + payload.encode('utf_8'))
         return h.hexdigest()
 
     def getDate(self):
@@ -36,7 +39,8 @@ class JAT:
             })
             alg = self._encodeString(self.algorithm)
             h = self.hash(payload)
-            accessToken = alg + '.' + payload + '.' + h
+            id = self._encodeString(self.id)
+            accessToken = alg + '.' + payload + '.' + id + '.' + h
             self.accessTokenCache[date] = accessToken
             self._clearCache()
         else:
@@ -46,7 +50,7 @@ class JAT:
 
     def parseAccessToken(self, accessToken):
         aT = accessToken.split('.')
-        if (len(aT) != 3):
+        if (len(aT) != 4):
             raise Exception('invalid accessToken')
 
         return {
@@ -55,7 +59,8 @@ class JAT:
                 "encoded": aT[1],
                 "decoded": self._decodeDict(aT[1])
             },
-            "hash": aT[2]
+            "id": self._decodeString(aT[2]),
+            "hash": aT[3]
         }
 
     def _encodeDict(self, target):

@@ -30,17 +30,36 @@ class CyberGISCompute:
         else:
             print(tabulate(data, headers, tablefmt="presto"))
 
+    def list_git(self):
+        git = self.client.request('GET', '/git')['git']
+        headers = ['link', 'name', 'container', 'repository', 'commit']
+        data = []
+
+        for i in git:
+            data.append([
+                'git://' + i,
+                git[i]['name'],
+                git[i]['container'],
+                git[i]['repository'],
+                git[i]['commit'],
+            ])
+
+        if self.isJupyter:
+            display(HTML(tabulate(data, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', '<td style="text-align:left">').replace('<th>', '<th style="text-align:left">')))
+        else:
+            print(tabulate(data, headers, tablefmt="presto"))
+
     def list_maintainer(self):
         maintainers = self.client.request('GET', '/maintainer')['maintainer']
-        headers = ['maintainer', 'hpc', 'default_hpc', 'job_pool_capacity', 'executable_folder->from_user_upload', 'executable_folder->must_have']
+        headers = ['maintainer', 'hpc', 'default_hpc', 'job_pool_capacity', 'executable_folder->from_user', 'executable_folder->must_have']
         data = []
 
         for i in maintainers:
             maintainer = maintainers[i]
 
-            from_user_upload = 'not specified'
+            from_user = 'not specified'
             if 'executable_folder' in maintainer:
-                from_user_upload = maintainer['executable_folder']['from_user_upload']
+                from_user = maintainer['executable_folder']['from_user']
 
             must_have = 'not specified'
             if 'executable_folder' in maintainer:
@@ -53,7 +72,7 @@ class CyberGISCompute:
                 maintainer['hpc'],
                 maintainer['default_hpc'],
                 maintainer['job_pool_capacity'],
-                from_user_upload,
+                from_user,
                 must_have
             ])
         
