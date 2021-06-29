@@ -41,7 +41,7 @@ class CyberGISCompute:
                 git[i]['name'],
                 git[i]['container'],
                 git[i]['repository'],
-                git[i]['commit'],
+                git[i]['commit'] if 'commit' in git[i] else 'NONE' ,
             ])
 
         if self.isJupyter:
