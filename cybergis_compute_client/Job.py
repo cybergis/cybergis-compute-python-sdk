@@ -130,6 +130,7 @@ class Job:
                     o['createdAt']
                 ]
                 events.append(i)
+                isEnd =  o['type'] == 'JOB_ENDED' or o['type'] == 'JOB_FAILED'
                 print('📮 Job ID: ' + self.id)
                 print('💻 HPC: ' + self.hpc)
                 print('🤖 Maintainer: ' + self.maintainer)
@@ -139,10 +140,7 @@ class Job:
                     print(tabulate(events, headers, tablefmt='presto'))
                 startPos += 1
 
-            endEventType = events[len(events) - 1][0]
-            if (endEventType == 'JOB_ENDED' or endEventType == 'JOB_FAILED'):
-                isEnd = True
-            else:
+            if not isEnd:
                 time.sleep(3)
 
     def logs(self, liveOutput=False):
@@ -173,10 +171,15 @@ class Job:
                     print(tabulate(logs, headers, tablefmt='presto'))
                 startPos += 1
 
-            endEventType = status['events'][len(status['events']) - 1]['type']
-            if (endEventType == 'JOB_ENDED' or endEventType == 'JOB_FAILED'):
-                isEnd = True
-            else:
+            i = 0
+            while (i < len(status['events'])):
+                eventType = status['events'][i]['type']
+                isEnd = eventType == 'JOB_ENDED' or eventType == 'JOB_FAILED'
+                if isEnd:
+                    break
+                i += 1
+
+            if isEnd:
                 time.sleep(3)
 
     def status(self):
