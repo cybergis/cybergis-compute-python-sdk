@@ -166,7 +166,7 @@ class Job:
                 print('💻 HPC: ' + self.hpc)
                 print('🤖 Maintainer: ' + self.maintainer)
                 if self.isJupyter:
-                    display(HTML(tabulate(logs, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', "<td style='text-align:left'>').replace('<th>', '<th style='text-align:left'>")))
+                    display(HTML(tabulate(logs, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', "<td style='text-align:left'>")))
                 else:
                     print(tabulate(logs, headers, tablefmt='presto'))
                 startPos += 1
