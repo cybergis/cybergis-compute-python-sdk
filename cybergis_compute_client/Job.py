@@ -99,17 +99,6 @@ class Job:
             self.body['slurm'] = slurm
         print(self.body)
 
-    def download(self, target_path):
-        if self.id is not None:
-            raise Exception('missing job ID, submit/register job first')
-
-        target_path += '/' + self.id
-        target_path = self.client.download('GET', '/job/' + self.id + '/download', {
-            'accessToken': self.JAT.getAccessToken()
-        }, target_path)
-        print('file successfully downloaded under: ' + target_path)
-        return target_path
-
     def events(self, liveOutput=False):
         if not liveOutput:
             return self.status()['events']
@@ -130,7 +119,7 @@ class Job:
                     o['createdAt']
                 ]
                 events.append(i)
-                isEnd =  o['type'] == 'JOB_ENDED' or o['type'] == 'JOB_FAILED'
+                isEnd =  isEnd or o['type'] == 'JOB_ENDED' or o['type'] == 'JOB_FAILED'
                 print('📮 Job ID: ' + self.id)
                 print('💻 HPC: ' + self.hpc)
                 print('🤖 Maintainer: ' + self.maintainer)
@@ -189,6 +178,23 @@ class Job:
         return self.client.request('GET', '/job/' + self.id, {
             'accessToken': self.JAT.getAccessToken()
         })
+
+    def downloadResultFolder(self, dir):
+        if self.id is None:
+            raise Exception('missing job ID, submit/register job first')
+
+        jobStatus = self.status()
+
+        if 'resultFolder' not in jobStatus:
+            raise Exception('executable folder is not ready')
+
+        dir = os.path.join(dir, self.id)
+        dir = self.client.download('GET', '/file', {
+            "accessToken": self.JAT.getAccessToken(),
+            "fileUrl": jobStatus['resultFolder']
+        }, dir)
+        print('file successfully downloaded under: ' + dir)
+        return dir
 
     def _clear(self):
         if self.isJupyter:

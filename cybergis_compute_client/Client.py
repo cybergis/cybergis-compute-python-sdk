@@ -57,7 +57,7 @@ class Client:
         response.close()
         return localDir
 
-    def upload(self, uri, body, file,):
+    def upload(self, uri, body, file):
         url = self.protocol.lower() + '://' + self.url + uri
         data = json.loads(requests.post(url, data=body, files={'file': file}).content.decode())
         if 'error' in data:
