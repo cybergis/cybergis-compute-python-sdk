@@ -100,7 +100,7 @@ class Job:
             self.body['slurm'] = slurm
         print(self.body)
 
-    def events(self, liveOutput=False, refreshRateInSeconds = 15):
+    def events(self, liveOutput=False, refreshRateInSeconds = 10):
         if not liveOutput:
             return self.status()['events']
 
