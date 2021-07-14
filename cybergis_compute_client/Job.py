@@ -23,6 +23,7 @@ class Job:
                 id = constructor['id']
                 sT = constructor['secretToken']
                 hpc = constructor['hpc']
+                maintainer = constructor['maintainer']
             else:
                 raise Exception('jobID provided but constructor file [job_constructor_' + id + '.json] not found')
         else:
@@ -46,7 +47,7 @@ class Job:
             sT = out['secretToken']
             id = out['id']
             with open('./job_constructor_' + id + '.json', 'w') as json_file:
-                json.dump({ 'secretToken': sT, 'id': id, 'hpc': hpc }, json_file)
+                json.dump({ 'secretToken': sT, 'id': id, 'hpc': hpc, 'maintainer': maintainer }, json_file)
             print('📃 created constructor file [job_constructor_' + id + '.json]')
 
         if (password is not None):
@@ -99,7 +100,7 @@ class Job:
             self.body['slurm'] = slurm
         print(self.body)
 
-    def events(self, liveOutput=False):
+    def events(self, liveOutput=False, refreshRateInSeconds = 10):
         if not liveOutput:
             return self.status()['events']
 
@@ -130,9 +131,9 @@ class Job:
                 startPos += 1
 
             if not isEnd:
-                time.sleep(3)
+                time.sleep(refreshRateInSeconds)
 
-    def logs(self, liveOutput=False):
+    def logs(self, liveOutput=False, refreshRateInSeconds = 15):
         if not liveOutput:
             return self.status()['logs']
 
@@ -169,7 +170,7 @@ class Job:
                 i += 1
 
             if isEnd:
-                time.sleep(3)
+                time.sleep(refreshRateInSeconds)
 
     def status(self):
         if self.id is None:
