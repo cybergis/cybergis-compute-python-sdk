@@ -61,5 +61,5 @@ class Client:
         url = self.protocol.lower() + '://' + self.url + uri
         data = json.loads(requests.post(url, data=body, files={'file': file}).content.decode())
         if 'error' in data:
-            raise Exception('server ' + self.url + ' responded with error "' + data['error'] + '"')
+            return '❌ server ' + self.url + ' responded with error "' + data['error'] + '"'
         return data
