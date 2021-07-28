@@ -1,0 +1,57 @@
+running setup...
+running main...
+
+./job.json
+
+SLURM_NODEID
+
+0
+SLURM_PROCID
+
+1
+{'jobId': '1627443453scXwE', 'userId': None, 'maintainer': 'community_contribution', 'hpc': 'keeling_community', 'param': {'key_a': 'val_a'}, 'env': {}, 'executableFolder': '/data/keeling/a/cigi-gisolve/scratch/dev/1627443453scXwE/executable', 'dataFolder': '/data/keeling/a/cigi-gisolve/scratch/dev/1627443453scXwE/data', 'resultFolder': '/data/keeling/a/cigi-gisolve/scratch/dev/1627443453scXwE/result'}
+running main...
+
+./job.json
+
+SLURM_NODEID
+
+0
+SLURM_PROCID
+
+2
+{'jobId': '1627443453scXwE', 'userId': None, 'maintainer': 'community_contribution', 'hpc': 'keeling_community', 'param': {'key_a': 'val_a'}, 'env': {}, 'executableFolder': '/data/keeling/a/cigi-gisolve/scratch/dev/1627443453scXwE/executable', 'dataFolder': '/data/keeling/a/cigi-gisolve/scratch/dev/1627443453scXwE/data', 'resultFolder': '/data/keeling/a/cigi-gisolve/scratch/dev/1627443453scXwE/result'}
+running main...
+
+./job.json
+
+SLURM_NODEID
+
+0
+SLURM_PROCID
+
+4
+{'jobId': '1627443453scXwE', 'userId': None, 'maintainer': 'community_contribution', 'hpc': 'keeling_community', 'param': {'key_a': 'val_a'}, 'env': {}, 'executableFolder': '/data/keeling/a/cigi-gisolve/scratch/dev/1627443453scXwE/executable', 'dataFolder': '/data/keeling/a/cigi-gisolve/scratch/dev/1627443453scXwE/data', 'resultFolder': '/data/keeling/a/cigi-gisolve/scratch/dev/1627443453scXwE/result'}
+running main...
+
+./job.json
+
+SLURM_NODEID
+
+0
+SLURM_PROCID
+
+0
+{'jobId': '1627443453scXwE', 'userId': None, 'maintainer': 'community_contribution', 'hpc': 'keeling_community', 'param': {'key_a': 'val_a'}, 'env': {}, 'executableFolder': '/data/keeling/a/cigi-gisolve/scratch/dev/1627443453scXwE/executable', 'dataFolder': '/data/keeling/a/cigi-gisolve/scratch/dev/1627443453scXwE/data', 'resultFolder': '/data/keeling/a/cigi-gisolve/scratch/dev/1627443453scXwE/result'}
+running main...
+
+./job.json
+
+SLURM_NODEID
+
+0
+SLURM_PROCID
+
+3
+{'jobId': '1627443453scXwE', 'userId': None, 'maintainer': 'community_contribution', 'hpc': 'keeling_community', 'param': {'key_a': 'val_a'}, 'env': {}, 'executableFolder': '/data/keeling/a/cigi-gisolve/scratch/dev/1627443453scXwE/executable', 'dataFolder': '/data/keeling/a/cigi-gisolve/scratch/dev/1627443453scXwE/data', 'resultFolder': '/data/keeling/a/cigi-gisolve/scratch/dev/1627443453scXwE/result'}
+running cleanup...
