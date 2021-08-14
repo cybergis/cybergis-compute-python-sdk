@@ -33,6 +33,26 @@ class CyberGISCompute:
         else:
             print(tabulate(data, headers, tablefmt="presto"))
 
+    def list_container(self):
+        hpc = self.client.request('GET', '/container')['container']
+        headers = ['container name', 'dockerfile', 'dockerhub']
+        data = []
+
+        for i in hpc:
+            data.append([
+                i,
+                hpc[i]['dockerfile'],
+                hpc[i]['dockerhub']
+            ])
+
+        if self.isJupyter:
+            if len(data) == 0:
+                print('empty')
+                return
+            display(HTML(tabulate(data, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', '<td style="text-align:left">').replace('<th>', '<th style="text-align:left">')))
+        else:
+            print(tabulate(data, headers, tablefmt="presto"))
+
     def list_git(self):
         git = self.client.request('GET', '/git')['git']
         headers = ['link', 'name', 'container', 'repository', 'commit']

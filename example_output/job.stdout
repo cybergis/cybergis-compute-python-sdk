@@ -9,18 +9,11 @@ SLURM_NODEID
 SLURM_PROCID
 
 1
-{'jobId': '1627443453scXwE', 'userId': None, 'maintainer': 'community_contribution', 'hpc': 'keeling_community', 'param': {'key_a': 'val_a'}, 'env': {}, 'executableFolder': '/data/keeling/a/cigi-gisolve/scratch/dev/1627443453scXwE/executable', 'dataFolder': '/data/keeling/a/cigi-gisolve/scratch/dev/1627443453scXwE/data', 'resultFolder': '/data/keeling/a/cigi-gisolve/scratch/dev/1627443453scXwE/result'}
-running main...
-
-./job.json
-
-SLURM_NODEID
-
-0
-SLURM_PROCID
-
-2
-{'jobId': '1627443453scXwE', 'userId': None, 'maintainer': 'community_contribution', 'hpc': 'keeling_community', 'param': {'key_a': 'val_a'}, 'env': {}, 'executableFolder': '/data/keeling/a/cigi-gisolve/scratch/dev/1627443453scXwE/executable', 'dataFolder': '/data/keeling/a/cigi-gisolve/scratch/dev/1627443453scXwE/data', 'resultFolder': '/data/keeling/a/cigi-gisolve/scratch/dev/1627443453scXwE/result'}
+job_id
+1628912680l622h
+param_a
+b
+{'job_id': '1628912680l622h', 'user_id': None, 'maintainer': 'community_contribution', 'hpc': 'keeling_community', 'param': {'a': 'b'}, 'env': {}, 'executable_folder': '/1628912680l622h/executable', 'data_folder': '/1628912680l622h/data', 'result_folder': '/1628912680l622h/result'}
 running main...
 
 ./job.json
@@ -31,18 +24,11 @@ SLURM_NODEID
 SLURM_PROCID
 
 4
-{'jobId': '1627443453scXwE', 'userId': None, 'maintainer': 'community_contribution', 'hpc': 'keeling_community', 'param': {'key_a': 'val_a'}, 'env': {}, 'executableFolder': '/data/keeling/a/cigi-gisolve/scratch/dev/1627443453scXwE/executable', 'dataFolder': '/data/keeling/a/cigi-gisolve/scratch/dev/1627443453scXwE/data', 'resultFolder': '/data/keeling/a/cigi-gisolve/scratch/dev/1627443453scXwE/result'}
-running main...
-
-./job.json
-
-SLURM_NODEID
-
-0
-SLURM_PROCID
-
-0
-{'jobId': '1627443453scXwE', 'userId': None, 'maintainer': 'community_contribution', 'hpc': 'keeling_community', 'param': {'key_a': 'val_a'}, 'env': {}, 'executableFolder': '/data/keeling/a/cigi-gisolve/scratch/dev/1627443453scXwE/executable', 'dataFolder': '/data/keeling/a/cigi-gisolve/scratch/dev/1627443453scXwE/data', 'resultFolder': '/data/keeling/a/cigi-gisolve/scratch/dev/1627443453scXwE/result'}
+job_id
+1628912680l622h
+param_a
+b
+{'job_id': '1628912680l622h', 'user_id': None, 'maintainer': 'community_contribution', 'hpc': 'keeling_community', 'param': {'a': 'b'}, 'env': {}, 'executable_folder': '/1628912680l622h/executable', 'data_folder': '/1628912680l622h/data', 'result_folder': '/1628912680l622h/result'}
 running main...
 
 ./job.json
@@ -53,5 +39,39 @@ SLURM_NODEID
 SLURM_PROCID
 
 3
-{'jobId': '1627443453scXwE', 'userId': None, 'maintainer': 'community_contribution', 'hpc': 'keeling_community', 'param': {'key_a': 'val_a'}, 'env': {}, 'executableFolder': '/data/keeling/a/cigi-gisolve/scratch/dev/1627443453scXwE/executable', 'dataFolder': '/data/keeling/a/cigi-gisolve/scratch/dev/1627443453scXwE/data', 'resultFolder': '/data/keeling/a/cigi-gisolve/scratch/dev/1627443453scXwE/result'}
+job_id
+1628912680l622h
+param_a
+b
+{'job_id': '1628912680l622h', 'user_id': None, 'maintainer': 'community_contribution', 'hpc': 'keeling_community', 'param': {'a': 'b'}, 'env': {}, 'executable_folder': '/1628912680l622h/executable', 'data_folder': '/1628912680l622h/data', 'result_folder': '/1628912680l622h/result'}
+running main...
+
+./job.json
+
+SLURM_NODEID
+
+0
+SLURM_PROCID
+
+0
+job_id
+1628912680l622h
+param_a
+b
+{'job_id': '1628912680l622h', 'user_id': None, 'maintainer': 'community_contribution', 'hpc': 'keeling_community', 'param': {'a': 'b'}, 'env': {}, 'executable_folder': '/1628912680l622h/executable', 'data_folder': '/1628912680l622h/data', 'result_folder': '/1628912680l622h/result'}
+running main...
+
+./job.json
+
+SLURM_NODEID
+
+0
+SLURM_PROCID
+
+2
+job_id
+1628912680l622h
+param_a
+b
+{'job_id': '1628912680l622h', 'user_id': None, 'maintainer': 'community_contribution', 'hpc': 'keeling_community', 'param': {'a': 'b'}, 'env': {}, 'executable_folder': '/1628912680l622h/executable', 'data_folder': '/1628912680l622h/data', 'result_folder': '/1628912680l622h/result'}
 running cleanup...
