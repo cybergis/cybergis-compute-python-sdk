@@ -4,6 +4,7 @@ from .Zip import *
 import time
 import os
 import mmap
+import json
 from os import system, name, path
 from tabulate import tabulate
 from IPython.display import HTML, display, clear_output
@@ -71,6 +72,25 @@ class Job:
             'accessToken': self.JAT.getAccessToken()
         })
         print('✅ job submitted')
+
+        headers = ['id', 'maintainer', 'hpc', 'executableFolder', 'dataFolder', 'resultFolder', 'param', 'slurm', 'createdAt']
+        data = [{
+            job['id'],
+            job['maintainer'],
+            job['hpc'],
+            job['executableFolder'],
+            job['dataFolder'],
+            job['resultFolder'],
+            json.dumps(job['param']),
+            json.dumps(job['slurm']),
+            job['createdAt'],
+        }]
+
+        if self.isJupyter:
+            display(HTML(tabulate(data, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', '<td style="text-align:left">').replace('<th>', '<th style="text-align:left">')))
+        else:
+            print(tabulate(data, headers, tablefmt="presto"))
+
         return self
 
     def uploadExecutableFolder(self, folder_path):
@@ -89,9 +109,13 @@ class Job:
         self.body['executableFolder'] = response['file']
         return response
 
-    def set(self, executableFolder=None, param=None, env=None, slurm=None):
+    def set(self, executableFolder=None, dataFolder=None, resultFolder=None, param=None, env=None, slurm=None):
         if executableFolder:
             self.body['executableFolder'] = executableFolder
+        if dataFolder:
+            self.body['dataFolder'] = dataFolder
+        if resultFolder:
+            self.body['resultFolder'] = resultFolder
         if param:
             self.body['param'] = param
         if env:
@@ -189,13 +213,29 @@ class Job:
         if 'resultFolder' not in jobStatus:
             raise Exception('executable folder is not ready')
 
-        dir = os.path.join(dir, self.id)
-        dir = self.client.download('GET', '/file', {
-            "accessToken": self.JAT.getAccessToken(),
-            "fileUrl": jobStatus['resultFolder']
-        }, dir)
-        print('file successfully downloaded under: ' + dir)
-        return dir
+        i = jobStatus['resultFolder'].split('://')
+        if (len(i) != 2):
+            raise Exception('invalid result folder formate provided')
+
+        fileType = i[0]
+        fileId = i[1]
+
+        if (fileType == 'globus'):
+            return self.client.request('GET', '/file', {
+                'accessToken': self.JAT.getAccessToken()
+            })
+
+        if (fileType == 'local'):
+            dir = os.path.join(dir, fileId)
+            dir = self.client.download('GET', '/file', {
+                "accessToken": self.JAT.getAccessToken(),
+                "fileUrl": jobStatus['resultFolder']
+            }, dir)
+            print('file successfully downloaded under: ' + dir)
+            return dir
+
+    def queryGlobusTaskStatus(self):
+        print(1)
 
     def _clear(self):
         if self.isJupyter:
