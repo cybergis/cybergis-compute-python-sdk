@@ -35,6 +35,11 @@ class Job:
         if (self.file != None):
             manifest['file'] = self.file
 
+        if payload.get("machine", "").lower() == "comet":
+            print('📮 Comet supercomputer was retired from XSEDE service on July 15, 2021.')
+            print('📮 Job will be sent to Expanse supercomputer instead.')
+            payload["machine"] = "expanse"
+
         out = self.client.request('POST', '/supervisor', manifest, self.protocol)
 
         self.id = out['id']
