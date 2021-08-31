@@ -42,7 +42,7 @@ class Client:
                 msg = ''
                 if 'messages' in data:
                     msg = str(data['messages'])
-                raise Exception('server ' + self.url + ' responded with error "' + data['error'] + msg + '"')
+                print('❌ server ' + self.url + ' responded with error "' + data['error'] + '"')
 
         if 'tar' in contentType:
             localDir += '.tar'

@@ -74,7 +74,7 @@ class Job:
         print('✅ job submitted')
 
         headers = ['id', 'maintainer', 'hpc', 'executableFolder', 'dataFolder', 'resultFolder', 'param', 'slurm', 'createdAt']
-        data = [{
+        data = [[
             job['id'],
             job['maintainer'],
             job['hpc'],
@@ -84,7 +84,7 @@ class Job:
             json.dumps(job['param']),
             json.dumps(job['slurm']),
             job['createdAt'],
-        }]
+        ]]
 
         if self.isJupyter:
             display(HTML(tabulate(data, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', '<td style="text-align:left">').replace('<th>', '<th style="text-align:left">')))
@@ -204,7 +204,7 @@ class Job:
             'accessToken': self.JAT.getAccessToken()
         })
 
-    def downloadResultFolder(self, dir):
+    def downloadResultFolder(self, dir=None):
         if self.id is None:
             raise Exception('missing job ID, submit/register job first')
 
@@ -222,7 +222,8 @@ class Job:
 
         if (fileType == 'globus'):
             return self.client.request('GET', '/file', {
-                'accessToken': self.JAT.getAccessToken()
+                'accessToken': self.JAT.getAccessToken(),
+                "fileUrl": jobStatus['resultFolder']
             })
 
         if (fileType == 'local'):
