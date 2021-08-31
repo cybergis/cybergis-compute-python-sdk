@@ -236,7 +236,12 @@ class Job:
             return dir
 
     def queryGlobusTaskStatus(self):
-        print(1)
+        if self.id is None:
+            raise Exception('missing job ID, submit/register job first')
+
+        return self.client.request('GET', '/file/' + self.id + '/globus_task_status', {
+            'accessToken': self.JAT.getAccessToken()
+        })
 
     def _clear(self):
         if self.isJupyter:
