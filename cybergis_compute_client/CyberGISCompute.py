@@ -4,6 +4,9 @@ import base64
 from IPython.display import Javascript
 
 class CyberGISCompute:
+    # static variable
+    cybergis_compute_jupyter_host = None
+
     def __init__(self, url="cgjobsup.cigi.illinois.edu", port=443, isJupyter=True, protocol='HTTPS'):
         self.client = Client(url, port, protocol)
         self.jupyterhub_api_token = None
@@ -25,18 +28,11 @@ class CyberGISCompute:
                 print('NOTE: if you want to login as another user, please remove this file')
         else:
             if self.isJupyter:
-                print(cybergis_compute_jupyter_host)
-                try:
-                    cybergis_compute_jupyter_host
-                except:
-                    print('❌ you might not be working on a web browser or enabled JavaScript')
-                    return
-
-                if ('cybergis_compute_jupyter_host' in globals()):
+                if (self.cybergis_compute_jupyter_host != None):
                     import getpass
                     print('📢 please go to Control Panel -> Token, request a new API token')
                     token = getpass.getpass('enter your API token here')
-                    self.jupyterhub_api_token = base64.b64encode((cybergis_compute_jupyter_host + '@' + token).encode('ascii'))
+                    self.jupyterhub_api_token = base64.b64encode((self.cybergis_compute_jupyter_host + '@' + token).encode('ascii'))
                     with open('./cybergis_compute_user.json', 'w') as json_file:
                         json.dump({ token: self.jupyterhub_api_token }, json_file)
                     try:
@@ -44,6 +40,8 @@ class CyberGISCompute:
                         print('✅ successfully logged in as ' + res.user)
                     except:
                         print('❌ invalid Jupyter token')
+                else:
+                    print('❌ you might not be working on a web browser or enabled JavaScript')
             else:
                 print('❌ enable Jupyter using .enable_jupyter() before you login')
 
@@ -155,4 +153,4 @@ class CyberGISCompute:
     def enable_jupyter(self):
         self.isJupyter = True
         # get jupyter variable
-        display(Javascript('IPython.notebook.kernel.execute(`cybergis_compute_jupyter_host = "${window.location.host}"`);alert(11111)'))
+        display(Javascript('IPython.notebook.kernel.execute(`CyberGISCompute.cybergis_compute_jupyter_host = "${window.location.host}"`);'))
