@@ -67,19 +67,20 @@ class CyberGISCompute:
 
         jobs = self.client.request('GET', '/user/job', { "jupyterhubApiToken": self.jupyterhub_api_token })
 
-        headers = ['id', 'maintainer', 'hpc', 'executableFolder', 'dataFolder', 'resultFolder', 'param', 'slurm', 'createdAt']
+        headers = ['id', 'hpc', 'executableFolder', 'dataFolder', 'resultFolder', 'param', 'slurm', 'userId', 'maintainer', 'createdAt']
         data = []
         for i in jobs['job']:
             job = jobs['job'][i]
             data.append([
                 job['id'],
-                job['maintainer'],
                 job['hpc'],
                 job['executableFolder'],
                 job['dataFolder'],
                 job['resultFolder'],
                 json.dumps(job['param']),
                 json.dumps(job['slurm']),
+                job['userId'],
+                job['maintainer'],
                 job['createdAt'],
             ])
 

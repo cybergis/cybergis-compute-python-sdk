@@ -237,16 +237,17 @@ class Job:
             _ = system('clear')
 
     def _print_job(self, job):
-        headers = ['id', 'maintainer', 'hpc', 'executableFolder', 'dataFolder', 'resultFolder', 'param', 'slurm', 'createdAt']
+        headers = ['id', 'hpc', 'executableFolder', 'dataFolder', 'resultFolder', 'param', 'slurm', 'userId', 'maintainer', 'createdAt']
         data = [[
             job['id'],
-            job['maintainer'],
             job['hpc'],
             job['executableFolder'],
             job['dataFolder'],
             job['resultFolder'],
             json.dumps(job['param']),
             json.dumps(job['slurm']),
+            job['userId'],
+            job['maintainer'],
             job['createdAt'],
         ]]
 
