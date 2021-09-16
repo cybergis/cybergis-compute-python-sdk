@@ -36,7 +36,7 @@ class CyberGISCompute:
                     token = base64.b64encode((self.cybergis_compute_jupyter_host + '@' + token).encode('ascii')).decode('utf-8')
                     # try:
                     res = self.client.request('GET', '/user', { "jupyterhubApiToken": token })
-                    print('✅ successfully logged in as ' + res.user)
+                    print('✅ successfully logged in as ' + res['username'])
                     self.jupyterhub_api_token = token
                     with open('./cybergis_compute_user.json', 'w') as json_file:
                         json.dump({ "token": token }, json_file)
