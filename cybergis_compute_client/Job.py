@@ -11,7 +11,7 @@ from IPython.display import HTML, display, clear_output
 
 
 class Job:
-    def __init__(self, maintainer=None, hpc=None, secretToken=None, hpcUsername=None, hpcPassword=None, client=None, isJupyter=None, jupyterhubApiToken=None):
+    def __init__(self, maintainer=None, hpc=None, id=None, secretToken=None, hpcUsername=None, hpcPassword=None, client=None, isJupyter=None, jupyterhubApiToken=None):
         self.JAT = JAT()
         self.client = client
         self.maintainer = maintainer
@@ -36,15 +36,13 @@ class Job:
                 out = self.client.request('POST', '/job', req)
 
             hpc = out['hpc']
-            sT = out['secretToken']
+            secretToken = out['secretToken']
             id = out['id']
-            self.JAT.init('md5', id, sT)
+            self.JAT.init('md5', id, secretToken)
         else:
             self.JAT.init('md5', id, secretToken)
             job = self.client.request('GET', '/job/get-by-token', { 'accessToken': self.JAT.getAccessToken() })
             hpc = job['hpc']
-            id = job['id']
-
 
         if (hpcPassword is not None):
             print('⚠️ HPC password input detected, change your code to use .get_job_by_id() instead')
