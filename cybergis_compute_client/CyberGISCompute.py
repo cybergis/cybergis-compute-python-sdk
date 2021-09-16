@@ -53,8 +53,7 @@ class CyberGISCompute:
     def get_job_by_id(self, id=None):
         jobs = self.client.request('GET', '/user/job', { "jupyterhubApiToken": self.jupyterhubApiToken })
         token = None
-        for i in jobs['job']:
-            job = jobs['job'][i]
+        for job in jobs['job']:
             if (job['id'] == id):
                 token = job['secretToken']
         if (token == None):
@@ -69,8 +68,7 @@ class CyberGISCompute:
 
         headers = ['id', 'hpc', 'executableFolder', 'dataFolder', 'resultFolder', 'param', 'slurm', 'userId', 'maintainer', 'createdAt']
         data = []
-        for i in jobs['job']:
-            job = jobs['job'][i]
+        for job in jobs['job']:
             data.append([
                 job['id'],
                 job['hpc'],
