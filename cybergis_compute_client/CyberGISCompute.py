@@ -34,14 +34,14 @@ class CyberGISCompute:
                     print('📢 please go to Control Panel -> Token, request a new API token')
                     token = getpass.getpass('enter your API token here')
                     token = base64.b64encode((self.cybergis_compute_jupyter_host + '@' + token).encode('ascii')).decode('utf-8')
-                    # try:
-                    res = self.client.request('GET', '/user', { "jupyterhubApiToken": token })
-                    print('✅ successfully logged in as ' + res['username'])
-                    self.jupyterhub_api_token = token
-                    with open('./cybergis_compute_user.json', 'w') as json_file:
-                        json.dump({ "token": token }, json_file)
-                    # except:
-                    #     print('❌ invalid Jupyter token')
+                    try:
+                        res = self.client.request('GET', '/user', { "jupyterhubApiToken": token })
+                        print('✅ successfully logged in as ' + res['username'])
+                        self.jupyterhub_api_token = token
+                        with open('./cybergis_compute_user.json', 'w') as json_file:
+                            json.dump({ "token": token }, json_file)
+                    except:
+                        print('❌ invalid Jupyter token')
                 else:
                     print('❌ you might not be working on a web browser or enabled JavaScript')
             else:
@@ -52,6 +52,32 @@ class CyberGISCompute:
 
     def create_job_from_id(self, id=None):
         return Job(id=id, isJupyter=self.isJupyter)
+
+    def list_job(self):
+        if self.jupyterhub_api_token == None:
+            print('❌ please login frist using .login()')
+
+        jobs = self.client.request('GET', '/user/job', { "jupyterhubApiToken": self.jupyterhub_api_token })
+
+        headers = ['id', 'maintainer', 'hpc', 'executableFolder', 'dataFolder', 'resultFolder', 'param', 'slurm', 'createdAt']
+        data = []
+        for job in jobs:
+            data.append([
+                job['id'],
+                job['maintainer'],
+                job['hpc'],
+                job['executableFolder'],
+                job['dataFolder'],
+                job['resultFolder'],
+                json.dumps(job['param']),
+                json.dumps(job['slurm']),
+                job['createdAt'],
+            ])
+
+        if self.isJupyter:
+            display(HTML(tabulate(data, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', '<td style="text-align:left">').replace('<th>', '<th style="text-align:left">')))
+        else:
+            print(tabulate(data, headers, tablefmt="presto"))
 
     def list_hpc(self):
         hpc = self.client.request('GET', '/hpc')['hpc']
