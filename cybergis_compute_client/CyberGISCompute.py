@@ -148,6 +148,6 @@ class CyberGISCompute:
 
 
     def enable_jupyter(self):
-        self.isJupyter
+        self.isJupyter = True
         # get jupyter variable
-        Javascript('IPython.notebook.kernel.execute(`cybergis_compute_jupyter_host = "${window.location.host}"`);alert(11111)')
+        display(Javascript('IPython.notebook.kernel.execute(`cybergis_compute_jupyter_host = "${window.location.host}"`);alert(11111)'))
