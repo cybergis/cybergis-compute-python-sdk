@@ -25,6 +25,7 @@ class CyberGISCompute:
                 print('NOTE: if you want to login as another user, please remove this file')
         else:
             if self.isJupyter:
+                print(cybergis_compute_jupyter_host)
                 try:
                     cybergis_compute_jupyter_host
                 except:
