@@ -105,7 +105,7 @@ class Job:
         if printJob:
             self._print_job(job)
 
-    def events(self, liveOutput=False, refreshRateInSeconds = 10):
+    def events(self, liveOutput=True, refreshRateInSeconds = 10):
         if not liveOutput:
             return self.status()['events']
 
@@ -138,7 +138,7 @@ class Job:
             if not isEnd:
                 time.sleep(refreshRateInSeconds)
 
-    def logs(self, liveOutput=False, refreshRateInSeconds = 15):
+    def logs(self, liveOutput=True, refreshRateInSeconds = 15):
         if not liveOutput:
             return self.status()['logs']
 
