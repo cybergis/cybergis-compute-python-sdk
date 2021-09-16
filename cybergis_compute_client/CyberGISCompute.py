@@ -61,7 +61,8 @@ class CyberGISCompute:
 
         headers = ['id', 'maintainer', 'hpc', 'executableFolder', 'dataFolder', 'resultFolder', 'param', 'slurm', 'createdAt']
         data = []
-        for job in jobs:
+        for i in jobs:
+            job = jobs[i]
             data.append([
                 job['id'],
                 job['maintainer'],
