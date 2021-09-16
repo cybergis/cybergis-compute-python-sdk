@@ -84,6 +84,9 @@ class CyberGISCompute:
             ])
 
         if self.isJupyter:
+            if len(data) == 0:
+                print('empty')
+                return
             display(HTML(tabulate(data, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', '<td style="text-align:left">').replace('<th>', '<th style="text-align:left">')))
         else:
             print(tabulate(data, headers, tablefmt="presto"))
