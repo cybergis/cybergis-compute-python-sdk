@@ -5,11 +5,11 @@ from IPython.display import Javascript
 
 class CyberGISCompute:
     # static variable
-    jupyterhubApiToken = None
+    jupyterhubHost = None
 
     def __init__(self, url="cgjobsup.cigi.illinois.edu", port=443, isJupyter=True, protocol='HTTPS'):
         self.client = Client(url, port, protocol)
-        self.jupyterhub_api_token = None
+        self.jupyterhubApiToken = None
         self.isJupyter = isJupyter
         if isJupyter:
             self.enable_jupyter()
@@ -23,21 +23,21 @@ class CyberGISCompute:
                 try:
                     res = self.client.request('GET', '/user', { "jupyterhubApiToken": token })
                     print('✅ successfully logged in as ' + res['username'])
-                    self.jupyterhub_api_token = token
+                    self.jupyterhubApiToken = token
                 except:
                     print('❌ invalid Jupyter token')
                 print('NOTE: if you want to login as another user, please remove this file')
         else:
             if self.isJupyter:
-                if (self.jupyterhubApiToken != None):
+                if (self.jupyterhubHost != None):
                     import getpass
                     print('📢 please go to Control Panel -> Token, request a new API token')
                     token = getpass.getpass('enter your API token here')
-                    token = base64.b64encode((self.jupyterhubApiToken + '@' + token).encode('ascii')).decode('utf-8')
+                    token = base64.b64encode((self.jupyterhubHost + '@' + token).encode('ascii')).decode('utf-8')
                     try:
                         res = self.client.request('GET', '/user', { "jupyterhubApiToken": token })
                         print('✅ successfully logged in as ' + res['username'])
-                        self.jupyterhub_api_token = token
+                        self.jupyterhubApiToken = token
                         with open('./cybergis_compute_user.json', 'w') as json_file:
                             json.dump({ "token": token }, json_file)
                     except:
@@ -51,7 +51,7 @@ class CyberGISCompute:
         return Job(maintainer, hpc, None, username, password, self.client, isJupyter=self.isJupyter, jupyterhubApiToken=self.jupyterhubApiToken)
 
     def get_job_by_id(self, id=None):
-        jobs = self.client.request('GET', '/user/job', { "jupyterhubApiToken": self.jupyterhub_api_token })
+        jobs = self.client.request('GET', '/user/job', { "jupyterhubApiToken": self.jupyterhubApiToken })
         token = None
         for i in jobs['job']:
             job = jobs['job'][i]
@@ -62,10 +62,10 @@ class CyberGISCompute:
         return Job(secretToken=token, isJupyter=self.isJupyter, jupyterhubApiToken=self.jupyterhubApiToken)
 
     def list_job(self):
-        if self.jupyterhub_api_token == None:
+        if self.jupyterhubApiToken == None:
             print('❌ please login frist using .login()')
 
-        jobs = self.client.request('GET', '/user/job', { "jupyterhubApiToken": self.jupyterhub_api_token })
+        jobs = self.client.request('GET', '/user/job', { "jupyterhubApiToken": self.jupyterhubApiToken })
 
         headers = ['id', 'hpc', 'executableFolder', 'dataFolder', 'resultFolder', 'param', 'slurm', 'userId', 'maintainer', 'createdAt']
         data = []
@@ -194,4 +194,4 @@ class CyberGISCompute:
     def enable_jupyter(self):
         self.isJupyter = True
         # get jupyter variable
-        display(Javascript('IPython.notebook.kernel.execute(`CyberGISCompute.jupyterhubApiToken = "${window.location.host}"`);'))
+        display(Javascript('IPython.notebook.kernel.execute(`CyberGISCompute.jupyterhubHost = "${window.location.host}"`);'))
