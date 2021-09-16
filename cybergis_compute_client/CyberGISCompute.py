@@ -25,6 +25,12 @@ class CyberGISCompute:
                 print('NOTE: if you want to login as another user, please remove this file')
         else:
             if self.isJupyter:
+                try:
+                    cybergis_compute_jupyter_host
+                except:
+                    print('❌ you might not be working on a web browser or enabled JavaScript')
+                    return
+
                 if ('cybergis_compute_jupyter_host' in globals()):
                     import getpass
                     print('📢 please go to Control Panel -> Token, request a new API token')
@@ -37,8 +43,6 @@ class CyberGISCompute:
                         print('✅ successfully logged in as ' + res.user)
                     except:
                         print('❌ invalid Jupyter token')
-                else:
-                    print('❌ you might not be working on a web browser or enabled JavaScript')
             else:
                 print('❌ enable Jupyter using .enable_jupyter() before you login')
 
