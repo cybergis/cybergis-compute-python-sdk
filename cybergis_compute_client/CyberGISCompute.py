@@ -53,11 +53,9 @@ class CyberGISCompute:
     def get_job_by_id(self, id=None):
         jobs = self.client.request('GET', '/user/job', { "jupyterhubApiToken": self.jupyterhubApiToken })
         token = None
-        id = None
         for job in jobs['job']:
             if (job['id'] == id):
                 token = job['secretToken']
-                id = job['id']
         if (token == None):
             print('❌ job with id ' + id + ' was not found')
         return Job(secretToken=token, client=self.client, id=id, isJupyter=self.isJupyter, jupyterhubApiToken=self.jupyterhubApiToken)
