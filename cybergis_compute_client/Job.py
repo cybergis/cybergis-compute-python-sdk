@@ -11,23 +11,14 @@ from IPython.display import HTML, display, clear_output
 
 
 class Job:
-    def __init__(self, maintainer=None, hpc=None, id=None, user=None, password=None, client=None, isJupyter=None):
+    def __init__(self, maintainer=None, hpc=None, secretToken=None, hpcUsername=None, hpcPassword=None, client=None, isJupyter=None, jupyterhubApiToken=None):
         self.JAT = JAT()
         self.client = client
         self.maintainer = maintainer
         self.isJupyter = isJupyter
+        self.jupyterhubApiToken = jupyterhubApiToken
 
-        if id != None:
-            if path.exists('./job_constructor_' + id + '.json'):
-                with open(os.path.abspath('job_constructor_' + id + '.json')) as f:
-                    constructor = json.load(f)
-                id = constructor['id']
-                sT = constructor['secretToken']
-                hpc = constructor['hpc']
-                maintainer = constructor['maintainer']
-            else:
-                raise Exception('jobID provided but constructor file [job_constructor_' + id + '.json] not found')
-        else:
+        if (secretToken == None):
             if maintainer == None:
                 raise Exception('maintainer cannot by NoneType')
 
@@ -37,60 +28,43 @@ class Job:
             if (hpc != None):
                 req['hpc'] = hpc
 
-            if (user is None):
+            if (hpcUsername is None):
                 out = self.client.request('POST', '/job', req)
             else:
-                req['user'] = user
-                req['password'] = password
+                req['user'] = hpcUsername
+                req['password'] = hpcPassword
                 out = self.client.request('POST', '/job', req)
 
             hpc = out['hpc']
             sT = out['secretToken']
             id = out['id']
-            with open('./job_constructor_' + id + '.json', 'w') as json_file:
-                json.dump({ 'secretToken': sT, 'id': id, 'hpc': hpc, 'maintainer': maintainer }, json_file)
-            print('📃 created constructor file [job_constructor_' + id + '.json]')
+            self.JAT.init('md5', id, sT)
+        else:
+            self.JAT.init('md5', id, secretToken)
+            job = self.client.request('GET', '/job/get-by-token', { 'accessToken': self.JAT.getAccessToken() })
+            hpc = job['hpc']
+            id = job['id']
 
-        if (password is not None):
-            print('⚠️ password input detected, change your code to use Job(id='' + id + '') instead')
+
+        if (hpcPassword is not None):
+            print('⚠️ HPC password input detected, change your code to use .get_job_by_id() instead')
             print('🙅‍♂️ it\'s not safe to distribute code with login credentials')
-            print('📃 share constructor file [job_constructor_' + id + '.json] instead')
 
         self.id = id
         self.hpc = hpc
-        self.JAT.init('md5', id, sT)
-        self.body = {
-            'param': {},
-            'env': {},
-            'slurm': {},
-            'executableFolder': None
-        }
 
     def submit(self):
-        self.client.request('PUT', '/job/' + self.id, self.getBodyForRequest())
-        job = self.client.request('POST', '/job/' + self.id + '/submit', {
-            'accessToken': self.JAT.getAccessToken()
-        })
-        print('✅ job submitted')
+        try:
+            body = { 'accessToken': self.JAT.getAccessToken() }
+            if (self.jupyterhubApiToken != None):
+                body['jupyterhubApiToken'] = self.jupyterhubApiToken
+            job = self.client.request('POST', '/job/' + self.id + '/submit', body)
+            print('✅ job submitted')
+        except:
+            print('❌ job already submitted or in queue')
+            job = self.client.request('GET', '/job', { 'accessToken': self.JAT.getAccessToken() })
 
-        headers = ['id', 'maintainer', 'hpc', 'executableFolder', 'dataFolder', 'resultFolder', 'param', 'slurm', 'createdAt']
-        data = [[
-            job['id'],
-            job['maintainer'],
-            job['hpc'],
-            job['executableFolder'],
-            job['dataFolder'],
-            job['resultFolder'],
-            json.dumps(job['param']),
-            json.dumps(job['slurm']),
-            job['createdAt'],
-        ]]
-
-        if self.isJupyter:
-            display(HTML(tabulate(data, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', '<td style="text-align:left">').replace('<th>', '<th style="text-align:left">')))
-        else:
-            print(tabulate(data, headers, tablefmt="presto"))
-
+        self._print_job(job)
         return self
 
     def uploadExecutableFolder(self, folder_path):
@@ -106,23 +80,32 @@ class Job:
         response = self.client.upload('/file', {
             'accessToken': self.JAT.getAccessToken()
         }, zip.read())
-        self.body['executableFolder'] = response['file']
+        self.set(executableFolder=response['file'], printJob=True)
         return response
 
-    def set(self, executableFolder=None, dataFolder=None, resultFolder=None, param=None, env=None, slurm=None):
+    def set(self, executableFolder=None, dataFolder=None, resultFolder=None, param=None, env=None, slurm=None, printJob=True):
+        body = {}
+        
         if executableFolder:
-            self.body['executableFolder'] = executableFolder
+            body['executableFolder'] = executableFolder
         if dataFolder:
-            self.body['dataFolder'] = dataFolder
+            body['dataFolder'] = dataFolder
         if resultFolder:
-            self.body['resultFolder'] = resultFolder
+            body['resultFolder'] = resultFolder
         if param:
-            self.body['param'] = param
+            body['param'] = param
         if env:
-            self.body['env'] = env
+            body['env'] = env
         if slurm:
-            self.body['slurm'] = slurm
-        print(self.body)
+            body['slurm'] = slurm
+
+        if (body == {}):
+            print('❌ please set at least one parmeter')
+
+        body['accessToken'] = self.JAT.getAccessToken()
+        job = self.client.request('PUT', '/job/' + self.id, body)
+        if printJob:
+            self._print_job(job)
 
     def events(self, liveOutput=False, refreshRateInSeconds = 10):
         if not liveOutput:
@@ -253,10 +236,21 @@ class Job:
         else:
             _ = system('clear')
 
-    def getBodyForRequest(self):
-        body = {}
-        body['accessToken'] = self.JAT.getAccessToken()
-        for i in self.body:
-            if self.body[i] != None:
-                body[i] = self.body[i]
-        return body
+    def _print_job(self, job):
+        headers = ['id', 'maintainer', 'hpc', 'executableFolder', 'dataFolder', 'resultFolder', 'param', 'slurm', 'createdAt']
+        data = [[
+            job['id'],
+            job['maintainer'],
+            job['hpc'],
+            job['executableFolder'],
+            job['dataFolder'],
+            job['resultFolder'],
+            json.dumps(job['param']),
+            json.dumps(job['slurm']),
+            job['createdAt'],
+        ]]
+
+        if self.isJupyter:
+            display(HTML(tabulate(data, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', '<td style="text-align:left">').replace('<th>', '<th style="text-align:left">')))
+        else:
+            print(tabulate(data, headers, tablefmt="presto"))

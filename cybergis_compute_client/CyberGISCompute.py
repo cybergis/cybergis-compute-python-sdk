@@ -5,7 +5,7 @@ from IPython.display import Javascript
 
 class CyberGISCompute:
     # static variable
-    cybergis_compute_jupyter_host = None
+    jupyterhubApiToken = None
 
     def __init__(self, url="cgjobsup.cigi.illinois.edu", port=443, isJupyter=True, protocol='HTTPS'):
         self.client = Client(url, port, protocol)
@@ -29,11 +29,11 @@ class CyberGISCompute:
                 print('NOTE: if you want to login as another user, please remove this file')
         else:
             if self.isJupyter:
-                if (self.cybergis_compute_jupyter_host != None):
+                if (self.jupyterhubApiToken != None):
                     import getpass
                     print('📢 please go to Control Panel -> Token, request a new API token')
                     token = getpass.getpass('enter your API token here')
-                    token = base64.b64encode((self.cybergis_compute_jupyter_host + '@' + token).encode('ascii')).decode('utf-8')
+                    token = base64.b64encode((self.jupyterhubApiToken + '@' + token).encode('ascii')).decode('utf-8')
                     try:
                         res = self.client.request('GET', '/user', { "jupyterhubApiToken": token })
                         print('✅ successfully logged in as ' + res['username'])
@@ -47,11 +47,19 @@ class CyberGISCompute:
             else:
                 print('❌ enable Jupyter using .enable_jupyter() before you login')
 
-    def create_job(self, maintainer, hpc=None, user=None, password=None):
-        return Job(maintainer, hpc, None, user, password, self.client, isJupyter=self.isJupyter)
+    def create_job(self, maintainer='community_contribution', hpc=None, username=None, password=None):
+        return Job(maintainer, hpc, None, username, password, self.client, isJupyter=self.isJupyter, jupyterhubApiToken=self.jupyterhubApiToken)
 
-    def create_job_from_id(self, id=None):
-        return Job(id=id, isJupyter=self.isJupyter)
+    def get_job_by_id(self, id=None):
+        jobs = self.client.request('GET', '/user/job', { "jupyterhubApiToken": self.jupyterhub_api_token })
+        token = None
+        for i in jobs['job']:
+            job = jobs['job'][i]
+            if (job['id'] == id):
+                token = job['secretToken']
+        if (token == None):
+            print('❌ job with id ' + id + ' was not found')
+        return Job(secretToken=token, isJupyter=self.isJupyter, jupyterhubApiToken=self.jupyterhubApiToken)
 
     def list_job(self):
         if self.jupyterhub_api_token == None:
@@ -61,8 +69,8 @@ class CyberGISCompute:
 
         headers = ['id', 'maintainer', 'hpc', 'executableFolder', 'dataFolder', 'resultFolder', 'param', 'slurm', 'createdAt']
         data = []
-        for i in jobs:
-            job = jobs[i]
+        for i in jobs['job']:
+            job = jobs['job'][i]
             data.append([
                 job['id'],
                 job['maintainer'],
@@ -182,4 +190,4 @@ class CyberGISCompute:
     def enable_jupyter(self):
         self.isJupyter = True
         # get jupyter variable
-        display(Javascript('IPython.notebook.kernel.execute(`CyberGISCompute.cybergis_compute_jupyter_host = "${window.location.host}"`);'))
+        display(Javascript('IPython.notebook.kernel.execute(`CyberGISCompute.jupyterhubApiToken = "${window.location.host}"`);'))
