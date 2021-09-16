@@ -21,8 +21,8 @@ class CyberGISCompute:
                 token = user['token']
                 print('📃 found "cybergis_compute_user.json"')
                 try:
-                    res = self.client.request('GET', '/user', { "jupyterhubApiToken": self.jupyterhub_api_token })
-                    print('✅ successfully logged in as ' + res.user)
+                    res = self.client.request('GET', '/user', { "jupyterhubApiToken": token })
+                    print('✅ successfully logged in as ' + res['username'])
                     self.jupyterhub_api_token = token
                 except:
                     print('❌ invalid Jupyter token')
