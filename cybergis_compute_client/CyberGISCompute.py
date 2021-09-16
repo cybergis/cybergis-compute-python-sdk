@@ -34,14 +34,14 @@ class CyberGISCompute:
                     print('📢 please go to Control Panel -> Token, request a new API token')
                     token = getpass.getpass('enter your API token here')
                     token = base64.b64encode((self.cybergis_compute_jupyter_host + '@' + token).encode('ascii')).decode('utf-8')
+                    # try:
+                    res = self.client.request('GET', '/user', { "jupyterhubApiToken": token })
+                    print('✅ successfully logged in as ' + res.user)
+                    self.jupyterhub_api_token = token
                     with open('./cybergis_compute_user.json', 'w') as json_file:
                         json.dump({ "token": token }, json_file)
-                    try:
-                        res = self.client.request('GET', '/user', { "jupyterhubApiToken": token })
-                        print('✅ successfully logged in as ' + res.user)
-                        self.jupyterhub_api_token = token
-                    except:
-                        print('❌ invalid Jupyter token')
+                    # except:
+                    #     print('❌ invalid Jupyter token')
                 else:
                     print('❌ you might not be working on a web browser or enabled JavaScript')
             else:
