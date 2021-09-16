@@ -58,7 +58,7 @@ class CyberGISCompute:
                 token = job['secretToken']
         if (token == None):
             print('❌ job with id ' + id + ' was not found')
-        return Job(secretToken=token, isJupyter=self.isJupyter, jupyterhubApiToken=self.jupyterhubApiToken)
+        return Job(secretToken=token, client=self.client, isJupyter=self.isJupyter, jupyterhubApiToken=self.jupyterhubApiToken)
 
     def list_job(self):
         if self.jupyterhubApiToken == None:
