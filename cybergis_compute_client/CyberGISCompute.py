@@ -1,10 +1,46 @@
 from .Client import *
 from .Job import *
+import base64
+from IPython.display import Javascript
 
 class CyberGISCompute:
-    def __init__(self, url="cgjobsup.cigi.illinois.edu", port=443, isJupyter=False, protocol='HTTPS'):
+    def __init__(self, url="cgjobsup.cigi.illinois.edu", port=443, isJupyter=True, protocol='HTTPS'):
         self.client = Client(url, port, protocol)
+        self.jupyterhub_api_token = None
         self.isJupyter = isJupyter
+        if isJupyter:
+            self.enable_jupyter()
+
+    def login(self, host=None):
+        if path.exists('./cybergis_compute_user.json'):
+            with open(os.path.abspath('cybergis_compute_user.json')) as f:
+                user = json.load(f)
+                token = user['token']
+                print('📃 found "cybergis_compute_user.json"')
+                try:
+                    res = self.client.request('GET', '/user', { "jupyterhubApiToken": self.jupyterhub_api_token })
+                    print('✅ successfully logged in as ' + res.user)
+                except:
+                    print('❌ invalid Jupyter token')
+                print('NOTE: if you want to login as another user, please remove this file')
+        else:
+            if self.isJupyter:
+                if ('cybergis_compute_jupyter_host' in globals()):
+                    import getpass
+                    print('📢 please go to Control Panel -> Token, request a new API token')
+                    token = getpass.getpass('enter your API token here')
+                    self.jupyterhub_api_token = base64.b64encode((cybergis_compute_jupyter_host + '@' + token).encode('ascii'))
+                    with open('./cybergis_compute_user.json', 'w') as json_file:
+                        json.dump({ token: self.jupyterhub_api_token }, json_file)
+                    try:
+                        res = self.client.request('GET', '/user', { "jupyterhubApiToken": self.jupyterhub_api_token })
+                        print('✅ successfully logged in as ' + res.user)
+                    except:
+                        print('❌ invalid Jupyter token')
+                else:
+                    print('❌ you might not be working on a web browser or enabled JavaScript')
+            else:
+                print('❌ enable Jupyter using .enable_jupyter() before you login')
 
     def create_job(self, maintainer, hpc=None, user=None, password=None):
         return Job(maintainer, hpc, None, user, password, self.client, isJupyter=self.isJupyter)
@@ -109,3 +145,9 @@ class CyberGISCompute:
             display(HTML(tabulate(data, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', '<td style="text-align:left">').replace('<th>', '<th style="text-align:left">')))
         else:
             print(tabulate(data, headers, tablefmt="presto"))
+
+
+    def enable_jupyter(self):
+        self.isJupyter
+        # get jupyter variable
+        Javascript('IPython.notebook.kernel.execute(`cybergis_compute_jupyter_host = "${window.location.host}"`);alert(11111)')
