@@ -22,11 +22,11 @@ class Job:
             if maintainer == None:
                 raise Exception('maintainer cannot by NoneType')
 
-            req = {
-                'maintainer': maintainer
-            }
+            req = { 'maintainer': maintainer }
             if (hpc != None):
                 req['hpc'] = hpc
+            if (jupyterhubApiToken != None):
+                req['jupyterhubApiToken'] = jupyterhubApiToken
 
             if (hpcUsername is None):
                 out = self.client.request('POST', '/job', req)
