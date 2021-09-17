@@ -14,7 +14,8 @@ class CyberGISCompute:
         if isJupyter:
             self.enable_jupyter()
 
-    def login(self, host=None):
+    def login(self):
+        # TODO: get env variables
         if path.exists('./cybergis_compute_user.json'):
             with open(os.path.abspath('cybergis_compute_user.json')) as f:
                 user = json.load(f)
@@ -47,8 +48,8 @@ class CyberGISCompute:
             else:
                 print('❌ enable Jupyter using .enable_jupyter() before you login')
 
-    def create_job(self, maintainer='community_contribution', hpc=None, username=None, password=None):
-        return Job(maintainer, hpc, None, username, password, self.client, isJupyter=self.isJupyter, jupyterhubApiToken=self.jupyterhubApiToken)
+    def create_job(self, maintainer='community_contribution', hpc=None, hpcUsername=None, hpcPassword=None):
+        return Job(maintainer=maintainer, hpc=hpc, id=None, hpcUsername=hpcUsername, hpcPassword=hpcPassword, client=self.client, isJupyter=self.isJupyter, jupyterhubApiToken=self.jupyterhubApiToken)
 
     def get_job_by_id(self, id=None):
         jobs = self.client.request('GET', '/user/job', { "jupyterhubApiToken": self.jupyterhubApiToken })
