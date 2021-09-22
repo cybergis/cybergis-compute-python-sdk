@@ -16,15 +16,15 @@ class CyberGISCompute:
         if isJupyter:
             self.enable_jupyter()
 
-    def login(self):
+    def login(self, manualLogin = True):
         if self.jupyterhubApiToken != None:
-            print('🎯 logged in as ' + self.username)
+            print('🎯 Logged in as ' + self.username)
             return
 
         # login via env variable
         envToken = os.getenv('JUPYTERHUB_API_TOKEN')
         if envToken != None:
-            print('💻 found system token')
+            print('💻 Found system token')
             try:
                 token = base64.b64encode((self.jupyterhubHost + '@' + envToken).encode('ascii')).decode('utf-8')
                 res = self.client.request('GET', '/user', { "jupyterhubApiToken": token })
@@ -32,43 +32,44 @@ class CyberGISCompute:
                 self.username = res['username']
                 return self.login()
             except:
-                print('❌ failed to login via system token')
+                print('❌ Failed to login via system token')
 
         # login via file
         if path.exists('./cybergis_compute_user.json'):
             with open(os.path.abspath('cybergis_compute_user.json')) as f:
                 user = json.load(f)
                 token = user['token']
-                print('📃 found "cybergis_compute_user.json"')
+                print('📃 Found "cybergis_compute_user.json"')
                 try:
                     res = self.client.request('GET', '/user', { "jupyterhubApiToken": token })
                     self.jupyterhubApiToken = token
                     self.username = res['username']
                     return self.login()
                 except:
-                    print('❌ failed to login via token JSON file')
+                    print('❌ Failed to login via token JSON file')
                 print('NOTE: if you want to login as another user, please remove this file')
-        else:
+        elif manualLogin:
             if self.isJupyter:
                 if (self.jupyterhubHost != None):
                     import getpass
-                    print('📢 please go to Control Panel -> Token, request a new API token')
+                    print('📢 Please go to Control Panel -> Token, request a new API token')
                     token = getpass.getpass('enter your API token here')
                     token = base64.b64encode((self.jupyterhubHost + '@' + token).encode('ascii')).decode('utf-8')
                     try:
                         res = self.client.request('GET', '/user', { "jupyterhubApiToken": token })
-                        print('✅ successfully logged in as ' + res['username'])
                         self.jupyterhubApiToken = token
                         self.username = res['username']
                         with open('./cybergis_compute_user.json', 'w') as json_file:
                             json.dump({ "token": token }, json_file)
                         return self.login()
                     except:
-                        print('❌ failed to login via user input')
+                        print('❌ Failed to login via user input')
                 else:
-                    print('❌ you might not be working on a web browser or enabled JavaScript')
+                    print('❌ You might not be working on a web browser or enabled JavaScript')
             else:
-                print('❌ enable Jupyter using .enable_jupyter() before you login')
+                print('❌ Enable Jupyter using .enable_jupyter() before you login')
+        else:
+            print('❌ Not logged in. To enable more features, use .login()')
 
     def create_job(self, maintainer='community_contribution', hpc=None, hpcUsername=None, hpcPassword=None):
         self.login()
