@@ -128,7 +128,6 @@ class Job:
                 isEnd =  isEnd or o['type'] == 'JOB_ENDED' or o['type'] == 'JOB_FAILED'
                 print('📮 Job ID: ' + self.id)
                 print('💻 HPC: ' + self.hpc)
-                print('🤖 Maintainer: ' + self.maintainer)
                 if self.isJupyter:
                     display(HTML(tabulate(events, headers, tablefmt='html')))
                 else:
@@ -159,7 +158,6 @@ class Job:
                 logs.append(i)
                 print('📮 Job ID: ' + self.id)
                 print('💻 HPC: ' + self.hpc)
-                print('🤖 Maintainer: ' + self.maintainer)
                 if self.isJupyter:
                     display(HTML(tabulate(logs, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', "<td style='text-align:left'>")))
                 else:
