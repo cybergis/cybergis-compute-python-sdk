@@ -33,11 +33,11 @@ class Job:
             else:
                 req['user'] = hpcUsername
                 req['password'] = hpcPassword
-                out = self.client.request('POST', '/job', req)
+                job = self.client.request('POST', '/job', req)
 
-            hpc = out['hpc']
-            secretToken = out['secretToken']
-            id = out['id']
+            hpc = job['hpc']
+            secretToken = job['secretToken']
+            id = job['id']
             self.JAT.init('md5', id, secretToken)
         else:
             self.JAT.init('md5', id, secretToken)
@@ -50,6 +50,7 @@ class Job:
 
         self.id = id
         self.hpc = hpc
+        self._print_job(job)
 
     def submit(self):
         try:
