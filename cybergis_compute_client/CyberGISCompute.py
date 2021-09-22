@@ -26,10 +26,7 @@ class CyberGISCompute:
         if envToken != None:
             print('💻 found system token')
             try:
-                print(self.jupyterhubHost)
-                print(envToken)
                 token = base64.b64encode((self.jupyterhubHost + '@' + envToken).encode('ascii')).decode('utf-8')
-                print(token)
                 res = self.client.request('GET', '/user', { "jupyterhubApiToken": token })
                 self.jupyterhubApiToken = token
                 self.username = res['username']
