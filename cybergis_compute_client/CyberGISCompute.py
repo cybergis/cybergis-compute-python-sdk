@@ -22,7 +22,10 @@ class CyberGISCompute:
         if envToken != None and not skipEnvLogin:
             print('💻 found system token')
             try:
+                print(self.jupyterhubHost)
+                print(envToken)
                 token = base64.b64encode((self.jupyterhubHost + '@' + envToken).encode('ascii')).decode('utf-8')
+                print(token)
                 res = self.client.request('GET', '/user', { "jupyterhubApiToken": token })
                 print('✅ successfully logged in as ' + res['username'])
                 self.jupyterhubApiToken = token
