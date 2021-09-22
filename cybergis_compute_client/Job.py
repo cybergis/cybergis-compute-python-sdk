@@ -30,7 +30,7 @@ class Job:
                 req['jupyterhubApiToken'] = jupyterhubApiToken
 
             if (hpcUsername is None):
-                out = self.client.request('POST', '/job', req)
+                job = self.client.request('POST', '/job', req)
             else:
                 req['user'] = hpcUsername
                 req['password'] = hpcPassword
