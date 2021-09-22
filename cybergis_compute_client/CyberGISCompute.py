@@ -11,15 +11,20 @@ class CyberGISCompute:
     def __init__(self, url="cgjobsup.cigi.illinois.edu", port=443, isJupyter=True, protocol='HTTPS'):
         self.client = Client(url, port, protocol)
         self.jupyterhubApiToken = None
+        self.username = None
         self.isJupyter = isJupyter
         if isJupyter:
             self.enable_jupyter()
             self.login()
 
-    def login(self, skipEnvLogin = False):
+    def login(self):
+        if self.jupyterhubApiToken != None:
+            print('🎯 logged in as ' + self.username)
+            return
+
         # login via env variable
         envToken = os.getenv('JUPYTERHUB_API_TOKEN')
-        if envToken != None and not skipEnvLogin:
+        if envToken != None:
             print('💻 found system token')
             try:
                 print(self.jupyterhubHost)
@@ -27,12 +32,12 @@ class CyberGISCompute:
                 token = base64.b64encode((self.jupyterhubHost + '@' + envToken).encode('ascii')).decode('utf-8')
                 print(token)
                 res = self.client.request('GET', '/user', { "jupyterhubApiToken": token })
-                print('✅ successfully logged in as ' + res['username'])
                 self.jupyterhubApiToken = token
-                return
+                self.username = res['username']
+                return self.login()
             except:
-                print('❌ invalid Jupyter token')
-        
+                print('❌ failed to login via system token')
+
         # login via file
         if path.exists('./cybergis_compute_user.json'):
             with open(os.path.abspath('cybergis_compute_user.json')) as f:
@@ -41,10 +46,11 @@ class CyberGISCompute:
                 print('📃 found "cybergis_compute_user.json"')
                 try:
                     res = self.client.request('GET', '/user', { "jupyterhubApiToken": token })
-                    print('✅ successfully logged in as ' + res['username'])
                     self.jupyterhubApiToken = token
+                    self.username = res['username']
+                    return self.login()
                 except:
-                    print('❌ invalid Jupyter token')
+                    print('❌ failed to login via token JSON file')
                 print('NOTE: if you want to login as another user, please remove this file')
         else:
             if self.isJupyter:
@@ -57,19 +63,23 @@ class CyberGISCompute:
                         res = self.client.request('GET', '/user', { "jupyterhubApiToken": token })
                         print('✅ successfully logged in as ' + res['username'])
                         self.jupyterhubApiToken = token
+                        self.username = res['username']
                         with open('./cybergis_compute_user.json', 'w') as json_file:
                             json.dump({ "token": token }, json_file)
+                        return self.login()
                     except:
-                        print('❌ invalid Jupyter token')
+                        print('❌ failed to login via user input')
                 else:
                     print('❌ you might not be working on a web browser or enabled JavaScript')
             else:
                 print('❌ enable Jupyter using .enable_jupyter() before you login')
 
     def create_job(self, maintainer='community_contribution', hpc=None, hpcUsername=None, hpcPassword=None):
+        self.login()
         return Job(maintainer=maintainer, hpc=hpc, id=None, hpcUsername=hpcUsername, hpcPassword=hpcPassword, client=self.client, isJupyter=self.isJupyter, jupyterhubApiToken=self.jupyterhubApiToken)
 
     def get_job_by_id(self, id=None):
+        self.login()
         jobs = self.client.request('GET', '/user/job', { "jupyterhubApiToken": self.jupyterhubApiToken })
         token = None
         for job in jobs['job']:
@@ -80,8 +90,9 @@ class CyberGISCompute:
         return Job(secretToken=token, client=self.client, id=id, isJupyter=self.isJupyter, jupyterhubApiToken=self.jupyterhubApiToken)
 
     def list_job(self):
+        self.login()
         if self.jupyterhubApiToken == None:
-            print('❌ please login frist using .login()')
+            print('❌ please login')
 
         jobs = self.client.request('GET', '/user/job', { "jupyterhubApiToken": self.jupyterhubApiToken })
 
