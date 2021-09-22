@@ -1,6 +1,7 @@
 from .Client import *
 from .Job import *
 import base64
+import os
 from IPython.display import Javascript
 
 class CyberGISCompute:
@@ -13,9 +14,22 @@ class CyberGISCompute:
         self.isJupyter = isJupyter
         if isJupyter:
             self.enable_jupyter()
+            self.login()
 
-    def login(self):
-        # TODO: get env variables
+    def login(self, skipEnvLogin = False):
+        # login via env variable
+        envToken = os.getenv('JUPYTERHUB_API_TOKEN')
+        if envToken != None and not skipEnvLogin:
+            print('💻 found system token')
+            try:
+                res = self.client.request('GET', '/user', { "jupyterhubApiToken": envToken })
+                print('✅ successfully logged in as ' + res['username'])
+                self.jupyterhubApiToken = envToken
+                return
+            except:
+                print('❌ invalid Jupyter token')
+        
+        # login via file
         if path.exists('./cybergis_compute_user.json'):
             with open(os.path.abspath('cybergis_compute_user.json')) as f:
                 user = json.load(f)
