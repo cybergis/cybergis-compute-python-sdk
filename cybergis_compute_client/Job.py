@@ -18,6 +18,7 @@ class Job:
         self.isJupyter = isJupyter
         self.jupyterhubApiToken = jupyterhubApiToken
 
+        job = None
         if (secretToken == None):
             if maintainer == None:
                 raise Exception('maintainer cannot by NoneType')
@@ -234,6 +235,8 @@ class Job:
             _ = system('clear')
 
     def _print_job(self, job):
+        if job == None:
+            return
         headers = ['id', 'hpc', 'executableFolder', 'dataFolder', 'resultFolder', 'param', 'slurm', 'userId', 'maintainer', 'createdAt']
         data = [[
             job['id'],
