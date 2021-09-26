@@ -255,6 +255,8 @@ class CyberGISCompute:
 
         style = {'description_width': '120px'}
         # main dropdown
+        print(['git://' + i for i in self.list_git(raw=True)])
+        print([i for i in self.list_hpc(raw=True)])
         repo = widgets.Dropdown(options=['git://' + i for i in self.list_git(raw=True)], value='Addition',description='📦 Git Repository:', style=style)
         hpc = widgets.Dropdown(options=[i for i in self.list_hpc(raw=True)], value='Addition',description='🖥 HPC Endpoint:', style=style)
         display(repo, hpc)
