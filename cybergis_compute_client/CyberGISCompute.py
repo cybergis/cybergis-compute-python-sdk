@@ -430,7 +430,7 @@ class CyberGISCompute:
                     slurm_settings['mail_type'].append('BEGIN')
 
             if slurm_settings != {}:
-                job.set(slurm_settings, printJob=False)
+                job.set(slurm=slurm_settings, printJob=False)
 
             if d['globus']['download']['is_globus_download']:
                 job.set(resultFolder='globus://' + d['globus']['download']['globus_download_endpoint'] + d['globus']['download']['globus_download_path'], printJob=False)
