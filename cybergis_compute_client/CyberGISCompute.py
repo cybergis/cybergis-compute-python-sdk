@@ -88,12 +88,14 @@ class CyberGISCompute:
             print('❌ job with id ' + id + ' was not found')
         return Job(secretToken=token, client=self.client, id=id, isJupyter=self.isJupyter, jupyterhubApiToken=self.jupyterhubApiToken)
 
-    def list_job(self):
+    def list_job(self, raw=False):
         self.login()
         if self.jupyterhubApiToken == None:
             print('❌ please login')
 
         jobs = self.client.request('GET', '/user/job', { "jupyterhubApiToken": self.jupyterhubApiToken })
+        if raw:
+            return jobs
 
         headers = ['id', 'hpc', 'executableFolder', 'dataFolder', 'resultFolder', 'param', 'slurm', 'userId', 'maintainer', 'createdAt']
         data = []
@@ -119,8 +121,11 @@ class CyberGISCompute:
         else:
             print(tabulate(data, headers, tablefmt="presto"))
 
-    def list_hpc(self):
+    def list_hpc(self, raw=False):
         hpc = self.client.request('GET', '/hpc')['hpc']
+        if raw:
+            return hpc
+
         headers = ['hpc', 'ip', 'port', 'is_community_account']
         data = []
 
@@ -140,16 +145,19 @@ class CyberGISCompute:
         else:
             print(tabulate(data, headers, tablefmt="presto"))
 
-    def list_container(self):
-        hpc = self.client.request('GET', '/container')['container']
+    def list_container(self, raw=False):
+        container = self.client.request('GET', '/container')['container']
+        if raw:
+            return container
+
         headers = ['container name', 'dockerfile', 'dockerhub']
         data = []
 
-        for i in hpc:
+        for i in container:
             data.append([
                 i,
-                hpc[i]['dockerfile'],
-                hpc[i]['dockerhub']
+                container[i]['dockerfile'],
+                container[i]['dockerhub']
             ])
 
         if self.isJupyter:
@@ -160,8 +168,11 @@ class CyberGISCompute:
         else:
             print(tabulate(data, headers, tablefmt="presto"))
 
-    def list_git(self):
+    def list_git(self, raw=False):
         git = self.client.request('GET', '/git')['git']
+        if raw:
+            return git
+
         headers = ['link', 'name', 'container', 'repository', 'commit']
         data = []
 
@@ -182,8 +193,11 @@ class CyberGISCompute:
         else:
             print(tabulate(data, headers, tablefmt="presto"))
 
-    def list_maintainer(self):
+    def list_maintainer(self, raw=False):
         maintainers = self.client.request('GET', '/maintainer')['maintainer']
+        if raw:
+            return maintainers
+
         headers = ['maintainer', 'hpc', 'default_hpc', 'job_pool_capacity', 'executable_folder->from_user', 'executable_folder->must_have']
         data = []
 
@@ -241,8 +255,8 @@ class CyberGISCompute:
 
         style = {'description_width': '120px'}
         # main dropdown
-        repo = widgets.Dropdown(options=['Addition', 'Multiplication', 'Subtraction'], value='Addition',description='📦 Git Repository:', style=style)
-        hpc = widgets.Dropdown(options=['Addition', 'Multiplication', 'Subtraction'], value='Addition',description='🖥 HPC Endpoint:', style=style)
+        repo = widgets.Dropdown(options=['git://' + i for i in self.list_git(raw=True)], value='Addition',description='📦 Git Repository:', style=style)
+        hpc = widgets.Dropdown(options=[i for i in self.list_hpc(raw=True)], value='Addition',description='🖥 HPC Endpoint:', style=style)
         display(repo, hpc)
         # slurm
         display(Markdown('#### Slurm Options:'), Markdown('Click checkboxs to enable option and overwrite default config value. All configs are optional. Please refer to [Slurm official documentation](https://slurm.schedmd.com/sbatch.html)'))
@@ -389,7 +403,7 @@ class CyberGISCompute:
                 }
             }
 
-            job = self.create_job(self, d['hpc'], printJob=False)
+            job = self.create_job(hpc=d['hpc'], printJob=False)
 
             # slurm
             slurm_settings = {}
