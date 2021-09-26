@@ -194,9 +194,10 @@ class Job:
         if raw:
             return statistic
 
-        headers = ['Job Runtime in Hours']
+        headers = ['Job Runtime in Hours', '']
         data = [[
-            statistic['runtime_in_seconds'] / (60 * 60) if statistic['runtime_in_seconds'] != None else 'job not finished'
+            statistic['runtime_in_seconds'] / (60 * 60) if statistic['runtime_in_seconds'] != None else 'job not finished',
+            ''
         ]]
 
         if self.isJupyter:

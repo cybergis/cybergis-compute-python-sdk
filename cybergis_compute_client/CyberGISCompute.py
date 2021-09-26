@@ -95,9 +95,10 @@ class CyberGISCompute:
         if raw:
             return statistic
 
-        headers = ['Total Runtime in Hours']
+        headers = ['Total Runtime in Hours', '']
         data = [[
-            statistic['runtime_in_seconds'] / (60 * 60)
+            statistic['runtime_in_seconds'] / (60 * 60),
+            ''
         ]]
 
         if self.isJupyter:
