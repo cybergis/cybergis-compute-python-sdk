@@ -90,6 +90,16 @@ class CyberGISCompute:
             print('❌ job with id ' + id + ' was not found')
         return Job(secretToken=token, client=self.client, id=id, isJupyter=self.isJupyter, jupyterhubApiToken=self.jupyterhubApiToken)
 
+    def get_statistic(self, raw=False):
+        statistic = self.client.request('GET', '/statistic', { "jupyterhubApiToken": self.jupyterhubApiToken })
+        if raw:
+            return statistic
+
+        headers = ['Total Runtime in Hours']
+        data = [[
+            statistic['runtime_in_seconds'] / (60 * 60)
+        ]]
+
     def list_job(self, raw=False):
         self.login()
         if self.jupyterhubApiToken == None:

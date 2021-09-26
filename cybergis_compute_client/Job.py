@@ -186,6 +186,19 @@ class Job:
             'accessToken': self.JAT.getAccessToken()
         })
 
+    def get_statistic(self, raw=False):
+        statistic = self.client.request('GET', '/statistic/job/' + self.id, { 
+            'jupyterhubApiToken': self.jupyterhubApiToken,
+            'accessToken': self.JAT.getAccessToken()
+        })
+        if raw:
+            return statistic
+
+        headers = ['Job Runtime in Hours']
+        data = [[
+            statistic['runtime_in_seconds'] / (60 * 60) if statistic['runtime_in_seconds'] != None else 'job not finished'
+        ]]
+
     def download_result_folder(self, dir=None):
         if self.id is None:
             raise Exception('missing job ID, submit/register job first')
