@@ -199,6 +199,14 @@ class Job:
             statistic['runtime_in_seconds'] / (60 * 60) if statistic['runtime_in_seconds'] != None else 'job not finished'
         ]]
 
+        if self.isJupyter:
+            if len(data) == 0:
+                print('empty')
+                return
+            display(HTML(tabulate(data, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', '<td style="text-align:left">').replace('<th>', '<th style="text-align:left">')))
+        else:
+            print(tabulate(data, headers, tablefmt="presto"))
+
     def download_result_folder(self, dir=None):
         if self.id is None:
             raise Exception('missing job ID, submit/register job first')
