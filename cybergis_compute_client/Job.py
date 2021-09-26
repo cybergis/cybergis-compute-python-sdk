@@ -11,7 +11,7 @@ from IPython.display import HTML, display, clear_output
 
 
 class Job:
-    def __init__(self, maintainer=None, hpc=None, id=None, secretToken=None, hpcUsername=None, hpcPassword=None, client=None, isJupyter=None, jupyterhubApiToken=None):
+    def __init__(self, maintainer=None, hpc=None, id=None, secretToken=None, hpcUsername=None, hpcPassword=None, client=None, isJupyter=None, jupyterhubApiToken=None, printJob=True):
         self.JAT = JAT()
         self.client = client
         self.maintainer = maintainer
@@ -51,7 +51,8 @@ class Job:
 
         self.id = id
         self.hpc = hpc
-        self._print_job(job)
+        if printJob:
+            self._print_job(job)
 
     def submit(self):
         try:
@@ -67,7 +68,7 @@ class Job:
         self._print_job(job)
         return self
 
-    def uploadExecutableFolder(self, folder_path):
+    def upload_executable_folder(self, folder_path):
         folder_path = os.path.abspath(folder_path)
 
         zip = Zip()
@@ -129,7 +130,7 @@ class Job:
                 events.append(i)
                 isEnd =  isEnd or o['type'] == 'JOB_ENDED' or o['type'] == 'JOB_FAILED'
                 print('📮 Job ID: ' + self.id)
-                print('💻 HPC: ' + self.hpc)
+                print('🖥 HPC: ' + self.hpc)
                 if self.isJupyter:
                     display(HTML(tabulate(events, headers, tablefmt='html')))
                 else:
@@ -159,7 +160,7 @@ class Job:
                 ]
                 logs.append(i)
                 print('📮 Job ID: ' + self.id)
-                print('💻 HPC: ' + self.hpc)
+                print('🖥 HPC: ' + self.hpc)
                 if self.isJupyter:
                     display(HTML(tabulate(logs, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', "<td style='text-align:left'>")))
                 else:
@@ -185,7 +186,7 @@ class Job:
             'accessToken': self.JAT.getAccessToken()
         })
 
-    def downloadResultFolder(self, dir=None):
+    def download_result_folder(self, dir=None):
         if self.id is None:
             raise Exception('missing job ID, submit/register job first')
 
@@ -216,7 +217,7 @@ class Job:
             print('file successfully downloaded under: ' + dir)
             return dir
 
-    def queryGlobusTaskStatus(self):
+    def query_globus_task_status(self):
         if self.id is None:
             raise Exception('missing job ID, submit/register job first')
 
@@ -224,6 +225,13 @@ class Job:
             'accessToken': self.JAT.getAccessToken()
         })
 
+    # Integrated functions
+
+    # HACK: back compatability
+    def downloadResultFolder(self, dir=None):
+        return self.download_result_folder(dir)
+
+    # Helpers
     def _clear(self):
         if self.isJupyter:
             clear_output(wait=True)

@@ -3,6 +3,8 @@ from .Job import *
 import base64
 import os
 from IPython.display import Javascript
+from IPython.display import display, Markdown, clear_output
+import ipywidgets as widgets
 
 class CyberGISCompute:
     # static variable
@@ -71,9 +73,9 @@ class CyberGISCompute:
         else:
             print('❌ Not logged in. To enable more features, use .login()')
 
-    def create_job(self, maintainer='community_contribution', hpc=None, hpcUsername=None, hpcPassword=None):
+    def create_job(self, maintainer='community_contribution', hpc=None, hpcUsername=None, hpcPassword=None, printJob=True):
         self.login()
-        return Job(maintainer=maintainer, hpc=hpc, id=None, hpcUsername=hpcUsername, hpcPassword=hpcPassword, client=self.client, isJupyter=self.isJupyter, jupyterhubApiToken=self.jupyterhubApiToken)
+        return Job(maintainer=maintainer, hpc=hpc, id=None, hpcUsername=hpcUsername, hpcPassword=hpcPassword, client=self.client, isJupyter=self.isJupyter, jupyterhubApiToken=self.jupyterhubApiToken, printJob=printJob)
 
     def get_job_by_id(self, id=None):
         self.login()
@@ -215,8 +217,222 @@ class CyberGISCompute:
         else:
             print(tabulate(data, headers, tablefmt="presto"))
 
+    # Integrated functions
+    def list_info(self, list_maintainer = False, list_container = False):
+        print('📦 Git repositories:')
+        self.list_git()
+        print('🖥 HPC endpoints:')
+        self.list_hpc()
+        if self.is_login():
+            print('📮 Submitted jobs:')
+            self.list_job()
 
+        if list_container:
+            print('🗳 Containers:')
+            self.list_container()
+
+        if list_maintainer:
+            print('🤖 Maintainers:')
+            self.list_maintainer()
+
+    def create_job_by_UI(self):
+        if not self.isJupyter:
+            print('❌ Enable Jupyter using .enable_jupyter() before you use the UI option')
+
+        style = {'description_width': '120px'}
+        # main dropdown
+        repo = widgets.Dropdown(options=['Addition', 'Multiplication', 'Subtraction'], value='Addition',description='📦 Git Repository:', style=style)
+        hpc = widgets.Dropdown(options=['Addition', 'Multiplication', 'Subtraction'], value='Addition',description='🖥 HPC Endpoint:', style=style)
+        display(repo, hpc)
+        # slurm
+        display(Markdown('#### Slurm Options:'), Markdown('Click checkboxs to enable option and overwrite default config value. All configs are optional. Please refer to [Slurm official documentation](https://slurm.schedmd.com/sbatch.html)'))
+        # general opts
+        display(Markdown('**General Slurm Options:**'))
+        # partition
+        partition_cbox = widgets.Checkbox(description='Partition*: ', value=False)
+        partition = widgets.Text(value='')
+        partition_hbox = widgets.HBox([partition_cbox, partition])
+        display(partition_hbox)
+        # total gpu
+        total_gpu_cbox = widgets.Checkbox(description='Total GPU per job: ', value=False)
+        total_gpu = widgets.IntSlider(
+            value=1,
+            min=1,
+            max=20,
+            step=1,
+            disabled=False,
+            continuous_update=False,
+            orientation='horizontal',
+            readout=True,
+            readout_format='d'
+        )
+        total_gpu_hbox = widgets.HBox([total_gpu_cbox, total_gpu])
+        display(total_gpu_hbox)
+        # task opts
+        display(Markdown('**Task Options:**'))
+        # num_of_task
+        num_of_task_cbox = widgets.Checkbox(description='Number of tasks: ', value=False)
+        num_of_task = widgets.IntSlider(
+            value=1,
+            min=1,
+            max=20,
+            step=1,
+            disabled=False,
+            continuous_update=False,
+            orientation='horizontal',
+            readout=True,
+            readout_format='d'
+        )
+        num_of_task_hbox = widgets.HBox([num_of_task_cbox, num_of_task])
+        display(num_of_task_hbox)
+        # cpu_per_task
+        cpu_per_task_cbox = widgets.Checkbox(description='Number of CPU per task: ', value=False)
+        cpu_per_task = widgets.IntSlider(
+            value=1,
+            min=1,
+            max=20,
+            step=1,
+            disabled=False,
+            continuous_update=False,
+            orientation='horizontal',
+            readout=True,
+            readout_format='d'
+        )
+        cpu_per_task_hbox = widgets.HBox([cpu_per_task_cbox, cpu_per_task])
+        display(cpu_per_task_hbox)
+        # gpu_per_task
+        gpus_per_task_cbox = widgets.Checkbox(description='Number of GPU per task: ', value=False)
+        gpus_per_task = widgets.IntSlider(
+            value=1,
+            min=1,
+            max=20,
+            step=1,
+            disabled=False,
+            continuous_update=False,
+            orientation='horizontal',
+            readout=True,
+            readout_format='d'
+        )
+        gpus_per_task_hbox = widgets.HBox([gpus_per_task_cbox, gpus_per_task])
+        display(gpus_per_task_hbox)
+        # email to
+        display(Markdown('**Email Options:**'))
+        email_to = widgets.Text(value='example@illinois.edu', style=style)
+        # email to opts
+        email_to_fail = widgets.Checkbox(description='FAIL', value=False)
+        email_to_end = widgets.Checkbox(description='END', value=False)
+        email_to_begin = widgets.Checkbox(description='BEGIN', value=False)
+        email_to_opt_hbox = widgets.HBox([widgets.Label('Email to '), email_to, widgets.Label('When job: ', style={'width': '100px'}), email_to_fail, email_to_end, email_to_begin], width="300px")
+        display(email_to_opt_hbox)
+        # globus
+        display(Markdown('#### Globus File Upload/Download:'), Markdown('[Share your Globus folder](https://docs.globus.org/how-to/share-files/) with apadmana@illinois.edu before job submission'))
+        # upload
+        globus_upload_cbox = widgets.Checkbox(description='Upload data from: ', value=False)
+        globus_upload_endpoint = widgets.Text(value='', description='endpoint')
+        globus_upload_path = widgets.Text(value='', description='file path')
+        globus_upload_hbox = widgets.HBox([globus_upload_cbox, globus_upload_endpoint, globus_upload_path])
+        display(globus_upload_hbox)
+        # download
+        globus_download_cbox = widgets.Checkbox(description='Download result to: ', value=False)
+        globus_download_endpoint = widgets.Text(value='', description='endpoint')
+        globus_download_path = widgets.Text(value='', description='file path')
+        globus_downloadd_hbox = widgets.HBox([globus_download_cbox, globus_download_endpoint, globus_download_path])
+        display(globus_downloadd_hbox)
+        # submit btn
+        submit_button = widgets.Button(description="Submit Job")
+        display(submit_button)
+
+        job = None
+
+        def on_click(change):
+            clear_output(wait=True)
+            d = {
+                'repo': repo.value,
+                'hpc': hpc.value,
+                'partition': {
+                    'partition': partition.value,
+                    'is_partition': partition_cbox.value
+                },
+                'total_gpu': {
+                    'total_gpu': total_gpu.value,
+                    'is_total_gpu': total_gpu_cbox.value
+                },
+                'num_of_task': {
+                    'num_of_task': num_of_task.value,
+                    'is_num_of_task': num_of_task_cbox.value
+                },
+                'cpu_per_task': {
+                    'cpu_per_task': cpu_per_task.value,
+                    'is_cpu_per_task': cpu_per_task_cbox.value
+                },
+                'gpus_per_task': {
+                    'gpus_per_task': gpus_per_task.value,
+                    'is_gpus_per_task': gpus_per_task_cbox.value
+                },
+                'email_to': {
+                    'email_to': email_to.value,
+                    'fail': email_to_fail.value,
+                    'end': email_to_end.value,
+                    'begin': email_to_begin.value
+                },
+                'globus': {
+                    'download': {
+                        'globus_download_endpoint': globus_download_endpoint.value,
+                        'globus_download_path': globus_download_path.value,
+                        'is_globus_download': globus_download_cbox.value
+                    },
+                    'upload': {
+                        'globus_upload_endpoint': globus_upload_endpoint.value,
+                        'globus_upload_path': globus_upload_path.value,
+                        'is_globus_upload': globus_upload_cbox.value
+                    }
+                }
+            }
+
+            job = self.create_job(self, d['hpc'], printJob=False)
+
+            # slurm
+            slurm_settings = {}
+            if d['partition']['is_partition']:
+                slurm_settings['partition'] = d['partition']['partition']
+            if d['total_gpu']['is_total_gpu']:
+                slurm_settings['gpus'] = d['total_gpu']['total_gpu']
+            if d['num_of_task']['is_num_of_task']:
+                slurm_settings['num_of_task'] = d['num_of_task']['num_of_task']
+            if d['cpu_per_task']['is_cpu_per_task']:
+                slurm_settings['cpu_per_task'] = d['cpu_per_task']['cpu_per_task']
+            if d['gpus_per_task']['is_gpus_per_task']:
+                slurm_settings['gpus_per_task'] = d['gpus_per_task']['gpus_per_task']
+            if d['email_to']['fail'] or d['email_to']['end'] or d['email_to']['begin']:
+                slurm_settings['mail_user'] = [d['email_to']['email_to']]
+                slurm_settings['mail_type'] = []
+                if d['email_to']['fail']:
+                    slurm_settings['mail_type'].append('FAIL')
+                if d['email_to']['end']:
+                    slurm_settings['mail_type'].append('END')
+                if d['email_to']['begin']:
+                    slurm_settings['mail_type'].append('BEGIN')
+
+            if slurm_settings != {}:
+                job.set(slurm_settings, printJob=False)
+
+            if d['globus']['download']['is_globus_download']:
+                job.set(resultFolder='globus://' + d['globus']['download']['globus_download_endpoint'] + d['globus']['download']['globus_download_path'], printJob=False)
+
+            if d['globus']['upload']['is_globus_upload']:
+                job.set(dataFolder='globus://' + d['globus']['upload']['globus_upload_endpoint'] + d['globus']['upload']['globus_upload_path'], printJob=False)
+
+            job.submit()
+
+        # submit event
+        submit_button.on_click(on_click)
+        return job
+
+    # helper functions
     def enable_jupyter(self):
         self.isJupyter = True
         # get jupyter variable
         display(Javascript('IPython.notebook.kernel.execute(`CyberGISCompute.jupyterhubHost = "${window.location.host}"`);'))
+
+    def is_login(self):
+        return self.jupyterhubApiToken != None
