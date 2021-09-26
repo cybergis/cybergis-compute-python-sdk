@@ -96,10 +96,9 @@ class CyberGISCompute:
             return statistic
 
         headers = ['Total Runtime in Hours', '']
-        data = [[
-            statistic['runtime_in_seconds'] / (60 * 60),
-            ''
-        ]]
+        data = []
+        for key in statistic['runtime_in_seconds']:
+            data[key] = statistic['runtime_in_seconds'][key]
 
         if self.isJupyter:
             display(HTML(tabulate(data, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', '<td style="text-align:left">').replace('<th>', '<th style="text-align:left">')))
