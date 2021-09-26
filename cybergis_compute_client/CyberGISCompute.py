@@ -255,10 +255,10 @@ class CyberGISCompute:
 
         style = {'description_width': '120px'}
         # main dropdown
-        print(['git://' + i for i in self.list_git(raw=True)])
-        print([i for i in self.list_hpc(raw=True)])
-        repo = widgets.Dropdown(options=['git://' + i for i in self.list_git(raw=True)], value='Addition',description='📦 Git Repository:', style=style)
-        hpc = widgets.Dropdown(options=[i for i in self.list_hpc(raw=True)], value='Addition',description='🖥 HPC Endpoint:', style=style)
+        repo_opts = ['git://' + i for i in self.list_git(raw=True)]
+        hpc_opts = [i for i in self.list_hpc(raw=True)]
+        repo = widgets.Dropdown(options=repo_opts, value=repo_opts[0],description='📦 Git Repository:', style=style)
+        hpc = widgets.Dropdown(options=hpc_opts, value=hpc_opts[0],description='🖥 HPC Endpoint:', style=style)
         display(repo, hpc)
         # slurm
         display(Markdown('#### Slurm Options:'), Markdown('Click checkboxs to enable option and overwrite default config value. All configs are optional. Please refer to [Slurm official documentation](https://slurm.schedmd.com/sbatch.html)'))
