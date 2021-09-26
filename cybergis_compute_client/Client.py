@@ -16,8 +16,9 @@ class Client:
         headers = {'Content-type': 'application/json'}
         connection.request(method, uri, json.dumps(body), headers)
         response = connection.getresponse()
-        print(response.read().decode())
-        data = json.loads(response.read().decode())
+        out = response.read().decode()
+        print(out)
+        data = json.loads(out)
 
         if 'error' in data:
             msg = ''
