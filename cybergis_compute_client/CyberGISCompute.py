@@ -10,6 +10,8 @@ class CyberGISCompute:
     # static variable
     jupyterhubHost = None
 
+    job = None
+
     def __init__(self, url="cgjobsup.cigi.illinois.edu", port=443, isJupyter=True, protocol='HTTPS'):
         self.client = Client(url, port, protocol)
         self.jupyterhubApiToken = None
@@ -358,8 +360,6 @@ class CyberGISCompute:
         submit_button = widgets.Button(description="Submit Job")
         display(submit_button)
 
-        job = None
-
         def on_click(change):
             clear_output(wait=True)
             d = {
@@ -405,8 +405,8 @@ class CyberGISCompute:
                 }
             }
 
-            job = self.create_job(hpc=d['hpc'], printJob=False)
-            job.set(executableFolder=d['repo'], printJob=False)
+            self.job = self.create_job(hpc=d['hpc'], printJob=False)
+            self.job.set(executableFolder=d['repo'], printJob=False)
 
             # slurm
             slurm_settings = {}
@@ -431,19 +431,19 @@ class CyberGISCompute:
                     slurm_settings['mail_type'].append('BEGIN')
 
             if slurm_settings != {}:
-                job.set(slurm=slurm_settings, printJob=False)
+                self.job.set(slurm=slurm_settings, printJob=False)
 
             if d['globus']['download']['is_globus_download']:
-                job.set(resultFolder='globus://' + d['globus']['download']['globus_download_endpoint'] + ':' + d['globus']['download']['globus_download_path'], printJob=False)
+                self.job.set(resultFolder='globus://' + d['globus']['download']['globus_download_endpoint'] + ':' + d['globus']['download']['globus_download_path'], printJob=False)
 
             if d['globus']['upload']['is_globus_upload']:
-                job.set(dataFolder='globus://' + d['globus']['upload']['globus_upload_endpoint'] + ':' + d['globus']['upload']['globus_upload_path'], printJob=False)
+                self.job.set(dataFolder='globus://' + d['globus']['upload']['globus_upload_endpoint'] + ':' + d['globus']['upload']['globus_upload_path'], printJob=False)
 
-            job.submit()
+            self.job.submit()
 
         # submit event
         submit_button.on_click(on_click)
-        return job
+        return self.job
 
     # helper functions
     def enable_jupyter(self):
