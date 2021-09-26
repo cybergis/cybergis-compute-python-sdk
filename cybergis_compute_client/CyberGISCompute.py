@@ -440,9 +440,13 @@ class CyberGISCompute:
                 self.job.set(dataFolder='globus://' + d['globus']['upload']['globus_upload_endpoint'] + ':' + d['globus']['upload']['globus_upload_path'], printJob=False)
 
             self.job.submit()
+            print('⚠️ use .get_latest_created_job() to retrive job object')
 
         # submit event
         submit_button.on_click(on_click)
+        return
+
+    def get_latest_created_job(self):
         return self.job
 
     # helper functions
