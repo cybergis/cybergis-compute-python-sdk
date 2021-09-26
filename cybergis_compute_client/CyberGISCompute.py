@@ -434,10 +434,10 @@ class CyberGISCompute:
                 job.set(slurm=slurm_settings, printJob=False)
 
             if d['globus']['download']['is_globus_download']:
-                job.set(resultFolder='globus://' + d['globus']['download']['globus_download_endpoint'] + d['globus']['download']['globus_download_path'], printJob=False)
+                job.set(resultFolder='globus://' + d['globus']['download']['globus_download_endpoint'] + ':' + d['globus']['download']['globus_download_path'], printJob=False)
 
             if d['globus']['upload']['is_globus_upload']:
-                job.set(dataFolder='globus://' + d['globus']['upload']['globus_upload_endpoint'] + d['globus']['upload']['globus_upload_path'], printJob=False)
+                job.set(dataFolder='globus://' + d['globus']['upload']['globus_upload_endpoint'] + ':' + d['globus']['upload']['globus_upload_path'], printJob=False)
 
             job.submit()
 

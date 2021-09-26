@@ -17,7 +17,6 @@ class Client:
         connection.request(method, uri, json.dumps(body), headers)
         response = connection.getresponse()
         out = response.read().decode()
-        print(out)
         data = json.loads(out)
 
         if 'error' in data:
