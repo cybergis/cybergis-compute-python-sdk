@@ -126,7 +126,7 @@ class Job:
                 self._clear()
                 o = out[startPos]
 
-                if o['type'] not in basicEventTypes and basic:
+                if o['type'] not in self.basicEventTypes and basic:
                     continue
 
                 i = [
