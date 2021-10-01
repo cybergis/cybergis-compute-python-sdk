@@ -375,7 +375,7 @@ class CyberGISCompute:
         submit_button = widgets.Button(description="Submit Job")
         display(submit_button)
 
-        def on_click(change):
+        def submit_on_click(change):
             clear_output(wait=True)
             d = {
                 'repo': repo.value,
@@ -456,10 +456,16 @@ class CyberGISCompute:
 
             self.job.submit()
             self.job.events()
+            download_dir = widgets.Text(value='./', description='Download to (tot applicable to Globus download):')
+            download_button = widgets.Button(description="Download")
+            def download_on_click(change):
+                self.job.downloadResultFolder(download_dir)
+            submit_button.on_click(submit_on_click)
+            self.job.download_result_folder()
             print('⚠️ use .get_latest_created_job() to retrive job object')
 
         # submit event
-        submit_button.on_click(on_click)
+        submit_button.on_click(submit_on_click)
         return
 
     def get_latest_created_job(self):

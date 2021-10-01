@@ -11,6 +11,9 @@ from IPython.display import HTML, display, clear_output
 
 
 class Job:
+    # static variables
+    basicEventTypes = ['JOB_QUEUED', 'JOB_REGISTERED', 'JOB_INIT', 'JOB_ENDED']
+
     def __init__(self, maintainer=None, hpc=None, id=None, secretToken=None, hpcUsername=None, hpcPassword=None, client=None, isJupyter=None, jupyterhubApiToken=None, printJob=True):
         self.JAT = JAT()
         self.client = client
@@ -108,7 +111,7 @@ class Job:
         if printJob:
             self._print_job(job)
 
-    def events(self, liveOutput=True, refreshRateInSeconds = 10):
+    def events(self, liveOutput=True, basic=True, refreshRateInSeconds = 10):
         if not liveOutput:
             return self.status()['events']
 
@@ -122,6 +125,10 @@ class Job:
             while (startPos < len(out)):
                 self._clear()
                 o = out[startPos]
+
+                if o['type'] not in basicEventTypes and basic:
+                    continue
+
                 i = [
                     o['type'],
                     o['message'],
