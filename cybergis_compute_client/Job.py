@@ -138,10 +138,10 @@ class Job:
                 isEnd =  isEnd or o['type'] == 'JOB_ENDED' or o['type'] == 'JOB_FAILED'
                 print('📮 Job ID: ' + self.id)
                 print('🖥 HPC: ' + self.hpc)
-                if self.isJupyter:
-                    display(HTML(tabulate(events, headers, tablefmt='html')))
-                else:
-                    print(tabulate(events, headers, tablefmt='presto'))
+                # if self.isJupyter:
+                #     display(HTML(tabulate(events, headers, tablefmt='html')))
+                # else:
+                #     print(tabulate(events, headers, tablefmt='presto'))
                 startPos += 1
 
             if not isEnd:
@@ -260,7 +260,7 @@ class Job:
     # Helpers
     def _clear(self):
         if self.isJupyter:
-            clear_output()
+            clear_output(wait=True)
         # for windows
         if name == 'nt':
             _ = system('cls')

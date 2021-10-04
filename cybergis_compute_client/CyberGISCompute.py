@@ -426,7 +426,8 @@ class CyberGISCompute:
                 }
             }
 
-            self.job = self.create_job(hpc=d['hpc'], printJob=False)
+            with job_output:
+                self.job = self.create_job(hpc=d['hpc'], printJob=False)
             self.job.set(executableFolder=d['repo'], printJob=False)
 
             # slurm
