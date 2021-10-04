@@ -111,7 +111,7 @@ class Job:
         if printJob:
             self._print_job(job)
 
-    def events(self, liveOutput=True, basic=True, refreshRateInSeconds = 10, outputContext = None):
+    def events(self, liveOutput=True, basic=True, refreshRateInSeconds = 10):
         if not liveOutput:
             return self.status()['events']
 
@@ -123,7 +123,7 @@ class Job:
             headers = ['types', 'message', 'time']
 
             while (startPos < len(out)):
-                outputContext.clear_output(wait=True) if outputContext != None else self._clear()
+                self._clear()
                 o = out[startPos]
 
                 if o['type'] not in self.basicEventTypes and basic:
@@ -138,15 +138,10 @@ class Job:
                 isEnd =  isEnd or o['type'] == 'JOB_ENDED' or o['type'] == 'JOB_FAILED'
                 print('📮 Job ID: ' + self.id)
                 print('🖥 HPC: ' + self.hpc)
-
-                if outputContext != None:
-                    outputContext.append_display_data(1234567)
-
-
-                # if self.isJupyter:
-                #     display(HTML(tabulate(events, headers, tablefmt='html')))
-                # else:
-                #     print(tabulate(events, headers, tablefmt='presto'))
+                if self.isJupyter:
+                    display(HTML(tabulate(events, headers, tablefmt='html')))
+                else:
+                    print(tabulate(events, headers, tablefmt='presto'))
                 startPos += 1
 
             if not isEnd:
