@@ -380,10 +380,6 @@ class CyberGISCompute:
         event_output = widgets.Output()
 
         def submit_on_click(change):
-            if self.job != None:
-                print('❌ job already submitted')
-                return
-
             d = {
                 'repo': repo.value,
                 'hpc': hpc.value,
