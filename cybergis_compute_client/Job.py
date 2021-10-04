@@ -123,12 +123,11 @@ class Job:
             headers = ['types', 'message', 'time']
 
             while (startPos < len(out)):
+                o = out[startPos]
                 if o['type'] not in self.basicEventTypes and basic:
                     continue
 
                 self._clear()
-                o = out[startPos]
-
                 i = [
                     o['type'],
                     o['message'],
