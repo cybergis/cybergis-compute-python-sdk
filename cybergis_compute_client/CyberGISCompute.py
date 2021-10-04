@@ -388,6 +388,9 @@ class CyberGISCompute:
             display(submit_button)
 
         def submit_on_click(change):
+            if self.job != None:
+                return
+
             submit_output.clear_output(wait=True)
 
             d = {
@@ -470,11 +473,9 @@ class CyberGISCompute:
 
             with job_output:
                 self.job.submit()
-                print('📋 job events:')
             with event_output:
                 self.job.events()
             with log_output:
-                print('🔖 job logs:')
                 self.job.logs()
             with download_output:
                 download_dir = widgets.Text(value='./', description='Download to (tot applicable to Globus download):')

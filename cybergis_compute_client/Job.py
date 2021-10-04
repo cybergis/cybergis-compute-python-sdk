@@ -134,6 +134,7 @@ class Job:
                 events.append(i)
                 isEnd =  isEnd or o['type'] == 'JOB_ENDED' or o['type'] == 'JOB_FAILED'
 
+            print('📋 Job events:')
             print('📮 Job ID: ' + self.id)
             print('🖥 HPC: ' + self.hpc)
             if self.isJupyter:
@@ -166,6 +167,7 @@ class Job:
                 ]
                 logs.append(i)
 
+            print('📋 Job logs:')
             print('📮 Job ID: ' + self.id)
             print('🖥 HPC: ' + self.hpc)
             if self.isJupyter:
