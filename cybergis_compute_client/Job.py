@@ -260,7 +260,7 @@ class Job:
     # Helpers
     def _clear(self):
         if self.isJupyter:
-            clear_output(wait=True)
+            clear_output()
         # for windows
         if name == 'nt':
             _ = system('cls')
