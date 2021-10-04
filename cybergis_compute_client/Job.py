@@ -111,7 +111,7 @@ class Job:
         if printJob:
             self._print_job(job)
 
-    def events(self, liveOutput=True, basic=True, refreshRateInSeconds = 10):
+    def events(self, liveOutput=True, basic=True, refreshRateInSeconds = 10, outputContext = None):
         if not liveOutput:
             return self.status()['events']
 
@@ -123,7 +123,7 @@ class Job:
             headers = ['types', 'message', 'time']
 
             while (startPos < len(out)):
-                self._clear()
+                outputContext.clear_output(wait=True) if outputContext != None else self._clear()
                 o = out[startPos]
 
                 if o['type'] not in self.basicEventTypes and basic:
