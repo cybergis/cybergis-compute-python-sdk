@@ -373,17 +373,23 @@ class CyberGISCompute:
         globus_download_path = widgets.Text(value='', description='file path')
         globus_downloadd_hbox = widgets.HBox([globus_download_cbox, globus_download_endpoint, globus_download_path])
         display(globus_downloadd_hbox)
-        # submit btn
-        submit_button = widgets.Button(description="Submit Job")
-        display(submit_button)
         # outputs
+        submit_output = widgets.Output()
         init_output = widgets.Output()
         job_output = widgets.Output()
         event_output = widgets.Output()
-        display(job_output, event_output)
+        log_output = widgets.Output()
+        download_output = widgets.Output()
+        display(submit_output, init_output, job_output, event_output, log_output, download_output)
+
+        # submit btn
+        with submit_output:
+            submit_button = widgets.Button(description="Submit Job")
+            display(submit_button)
 
         def submit_on_click(change):
-    
+            submit_output.clear_output(wait=True)
+
             d = {
                 'repo': repo.value,
                 'hpc': hpc.value,
@@ -465,13 +471,18 @@ class CyberGISCompute:
             with job_output:
                 self.job.submit()
             with event_output:
+                print('📋 job events:')
                 self.job.events()
-            # download_dir = widgets.Text(value='./', description='Download to (tot applicable to Globus download):')
-            # download_button = widgets.Button(description="Download")
-            # def download_on_click(change):
-            #     self.job.downloadResultFolder(download_dir)
-            # display(download_dir, download_button)
-            # download_button.on_click(download_on_click)
+            with log_output:
+                print('🔖 job logs:')
+                self.job.logs()
+            with download_output:
+                download_dir = widgets.Text(value='./', description='Download to (tot applicable to Globus download):')
+                download_button = widgets.Button(description="Download")
+                def download_on_click(change):
+                    self.job.downloadResultFolder(download_dir)
+                display(download_dir, download_button)
+                download_button.on_click(download_on_click)
             print('⚠️ use .get_latest_created_job() to retrive job object')
 
         submit_button.on_click(submit_on_click)

@@ -151,35 +151,29 @@ class Job:
         logs = []
         isEnd = False
         while (not isEnd):
+            self.clear()
             status = self.status()
-            startPos = len(logs)
             headers = ['message', 'time']
+            logs = []
 
-            while (startPos < len(status['logs'])):
-                self._clear()
-                o = status['logs'][startPos]
+            for o in status['events']:
+                isEnd =  isEnd or o['type'] == 'JOB_ENDED' or o['type'] == 'JOB_FAILED'
+
+            for o in status['logs']:
                 i = [
                     o['message'],
                     o['createdAt']
                 ]
                 logs.append(i)
-                print('📮 Job ID: ' + self.id)
-                print('🖥 HPC: ' + self.hpc)
-                if self.isJupyter:
-                    display(HTML(tabulate(logs, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', "<td style='text-align:left'>")))
-                else:
-                    print(tabulate(logs, headers, tablefmt='presto'))
-                startPos += 1
 
-            i = 0
-            while (i < len(status['events'])):
-                eventType = status['events'][i]['type']
-                isEnd = eventType == 'JOB_ENDED' or eventType == 'JOB_FAILED'
-                if isEnd:
-                    break
-                i += 1
+            print('📮 Job ID: ' + self.id)
+            print('🖥 HPC: ' + self.hpc)
+            if self.isJupyter:
+                display(HTML(tabulate(logs, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', "<td style='text-align:left'>")))
+            else:
+                print(tabulate(logs, headers, tablefmt='presto'))
 
-            if isEnd:
+            if not isEnd:
                 time.sleep(refreshRateInSeconds)
 
     def status(self):
