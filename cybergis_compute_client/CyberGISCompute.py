@@ -270,6 +270,8 @@ class CyberGISCompute:
         if not self.isJupyter:
             print('❌ Enable Jupyter using .enable_jupyter() before you use the UI option')
 
+        self.job = None
+
         style = {'description_width': '120px'}
         # main dropdown
         repo_opts = ['git://' + i for i in self.list_git(raw=True)]
@@ -376,9 +378,12 @@ class CyberGISCompute:
         display(submit_button)
         # outputs
         event_output = widgets.Output()
-        display(event_output)
 
         def submit_on_click(change):
+            if self.job != None:
+                print('❌ job already submitted')
+                return
+
             d = {
                 'repo': repo.value,
                 'hpc': hpc.value,
@@ -458,6 +463,7 @@ class CyberGISCompute:
 
             self.job.submit()
             with event_output:
+                display(event_output)
                 self.job.events()
             # download_dir = widgets.Text(value='./', description='Download to (tot applicable to Globus download):')
             # download_button = widgets.Button(description="Download")
@@ -467,8 +473,6 @@ class CyberGISCompute:
             # download_button.on_click(download_on_click)
             print('⚠️ use .get_latest_created_job() to retrive job object')
 
-        # submit event
-        submit_button.on_click(submit_on_click)
         return
 
     def get_latest_created_job(self):
