@@ -138,6 +138,11 @@ class Job:
                 isEnd =  isEnd or o['type'] == 'JOB_ENDED' or o['type'] == 'JOB_FAILED'
                 print('📮 Job ID: ' + self.id)
                 print('🖥 HPC: ' + self.hpc)
+
+                if outputContext != None:
+                    outputContext.append_display_data(1234567)
+
+
                 # if self.isJupyter:
                 #     display(HTML(tabulate(events, headers, tablefmt='html')))
                 # else:
