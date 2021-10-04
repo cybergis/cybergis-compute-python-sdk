@@ -380,6 +380,7 @@ class CyberGISCompute:
         event_output = widgets.Output()
 
         def submit_on_click(change):
+    
             d = {
                 'repo': repo.value,
                 'hpc': hpc.value,
@@ -469,6 +470,7 @@ class CyberGISCompute:
             # download_button.on_click(download_on_click)
             print('⚠️ use .get_latest_created_job() to retrive job object')
 
+        submit_button.on_click(submit_on_click)
         return
 
     def get_latest_created_job(self):
