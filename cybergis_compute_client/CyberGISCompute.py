@@ -376,6 +376,7 @@ class CyberGISCompute:
         display(submit_button)
         # outputs
         event_output = widgets.Output()
+        display(event_output)
 
         def submit_on_click(change):
             d = {
