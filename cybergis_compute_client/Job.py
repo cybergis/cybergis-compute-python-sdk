@@ -115,24 +115,22 @@ class Job:
         if not liveOutput:
             return self.status()['events']
 
-        events = []
         isEnd = False
         while (not isEnd):
+            self._clear()
             out = self.status()['events']
-            startPos = len(events)
             headers = ['types', 'message', 'time']
-
-            while (startPos < len(out)):
-                o = out[startPos]
+            events = []
+            for o in out:
                 if o['type'] not in self.basicEventTypes and basic:
                     continue
 
-                self._clear()
                 i = [
                     o['type'],
                     o['message'],
                     o['createdAt']
                 ]
+                
                 events.append(i)
                 isEnd =  isEnd or o['type'] == 'JOB_ENDED' or o['type'] == 'JOB_FAILED'
                 print('📮 Job ID: ' + self.id)
@@ -141,7 +139,6 @@ class Job:
                     display(HTML(tabulate(events, headers, tablefmt='html')))
                 else:
                     print(tabulate(events, headers, tablefmt='presto'))
-                startPos += 1
 
             if not isEnd:
                 time.sleep(refreshRateInSeconds)

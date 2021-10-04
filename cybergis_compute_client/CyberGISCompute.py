@@ -377,6 +377,7 @@ class CyberGISCompute:
         submit_button = widgets.Button(description="Submit Job")
         display(submit_button)
         # outputs
+        init_output = widgets.Output()
         job_output = widgets.Output()
         event_output = widgets.Output()
         display(job_output, event_output)
@@ -426,7 +427,7 @@ class CyberGISCompute:
                 }
             }
 
-            with job_output:
+            with init_output:
                 self.job = self.create_job(hpc=d['hpc'], printJob=False)
             self.job.set(executableFolder=d['repo'], printJob=False)
 
