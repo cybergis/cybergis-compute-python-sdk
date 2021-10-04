@@ -151,7 +151,7 @@ class Job:
         logs = []
         isEnd = False
         while (not isEnd):
-            self.clear()
+            self._clear()
             status = self.status()
             headers = ['message', 'time']
             logs = []

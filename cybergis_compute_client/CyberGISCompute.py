@@ -470,8 +470,8 @@ class CyberGISCompute:
 
             with job_output:
                 self.job.submit()
-            with event_output:
                 print('📋 job events:')
+            with event_output:
                 self.job.events()
             with log_output:
                 print('🔖 job logs:')
@@ -480,7 +480,7 @@ class CyberGISCompute:
                 download_dir = widgets.Text(value='./', description='Download to (tot applicable to Globus download):')
                 download_button = widgets.Button(description="Download")
                 def download_on_click(change):
-                    self.job.downloadResultFolder(download_dir)
+                    self.job.downloadResultFolder(download_dir.value)
                 display(download_dir, download_button)
                 download_button.on_click(download_on_click)
             print('⚠️ use .get_latest_created_job() to retrive job object')
