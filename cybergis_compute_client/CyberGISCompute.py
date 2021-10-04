@@ -378,7 +378,6 @@ class CyberGISCompute:
         event_output = widgets.Output()
 
         def submit_on_click(change):
-            clear_output(wait=True)
             d = {
                 'repo': repo.value,
                 'hpc': hpc.value,
