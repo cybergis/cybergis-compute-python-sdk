@@ -4,7 +4,7 @@
 [![PythonCodeTest](https://github.com/cybergis/job-supervisor-python-sdk/workflows/Python%20Code%20Test/badge.svg)](https://github.com/cybergis/job-supervisor-python-sdk/actions)
 ![GitHub](https://img.shields.io/github/license/cybergis/job-supervisor-python-sdk)
 
-RIF meeting iPyWidget demo notebooks: [Open With CyberGISX](https://cybergisx.cigi.illinois.edu/hub/user-redirect/git-pull?repo=https%3A%2F%2Fgithub.com%2Fcybergis%2Fcybergis-compute-python-sdk&urlpath=tree%2Fcybergis-compute-python-sdk%2FRIF_UI_NBK%2FiPython%20Widget.ipynb)
+RIF meeting iPyWidget demo notebooks: [Open With CyberGISX](https://cybergisx.cigi.illinois.edu/hub/user-redirect/git-pull?repo=https%3A%2F%2Fgithub.com%2Fcybergis%2Fcybergis-compute-python-sdk&branch=v2&urlpath=tree%2Fcybergis-compute-python-sdk%2FRIF_UI_NBK%2FiPython%20Widget.ipynb)
 
 Python SDK client for submitting HPC job to CyberGIS Job Supervisor
 
