@@ -377,7 +377,9 @@ class CyberGISCompute:
         submit_button = widgets.Button(description="Submit Job")
         display(submit_button)
         # outputs
+        job_output = widgets.Output()
         event_output = widgets.Output()
+        display(job_output, event_output)
 
         def submit_on_click(change):
     
@@ -458,9 +460,9 @@ class CyberGISCompute:
             if d['globus']['upload']['is_globus_upload']:
                 self.job.set(dataFolder='globus://' + d['globus']['upload']['globus_upload_endpoint'] + ':' + d['globus']['upload']['globus_upload_path'], printJob=False)
 
-            self.job.submit()
+            with job_output:
+                self.job.submit()
             with event_output:
-                display(event_output)
                 self.job.events()
             # download_dir = widgets.Text(value='./', description='Download to (tot applicable to Globus download):')
             # download_button = widgets.Button(description="Download")
