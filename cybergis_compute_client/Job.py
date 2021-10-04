@@ -133,12 +133,13 @@ class Job:
                 
                 events.append(i)
                 isEnd =  isEnd or o['type'] == 'JOB_ENDED' or o['type'] == 'JOB_FAILED'
-                print('📮 Job ID: ' + self.id)
-                print('🖥 HPC: ' + self.hpc)
-                if self.isJupyter:
-                    display(HTML(tabulate(events, headers, tablefmt='html')))
-                else:
-                    print(tabulate(events, headers, tablefmt='presto'))
+
+            print('📮 Job ID: ' + self.id)
+            print('🖥 HPC: ' + self.hpc)
+            if self.isJupyter:
+                display(HTML(tabulate(events, headers, tablefmt='html')))
+            else:
+                print(tabulate(events, headers, tablefmt='presto'))
 
             if not isEnd:
                 time.sleep(refreshRateInSeconds)
