@@ -12,8 +12,8 @@ class CyberGISCompute:
 
     job = None
 
-    def __init__(self, url="cgjobsup.cigi.illinois.edu", port=443, isJupyter=True, protocol='HTTPS'):
-        self.client = Client(url, port, protocol)
+    def __init__(self, url="https://cgjobsup.cigi.illinois.edu", isJupyter=True):
+        self.client = Client(url)
         self.jupyterhubApiToken = None
         self.username = None
         self.isJupyter = isJupyter
