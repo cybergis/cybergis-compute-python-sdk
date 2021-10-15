@@ -369,6 +369,7 @@ class CyberGISCompute:
         def on_click_show_slurm_options(change):
             slurm_button_output.clear_output(wait=True)
             with slurm_output:
+                display(hide_slurm_button)
                 display(Markdown('**General Slurm Options:**'))
                 display(partition_hbox)
                 display(total_gpu_hbox)
