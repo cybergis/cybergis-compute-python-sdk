@@ -32,6 +32,10 @@ class CyberGISCompute:
             s.pop(0)
             suffix = '/'.join(s)
 
+        print(url)
+        print(protocol)
+        print(suffix)
+
         self.client = Client(url=url, protocol=protocol, suffix=suffix)
         self.jupyterhubApiToken = None
         self.username = None
