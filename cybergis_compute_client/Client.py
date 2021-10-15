@@ -1,7 +1,7 @@
 import http.client as client
 import requests
 import json
-import urllib.parse
+from os import path
 
 class Client:
     def __init__(self, url="cgjobsup.cigi.illinois.edu", port=443, protocol="HTTPS", suffix="v2"):
@@ -15,7 +15,7 @@ class Client:
         else:
             connection = client.HTTPSConnection(self.url)
         headers = {'Content-type': 'application/json'}
-        connection.request(method, urllib.parse.urljoin(self.suffix, uri), json.dumps(body), headers)
+        connection.request(method, path.join(self.suffix, uri), json.dumps(body), headers)
         response = connection.getresponse()
         out = response.read().decode()
         data = json.loads(out)
@@ -29,7 +29,7 @@ class Client:
         return data
 
     def download(self, uri, body, localDir):
-        url = self.protocol.lower() + '://' + urllib.parse.urljoin(self.url, self.suffix, uri)
+        url = self.protocol.lower() + '://' + path.join(self.url, self.suffix, uri)
         response = requests.get(url, data=body, stream=True)
         contentType = response.headers['Content-Type']
 
@@ -60,7 +60,7 @@ class Client:
         return localDir
 
     def upload(self, uri, body, file):
-        url = self.protocol.lower() + '://' + urllib.parse.urljoin(self.url, self.suffix, uri)
+        url = self.protocol.lower() + '://' + path.join(self.url, self.suffix, uri)
         data = json.loads(requests.post(url, data=body, files={'file': file}).content.decode())
         if 'error' in data:
             return '❌ server ' + self.url + ' responded with error "' + data['error'] + '"'
