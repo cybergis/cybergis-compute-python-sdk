@@ -15,10 +15,10 @@ class CyberGISCompute:
     def __init__(self, url="https://cgjobsup.cigi.illinois.edu", port=None, protocol=None, isJupyter=True):
         if url[0:7] == 'http://':
             protocol = 'HTTP'
-            url = url.replace('http://')
+            url = url.replace('http://', '')
         elif url[0:8] == 'https://':
             protocol = 'HTTPS'
-            url = url.replace('https://')
+            url = url.replace('https://', '')
 
         # TODO: hack
         if port != None:
