@@ -3,7 +3,7 @@ from .Job import *
 import base64
 import os
 from IPython.display import Javascript
-from IPython.display import display, Markdown, clear_output
+from IPython.display import display, Markdown
 import ipywidgets as widgets
 
 class CyberGISCompute:
@@ -282,8 +282,20 @@ class CyberGISCompute:
         # slurm
         display(Markdown('#### Slurm Options:'), Markdown('Click checkboxs to enable option and overwrite default config value. All configs are optional. Please refer to [Slurm official documentation](https://slurm.schedmd.com/sbatch.html)'))
         show_slurm_button = widgets.Button(description="Show Slurm Options")
+        hide_slurm_button = widgets.Button(description="Hide Slurm Options")
         slurm_output = widgets.Output()
-        display(show_slurm_button, slurm_output)
+        slurm_button_output = widgets.Output()
+
+        with slurm_button_output:
+            display(show_slurm_button)
+        display(slurm_button_output, slurm_output)
+
+        def on_click_hide_slurm_options(change):
+            slurm_output.clear_output(wait=True)
+            with slurm_button_output:
+                display(show_slurm_button)
+        hide_slurm_button.on_click(on_click_hide_slurm_options)
+
         # general opts
         # partition
         partition_cbox = widgets.Checkbox(description='Partition*: ', value=False)
@@ -355,6 +367,7 @@ class CyberGISCompute:
         email_to_opt_hbox = widgets.HBox([widgets.Label('Email to '), email_to, widgets.Label('When job: ', style={'width': '100px'}), email_to_fail, email_to_end, email_to_begin], width="300px")
 
         def on_click_show_slurm_options(change):
+            slurm_button_output.clear_output(wait=True)
             with slurm_output:
                 display(Markdown('**General Slurm Options:**'))
                 display(partition_hbox)
