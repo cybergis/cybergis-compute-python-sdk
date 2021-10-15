@@ -281,13 +281,14 @@ class CyberGISCompute:
         display(repo, hpc)
         # slurm
         display(Markdown('#### Slurm Options:'), Markdown('Click checkboxs to enable option and overwrite default config value. All configs are optional. Please refer to [Slurm official documentation](https://slurm.schedmd.com/sbatch.html)'))
+        show_slurm_button = widgets.Button(description="Show Slurm Options")
+        slurm_output = widgets.Output()
+        display(show_slurm_button, slurm_output)
         # general opts
-        display(Markdown('**General Slurm Options:**'))
         # partition
         partition_cbox = widgets.Checkbox(description='Partition*: ', value=False)
         partition = widgets.Text(value='')
         partition_hbox = widgets.HBox([partition_cbox, partition])
-        display(partition_hbox)
         # total gpu
         total_gpu_cbox = widgets.Checkbox(description='Total GPU per job: ', value=False)
         total_gpu = widgets.IntSlider(
@@ -302,9 +303,7 @@ class CyberGISCompute:
             readout_format='d'
         )
         total_gpu_hbox = widgets.HBox([total_gpu_cbox, total_gpu])
-        display(total_gpu_hbox)
         # task opts
-        display(Markdown('**Task Options:**'))
         # num_of_task
         num_of_task_cbox = widgets.Checkbox(description='Number of tasks: ', value=False)
         num_of_task = widgets.IntSlider(
@@ -319,7 +318,6 @@ class CyberGISCompute:
             readout_format='d'
         )
         num_of_task_hbox = widgets.HBox([num_of_task_cbox, num_of_task])
-        display(num_of_task_hbox)
         # cpu_per_task
         cpu_per_task_cbox = widgets.Checkbox(description='Number of CPU per task: ', value=False)
         cpu_per_task = widgets.IntSlider(
@@ -334,7 +332,6 @@ class CyberGISCompute:
             readout_format='d'
         )
         cpu_per_task_hbox = widgets.HBox([cpu_per_task_cbox, cpu_per_task])
-        display(cpu_per_task_hbox)
         # gpu_per_task
         gpus_per_task_cbox = widgets.Checkbox(description='Number of GPU per task: ', value=False)
         gpus_per_task = widgets.IntSlider(
@@ -349,16 +346,27 @@ class CyberGISCompute:
             readout_format='d'
         )
         gpus_per_task_hbox = widgets.HBox([gpus_per_task_cbox, gpus_per_task])
-        display(gpus_per_task_hbox)
         # email to
-        display(Markdown('**Email Options:**'))
         email_to = widgets.Text(value='example@illinois.edu', style=style)
         # email to opts
         email_to_fail = widgets.Checkbox(description='FAIL', value=False)
         email_to_end = widgets.Checkbox(description='END', value=False)
         email_to_begin = widgets.Checkbox(description='BEGIN', value=False)
         email_to_opt_hbox = widgets.HBox([widgets.Label('Email to '), email_to, widgets.Label('When job: ', style={'width': '100px'}), email_to_fail, email_to_end, email_to_begin], width="300px")
-        display(email_to_opt_hbox)
+
+        def on_click_show_slurm_options(change):
+            with slurm_output:
+                display(Markdown('**General Slurm Options:**'))
+                display(partition_hbox)
+                display(total_gpu_hbox)
+                display(Markdown('**Task Options:**'))
+                display(num_of_task_hbox)
+                display(cpu_per_task_hbox)
+                display(gpus_per_task_hbox)
+                display(Markdown('**Email Options:**'))
+                display(email_to_opt_hbox)
+        show_slurm_button.on_click(on_click_show_slurm_options)
+
         # globus
         display(Markdown('#### Globus File Upload/Download:'), Markdown('[Share your Globus folder](https://docs.globus.org/how-to/share-files/) with apadmana@illinois.edu before job submission'))
         # upload

@@ -3,12 +3,10 @@ from .JAT import *
 from .Zip import *
 import time
 import os
-import mmap
 import json
-from os import system, name, path
+from os import system, name
 from tabulate import tabulate
 from IPython.display import HTML, display, clear_output
-
 
 class Job:
     # static variables
