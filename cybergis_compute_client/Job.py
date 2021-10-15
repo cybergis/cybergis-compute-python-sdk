@@ -229,7 +229,7 @@ class Job:
 
         if (fileType == 'local'):
             dir = os.path.join(dir, fileId)
-            dir = self.client.download('GET', '/file', {
+            dir = self.client.download('/file', {
                 "accessToken": self.JAT.getAccessToken(),
                 "fileUrl": jobStatus['resultFolder']
             }, dir)
