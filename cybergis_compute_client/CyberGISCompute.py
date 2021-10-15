@@ -412,12 +412,14 @@ class CyberGISCompute:
 
         def on_click_use_custom_globus_button(change):
             is_globus_jupyter = False
+            globus_output.clear_output()
             with globus_output:
                 display(globus_upload_hbox, globus_download_hbox, use_jupyter_globus_button_hbox)
         use_custom_globus_button.on_click(on_click_use_custom_globus_button)
 
         def on_click_use_jupyter_globus_button(change):
             is_globus_jupyter = True
+            globus_output.clear_output()
             with globus_output:
                 display(globus_jupyter_upload_hbox, globus_jupyter_download_cbox, use_custom_globus_button_hbox)
         use_jupyter_globus_button.on_click(on_click_use_jupyter_globus_button)
@@ -475,18 +477,28 @@ class CyberGISCompute:
                     'begin': email_to_begin.value
                 },
                 'globus': {
-                    'download': {
+                    'custom_download': {
                         'globus_download_endpoint': globus_download_endpoint.value,
                         'globus_download_path': globus_download_path.value,
                         'is_globus_download': globus_download_cbox.value
                     },
-                    'upload': {
+                    'custom_upload': {
                         'globus_upload_endpoint': globus_upload_endpoint.value,
                         'globus_upload_path': globus_upload_path.value,
                         'is_globus_upload': globus_upload_cbox.value
+                    },
+                    'jupyter_download': {
+                        'is_globus_download': globus_jupyter_download_cbox.value
+                    },
+                    'jupyter_upload': {
+                        'globus_upload_path': globus_jupyter_upload_path.value,
+                        'is_globus_upload': globus_jupyter_upload_cbox.value
                     }
                 }
             }
+
+            is_globus_download = d['globus']['custom_download']['is_globus_download'] or d['globus']['jupyter_download']['is_globus_download']
+            is_globus = d['globus']['custom_upload']['is_globus_upload'] or d['globus']['jupyter_upload']['is_globus_upload'] or is_globus_download
 
             with init_output:
                 self.job = self.create_job(hpc=d['hpc'], printJob=False)
@@ -517,11 +529,23 @@ class CyberGISCompute:
             if slurm_settings != {}:
                 self.job.set(slurm=slurm_settings, printJob=False)
 
-            if d['globus']['download']['is_globus_download']:
-                self.job.set(resultFolder='globus://' + d['globus']['download']['globus_download_endpoint'] + ':' + d['globus']['download']['globus_download_path'], printJob=False)
+            if is_globus_jupyter and is_globus:
+                jupyter_globus = self.get_user_jupyter_globus()
 
-            if d['globus']['upload']['is_globus_upload']:
-                self.job.set(dataFolder='globus://' + d['globus']['upload']['globus_upload_endpoint'] + ':' + d['globus']['upload']['globus_upload_path'], printJob=False)
+                if d['globus']['jupyter_download']['is_globus_download']:
+                    filepath = 'globus_download_' + self.job.id
+                    self.job.set(resultFolder='globus://' + jupyter_globus['endpoint'] + ':' + path.join(jupyter_globus['root_path'], filepath), printJob=False)
+
+                if d['globus']['jupyter_upload']['is_globus_upload']:
+                    filepath = d['globus']['upload']['globus_upload_path'].strip('/')
+                    self.job.set(dataFolder='globus://' + jupyter_globus['endpoint'] + ':' + path.join(jupyter_globus['root_path'], filepath), printJob=False)
+
+            else:
+                if d['globus']['custom_download']['is_globus_download']:
+                    self.job.set(resultFolder='globus://' + d['globus']['download']['globus_download_endpoint'] + ':' + d['globus']['download']['globus_download_path'], printJob=False)
+
+                if d['globus']['custom_upload']['is_globus_upload']:
+                    self.job.set(dataFolder='globus://' + d['globus']['upload']['globus_upload_endpoint'] + ':' + d['globus']['upload']['globus_upload_path'], printJob=False)
 
             with job_output:
                 self.job.submit()
@@ -530,11 +554,18 @@ class CyberGISCompute:
             with log_output:
                 self.job.logs()
             with download_output:
-                download_dir = widgets.Text(value='./', description='Download to (tot applicable to Globus download):')
-                download_button = widgets.Button(description="Download")
+                if is_globus_download:
+                    download_button = widgets.Button(description="Globus Download")
+                    display(download_button)
+                else:
+                    download_dir = widgets.Text(value='./', description='Download to:')
+                    download_button = widgets.Button(description="Local Download")
+                    display(download_dir, download_button)
+
                 def download_on_click(change):
                     self.job.downloadResultFolder(download_dir.value)
-                display(download_dir, download_button)
+                    if is_globus_download:
+                        display(Markdown('your data is being downloaded using Globus in background, please wait patiently...'))
                 download_button.on_click(download_on_click)
             print('⚠️ use .get_latest_created_job() to retrive job object')
 
