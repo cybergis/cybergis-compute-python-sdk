@@ -12,31 +12,8 @@ class CyberGISCompute:
 
     job = None
 
-    def __init__(self, url="https://cgjobsup.cigi.illinois.edu", port=None, protocol=None, isJupyter=True):
-        if url[0:7] == 'http://':
-            protocol = 'HTTP'
-            url = url.replace('http://', '')
-        elif url[0:8] == 'https://':
-            protocol = 'HTTPS'
-            url = url.replace('https://', '')
-
-        # TODO: hack
-        if port != None:
-            url += ':' + str(port)
-
-        suffix = ""
-        s = url.split('/')
-        if len(s) > 3:
-            s.pop(0)
-            s.pop(0)
-            s.pop(0)
-            suffix = '/'.join(s)
-
-        print(url)
-        print(protocol)
-        print(suffix)
-
-        self.client = Client(url=url, protocol=protocol, suffix=suffix)
+    def __init__(self, url="cgjobsup.cigi.illinois.edu", port=443, protocol='HTTPS', suffix="v2", isJupyter=True):
+        self.client = Client(url=url, protocol=protocol, port=port, suffix=suffix)
         self.jupyterhubApiToken = None
         self.username = None
         self.isJupyter = isJupyter
