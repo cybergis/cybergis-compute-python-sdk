@@ -4,8 +4,8 @@ import json
 import urllib.parse
 
 class Client:
-    def __init__(self, host="cgjobsup.cigi.illinois.edu", port=443, protocol="HTTPS", suffix="v2"):
-        self.url = host + ':' + str(port)
+    def __init__(self, url="cgjobsup.cigi.illinois.edu", port=443, protocol="HTTPS", suffix="v2"):
+        self.url = url + ':' + str(port)
         self.protocol = protocol
         self.suffix = suffix
 
