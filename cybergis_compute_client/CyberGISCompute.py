@@ -271,6 +271,7 @@ class CyberGISCompute:
             print('❌ Enable Jupyter using .enable_jupyter() before you use the UI option')
 
         self.job = None
+        self.login()
 
         style = {'description_width': '120px'}
         # main dropdown
@@ -382,19 +383,49 @@ class CyberGISCompute:
         show_slurm_button.on_click(on_click_show_slurm_options)
 
         # globus
-        display(Markdown('#### Globus File Upload/Download:'), Markdown('[Share your Globus folder](https://docs.globus.org/how-to/share-files/) with apadmana@illinois.edu before job submission'))
+        globus_output = widgets.Output()
+
+        display(Markdown('#### Globus File Upload/Download:'), globus_output)
+
+        is_globus_jupyter = True
+        globus_jupyter_upload_cbox = widgets.Checkbox(description='Upload from Jupyter working directory', value=False)
+        globus_jupyter_upload_path = widgets.Text(value='', description='file path')
+        globus_jupyter_upload_hbox = widgets.HBox([globus_jupyter_upload_cbox, globus_jupyter_upload_path])
+        globus_jupyter_download_cbox = widgets.Checkbox(description='Download to Jupyter working directory', value=False)
+
+        # Markdown('Upload data using Globus SFTP. [share your Globus folder](https://docs.globus.org/how-to/share-files/) with apadmana@illinois.edu before job submission')
         # upload
         globus_upload_cbox = widgets.Checkbox(description='Upload data from: ', value=False)
         globus_upload_endpoint = widgets.Text(value='', description='endpoint')
         globus_upload_path = widgets.Text(value='', description='file path')
         globus_upload_hbox = widgets.HBox([globus_upload_cbox, globus_upload_endpoint, globus_upload_path])
-        display(globus_upload_hbox)
+
         # download
         globus_download_cbox = widgets.Checkbox(description='Download result to: ', value=False)
         globus_download_endpoint = widgets.Text(value='', description='endpoint')
         globus_download_path = widgets.Text(value='', description='file path')
-        globus_downloadd_hbox = widgets.HBox([globus_download_cbox, globus_download_endpoint, globus_download_path])
-        display(globus_downloadd_hbox)
+        globus_download_hbox = widgets.HBox([globus_download_cbox, globus_download_endpoint, globus_download_path])
+
+        use_custom_globus_button = widgets.Button(description="Custom Globus Settings")
+        use_jupyter_globus_button = widgets.Button(description="Jupyter Globus Settings")
+        use_custom_globus_button_hbox = widgets.HBox([Markdown('Want to use your own Globus endpoint?'), use_custom_globus_button])
+        use_jupyter_globus_button_hbox = widgets.HBox([Markdown('Want to use Jupyter Globus endpoint?'), use_jupyter_globus_button])
+
+        def on_click_use_custom_globus_button(change):
+            is_globus_jupyter = False
+            with globus_output:
+                display(globus_upload_hbox, globus_download_hbox, use_jupyter_globus_button_hbox)
+        use_custom_globus_button.on_click(on_click_use_custom_globus_button)
+
+        def on_click_use_jupyter_globus_button(change):
+            is_globus_jupyter = True
+            with globus_output:
+                display(globus_jupyter_upload_hbox, globus_jupyter_download_cbox, use_custom_globus_button_hbox)
+        use_jupyter_globus_button.on_click(on_click_use_jupyter_globus_button)
+
+        with globus_output:
+            display(globus_jupyter_upload_hbox, globus_jupyter_download_cbox, use_custom_globus_button_hbox)
+
         # outputs
         submit_output = widgets.Output()
         init_output = widgets.Output()
@@ -405,15 +436,15 @@ class CyberGISCompute:
         display(submit_output, init_output, job_output, event_output, log_output, download_output)
 
         # submit btn
+        submit_button = widgets.Button(description="Submit Job")
         with submit_output:
-            submit_button = widgets.Button(description="Submit Job")
             display(submit_button)
 
         def submit_on_click(change):
             if self.job != None:
                 return
 
-            submit_output.clear_output(wait=True)
+            submit_output.clear_output()
 
             d = {
                 'repo': repo.value,
@@ -519,6 +550,9 @@ class CyberGISCompute:
         self.isJupyter = True
         # get jupyter variable
         display(Javascript('IPython.notebook.kernel.execute(`CyberGISCompute.jupyterhubHost = "${window.location.host}"`);'))
+
+    def get_user_jupyter_globus(self):
+        return self.client.request('GET', '/user/jupyter-globus', { "jupyterhubApiToken": self.jupyterhubApiToken })
 
     def is_login(self):
         return self.jupyterhubApiToken != None
