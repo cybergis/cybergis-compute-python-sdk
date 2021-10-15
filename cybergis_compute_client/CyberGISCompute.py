@@ -271,7 +271,6 @@ class CyberGISCompute:
             print('❌ Enable Jupyter using .enable_jupyter() before you use the UI option')
 
         self.job = None
-        self.login()
 
         style = {'description_width': '120px'}
         # main dropdown
@@ -408,8 +407,8 @@ class CyberGISCompute:
 
         use_custom_globus_button = widgets.Button(description="Custom Globus Settings")
         use_jupyter_globus_button = widgets.Button(description="Jupyter Globus Settings")
-        use_custom_globus_button_hbox = widgets.HBox([Markdown('Want to use your own Globus endpoint?'), use_custom_globus_button])
-        use_jupyter_globus_button_hbox = widgets.HBox([Markdown('Want to use Jupyter Globus endpoint?'), use_jupyter_globus_button])
+        use_custom_globus_button_hbox = widgets.HBox([widgets.Label('Want to use your own Globus endpoint?'), use_custom_globus_button])
+        use_jupyter_globus_button_hbox = widgets.HBox([widgets.Label('Want to use Jupyter Globus endpoint?'), use_jupyter_globus_button])
 
         def on_click_use_custom_globus_button(change):
             is_globus_jupyter = False
