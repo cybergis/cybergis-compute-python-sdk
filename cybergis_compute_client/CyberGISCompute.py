@@ -291,7 +291,7 @@ class CyberGISCompute:
         display(slurm_button_output, slurm_output)
 
         def on_click_hide_slurm_options(change):
-            slurm_output.clear_output(wait=True)
+            slurm_output.clear_output()
             with slurm_button_output:
                 display(show_slurm_button)
         hide_slurm_button.on_click(on_click_hide_slurm_options)
@@ -367,7 +367,7 @@ class CyberGISCompute:
         email_to_opt_hbox = widgets.HBox([widgets.Label('Email to '), email_to, widgets.Label('When job: ', style={'width': '100px'}), email_to_fail, email_to_end, email_to_begin], width="300px")
 
         def on_click_show_slurm_options(change):
-            slurm_button_output.clear_output(wait=True)
+            slurm_button_output.clear_output()
             with slurm_output:
                 display(hide_slurm_button)
                 display(Markdown('**General Slurm Options:**'))
