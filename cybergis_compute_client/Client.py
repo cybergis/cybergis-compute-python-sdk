@@ -4,9 +4,10 @@ import json
 import urllib.parse
 
 class Client:
-    def __init__(self, url="https://cgjobsup.cigi.illinois.edu/v2"):
+    def __init__(self, url="cglogger.cigi.illinois.edu", protocol="HTTPS", suffix=""):
         self.url = url
-        self.protocol = 'HTTP' if url[0:7] == 'http://' else 'HTTPS'
+        self.protocol = protocol
+        self.suffix = suffix
 
     def request(self, method, uri, body={}):
         if self.protocol == 'HTTP':
@@ -14,7 +15,7 @@ class Client:
         else:
             connection = client.HTTPSConnection(self.url)
         headers = {'Content-type': 'application/json'}
-        connection.request(method, uri, json.dumps(body), headers)
+        connection.request(method, urllib.parse.urljoin(self.suffix, uri), json.dumps(body), headers)
         response = connection.getresponse()
         out = response.read().decode()
         data = json.loads(out)
@@ -27,8 +28,8 @@ class Client:
 
         return data
 
-    def download(self, method, uri, body, localDir):
-        url = urllib.parse.urljoin(self.protocol.lower() + '://' + self.url, uri)
+    def download(self, uri, body, localDir):
+        url = self.protocol.lower() + '://' + urllib.parse.urljoin(self.url, self.suffix, uri)
         response = requests.get(url, data=body, stream=True)
         contentType = response.headers['Content-Type']
 
@@ -59,7 +60,7 @@ class Client:
         return localDir
 
     def upload(self, uri, body, file):
-        url = urllib.parse.urljoin(self.protocol.lower() + '://' + self.url, uri)
+        url = self.protocol.lower() + '://' + urllib.parse.urljoin(self.url, uri)
         data = json.loads(requests.post(url, data=body, files={'file': file}).content.decode())
         if 'error' in data:
             return '❌ server ' + self.url + ' responded with error "' + data['error'] + '"'
