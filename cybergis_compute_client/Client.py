@@ -15,8 +15,7 @@ class Client:
         else:
             connection = client.HTTPSConnection(self.url)
         headers = {'Content-type': 'application/json'}
-        print(path.join(self.suffix.strip('/'), uri.strip('/')))
-        connection.request(method, path.join(self.suffix.strip('/'), uri.strip('/')), json.dumps(body), headers)
+        connection.request(method, '/' + path.join(self.suffix.strip('/'), uri.strip('/')), json.dumps(body), headers)
         response = connection.getresponse()
         out = response.read().decode()
         data = json.loads(out)
