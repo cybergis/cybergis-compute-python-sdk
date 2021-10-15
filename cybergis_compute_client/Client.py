@@ -60,7 +60,7 @@ class Client:
         return localDir
 
     def upload(self, uri, body, file):
-        url = self.protocol.lower() + '://' + urllib.parse.urljoin(self.url, uri)
+        url = self.protocol.lower() + '://' + urllib.parse.urljoin(self.url, self.suffix, uri)
         data = json.loads(requests.post(url, data=body, files={'file': file}).content.decode())
         if 'error' in data:
             return '❌ server ' + self.url + ' responded with error "' + data['error'] + '"'
