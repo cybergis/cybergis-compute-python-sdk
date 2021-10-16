@@ -563,9 +563,11 @@ class CyberGISCompute:
                     display(download_dir, download_button)
 
                 def download_on_click(change):
-                    self.job.downloadResultFolder(download_dir.value)
                     if is_globus_download:
+                        self.job.downloadResultFolder()
                         display(Markdown('your data is being downloaded using Globus in background, please wait patiently...'))
+                    else:
+                        self.job.downloadResultFolder(download_dir.value)
                 download_button.on_click(download_on_click)
             print('⚠️ use .get_latest_created_job() to retrive job object')
 
