@@ -5,8 +5,8 @@ class UI:
     def __init__(self, compute):
         self.compute = compute
         self.style = {'description_width': '120px'}
-        self.jobs = [i for i in compute.list_git(raw=True)]
-        self.hpcs = [i for i in compute.list_hpc(raw=True)]
+        self.jobs = compute.list_git(raw=True)
+        self.hpcs = compute.list_hpc(raw=True)
         self.job = None
 
     def render(self):
@@ -21,7 +21,7 @@ class UI:
     # components
     def createJobTemplate(self):
         ui = {
-            'dropdown': widgets.Dropdown(options=self.jobs, value='hello_world', description='📦 Job Templates:', style=self.style),
+            'dropdown': widgets.Dropdown(options=[i for i in self.jobs], value='hello_world', description='📦 Job Templates:', style=self.style),
             'output': widgets.Output()
         }
         ui['dropdown'].observe(self.onJobDropdownChange())
