@@ -5,11 +5,12 @@ class UI:
     def __init__(self, compute):
         self.compute = compute
         self.style = {'description_width': '120px'}
-        self.jobs = compute.list_git(raw=True)
-        self.hpcs = compute.list_hpc(raw=True)
+        self.jobs = None
+        self.hpcs = None
         self.job = None
 
     def render(self):
+        self.init()
         self.assembleCompoenets()
         # job template
         display(self.jobTemplate['dropdown'], self.jobTemplate['output'])
@@ -40,3 +41,10 @@ class UI:
                     estimated_runtime = Markdown('**Estimated Runtime:** ' + self.job['estimated_runtime'])
                     display(description, estimated_runtime)
         return on_change
+
+    # helpers
+    def init(self):
+        if self.jobs == None:
+            self.jobs = self.compute.list_git(raw=True)
+        if self.hpcs == None:
+            self.hpcs = self.compute.list_hpc(raw=True)
