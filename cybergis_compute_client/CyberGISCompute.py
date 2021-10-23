@@ -18,6 +18,7 @@ class CyberGISCompute:
         self.jupyterhubApiToken = None
         self.username = None
         self.isJupyter = isJupyter
+        self.ui = UI(self)
         if isJupyter:
             self.enable_jupyter()
 
@@ -267,7 +268,8 @@ class CyberGISCompute:
             print('🤖 Maintainers:')
             self.list_maintainer()
 
-
+    def test_ui(self):
+        self.ui.render()
 
     def create_job_by_UI(self):
         if not self.isJupyter:
