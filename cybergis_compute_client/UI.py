@@ -13,7 +13,14 @@ class UI:
         self.init()
         self.assembleCompoenets()
         # job template
-        display(self.jobTemplate['dropdown'], self.jobTemplate['output'])
+        job_template_output = widgets.Output()
+        with job_template_output:
+            display(self.jobTemplate['dropdown'], self.jobTemplate['output'])
+        # tab
+        tab = widgets.Tab(children=[
+            job_template_output
+        ])
+        display(tab)
 
     def assembleCompoenets(self):
         self.jobTemplate = self.createJobTemplate()
@@ -36,8 +43,9 @@ class UI:
         def on_change(change):
             if change['type'] == 'change':
                 self.job = self.jobs[self.jobTemplate['dropdown'].value]
+                self.jobTemplate['output'].clear_output()
                 with self.jobTemplate['output']:
-                    description = Markdown('**Description: **' + self.job['description'])
+                    description = Markdown('**Template Description:** ' + self.job['description'])
                     estimated_runtime = Markdown('**Estimated Runtime:** ' + self.job['estimated_runtime'])
                     display(description, estimated_runtime)
         return on_change
