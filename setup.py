@@ -18,7 +18,7 @@ setup(
     # https://packaging.python.org/en/latest/single_source_version.html
     version='0.0.2',
 
-    description='HPC job submission client',
+    description='CyberGISX compatable HPC job submission client',
     long_description=long_description,
 
     # The project's main homepage.
@@ -68,7 +68,7 @@ setup(
     # your project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=["tabulate", "ipython"],
+    install_requires=["tabulate", "ipython", "ipyfilechooser"],
 
     # List additional groups of dependencies here (e.g. development
     # dependencies). You can install these using the following syntax,
@@ -86,7 +86,7 @@ setup(
     #    'cybot': ['qsub.template'],
     #},
     include_package_data=True,
-    package_data={'job_supervisor_client': ['job_supervisor_client/*.py']},
+    package_data={'cybergis_compute_client': ['cybergis_compute_client/*.py']},
 
     # Although 'package_data' is the preferred approach, in some case you may
     # need to place data files outside of your packages. See:
