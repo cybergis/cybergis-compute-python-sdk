@@ -34,7 +34,7 @@ class UI:
     def onJobDropdownChange(self):
         def on_change(change):
             if change['type'] == 'change':
-                self.job = self.jobs[change['name']]
+                self.job = self.jobs[self.jobTemplate['dropdown'].value]
                 with self.jobTemplate['output']:
                     description = Markdown('**Description: **' + self.job['description'])
                     estimated_runtime = Markdown('**Estimated Runtime:** ' + self.job['estimated_runtime'])
