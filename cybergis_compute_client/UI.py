@@ -4,7 +4,7 @@ import ipywidgets as widgets
 class UI:
     def __init__(self, compute):
         self.compute = compute
-        self.style = {'description_width': '200px'}
+        self.style = {'description_width': 'auto'}
         self.jobs = None
         self.hpcs = None
         # selection
@@ -56,11 +56,11 @@ class UI:
             self.computingResource['output'] = widgets.Output()
         # create components
         hpcName = self.job['default_hpc']
-        self.jobTemplate['dropdown'] = widgets.Dropdown(options=[i for i in self.job['supported_hpc']], value=hpcName, description='🖥 Computing Recourse:', style=self.style)
-        self.jobTemplate['description'] = widgets.Label(value=self.hpcs[hpcName]['description'])
-        self.jobTemplate['accordion'] = widgets.Accordion(children=( widgets.VBox(children=(self.jobTemplate['dropdown'], self.jobTemplate['description'])), ), titles=('Computing Resource'))
+        self.computingResource['dropdown'] = widgets.Dropdown(options=[i for i in self.job['supported_hpc']], value=hpcName, description='🖥 Computing Recourse:', style=self.style)
+        self.computingResource['description'] = widgets.Label(value=self.hpcs[hpcName]['description'])
+        self.computingResource['accordion'] = widgets.Accordion(children=( widgets.VBox(children=(self.computingResource['dropdown'], self.computingResource['description'])), ), titles=('Computing Resource'))
         with self.computingResource['output']:
-            display(self.jobTemplate['accordion'])
+            display(self.computingResource['accordion'])
 
     def createSlurm(self):
         return
