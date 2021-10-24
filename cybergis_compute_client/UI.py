@@ -58,7 +58,7 @@ class UI:
         hpcName = self.job['default_hpc']
         self.jobTemplate['dropdown'] = widgets.Dropdown(options=[i for i in self.job['supported_hpc']], value=hpcName, description='🖥 Computing Recourse:', style=self.style)
         self.jobTemplate['description'] = widgets.Label(value=self.hpcs[hpcName]['description'])
-        self.jobTemplate['accordion'] = widgets.Accordion(children=( widgets.VBox(children=(self.jobTemplate['dropdown'], self.jobTemplate['description'])) ), titles=('Computing Resource'))
+        self.jobTemplate['accordion'] = widgets.Accordion(children=( widgets.VBox(children=(self.jobTemplate['dropdown'], self.jobTemplate['description'])), ), titles=('Computing Resource'))
         with self.computingResource['output']:
             display(self.jobTemplate['accordion'])
 
