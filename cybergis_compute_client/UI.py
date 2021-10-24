@@ -11,8 +11,8 @@ class UI:
         self.job = None
         self.jobName = None
         # components
-        self.jobTemplate = None
-        self.computingResource = None
+        self.jobTemplate = { 'output': None }
+        self.computingResource = { 'output': None }
 
     def render(self):
         self.init()
@@ -25,8 +25,8 @@ class UI:
             display(Markdown('# Welcome to CyberGIS-Compute'))
             display(Markdown('Some description about CyberGIS-Compute'))
             display(divider)
-            display(self.jobTemplate)
-            display(self.computingResource)
+            display(self.jobTemplate['output'])
+            display(self.computingResource['output'])
 
         # assemble into tabs
         tab = widgets.Tab(children=[
@@ -41,26 +41,26 @@ class UI:
 
     # components
     def renderJobTemplate(self):
-        if self.jobTemplate == None:
-            self.jobTemplate = widgets.Output()
+        if self.jobTemplate['output'] == None:
+            self.jobTemplate['output'] = widgets.Output()
         # create components
-        dropdown = widgets.Dropdown(options=[i for i in self.jobs], value=self.jobName, description='📦 Job Templates:', style=self.style)
-        description = Markdown('**Description:** ' + self.job['description'])
-        estimated_runtime = Markdown('**Estimated Runtime:** ' + self.job['estimated_runtime'])
-        dropdown.observe(self.onJobDropdownChange())
-        with self.jobTemplate:
-            display(dropdown, description, estimated_runtime)
+        self.jobTemplate['dropdown'] = widgets.Dropdown(options=[i for i in self.jobs], value=self.jobName, description='📦 Job Templates:', style=self.style)
+        self.jobTemplate['description'] = Markdown('**Description:** ' + self.job['description'])
+        self.jobTemplate['estimated_runtime'] = Markdown('**Estimated Runtime:** ' + self.job['estimated_runtime'])
+        self.jobTemplate['dropdown'].observe(self.onJobDropdownChange())
+        with self.jobTemplate['output']:
+            display(self.jobTemplate['dropdown'], self.jobTemplate['description'], self.jobTemplate['estimated_runtime'])
 
     def renderComputingResource(self):
-        if self.computingResource == None:
-            self.computingResource = widgets.Output()
+        if self.computingResource['output'] == None:
+            self.computingResource['output'] = widgets.Output()
         # create components
         hpcName = self.job['default_hpc']
-        dropdown = widgets.Dropdown(options=[i for i in self.job['supported_hpc']], value=hpcName, description='🖥 Computing Recourse:', style=self.style)
-        description = widgets.Label(value=self.hpcs[hpcName]['description'])
-        accordion = widgets.Accordion(children=( widgets.VBox(children=(dropdown, description)) ), titles=('Computing Resource'))
-        with self.jobTemplate:
-            display(accordion)
+        self.jobTemplate['dropdown'] = widgets.Dropdown(options=[i for i in self.job['supported_hpc']], value=hpcName, description='🖥 Computing Recourse:', style=self.style)
+        self.jobTemplate['description'] = widgets.Label(value=self.hpcs[hpcName]['description'])
+        self.jobTemplate['accordion'] = widgets.Accordion(children=( widgets.VBox(children=(self.jobTemplate['dropdown'], self.jobTemplate['description'])) ), titles=('Computing Resource'))
+        with self.computingResource['output']:
+            display(self.jobTemplate['accordion'])
 
     def createSlurm(self):
         return
@@ -85,5 +85,5 @@ class UI:
 
     def rerender(self, components = []):
         for c in components:
-            getattr(self, c).clear_output()
+            getattr(self, c)['output'].clear_output()
             getattr(self, 'render' + c.title())
