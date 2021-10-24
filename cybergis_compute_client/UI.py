@@ -8,6 +8,8 @@ class UI:
         self.jobs = None
         self.hpcs = None
         self.job = None
+        # components
+        self.jobTemplate = None
 
     def render(self):
         self.init()
