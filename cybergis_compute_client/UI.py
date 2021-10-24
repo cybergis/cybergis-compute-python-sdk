@@ -4,7 +4,7 @@ import ipywidgets as widgets
 class UI:
     def __init__(self, compute):
         self.compute = compute
-        self.style = {'description_width': '120px'}
+        self.style = {'description_width': '200px'}
         self.jobs = None
         self.hpcs = None
         # selection
