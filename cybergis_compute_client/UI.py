@@ -7,9 +7,12 @@ class UI:
         self.style = {'description_width': '120px'}
         self.jobs = None
         self.hpcs = None
+        # selection
         self.job = None
+        self.jobName = None
         # components
         self.jobTemplate = None
+        self.computingResource = None
 
     def render(self):
         self.init()
@@ -24,6 +27,7 @@ class UI:
             display(divider)
             display(self.jobTemplate)
             display(divider)
+            display(self.computingResource)
 
         # assemble into tabs
         tab = widgets.Tab(children=[
@@ -34,21 +38,30 @@ class UI:
 
     def renderCompoenets(self):
         self.renderJobTemplate()
+        self.renderComputingResource()
 
     # components
     def renderJobTemplate(self):
         if self.jobTemplate == None:
             self.jobTemplate = widgets.Output()
         # create components
-        dropdown = widgets.Dropdown(options=[i for i in self.jobs], value='hello_world', description='📦 Job Templates:', style=self.style),
-        description = Markdown('**Template Description:** ' + self.job['description'])
+        dropdown = widgets.Dropdown(options=[i for i in self.jobs], value=self.jobName, description='📦 Job Templates:', style=self.style)
+        description = Markdown('**Description:** ' + self.job['description'])
         estimated_runtime = Markdown('**Estimated Runtime:** ' + self.job['estimated_runtime'])
         dropdown.observe(self.onJobDropdownChange())
         with self.jobTemplate:
             display(dropdown, description, estimated_runtime)
 
-    def renderHPC(self):
-        return
+    def renderComputingResource(self):
+        if self.computingResource == None:
+            self.computingResource = widgets.Output()
+        # create components
+        hpcName = self.job['default_hpc']
+        dropdown = widgets.Dropdown(options=[i for i in self.job['supported_hpc']], value=hpcName, description='🖥 Computing Recourse:', style=self.style)
+        description = Markdown(self.hpcs[hpcName]['description'])
+        accordion = widgets.Accordion(children=[dropdown, description], titles=('Slider', 'Text'))
+        with self.jobTemplate:
+            display(accordion)
 
     def createSlurm(self):
         return
@@ -57,15 +70,17 @@ class UI:
     def onJobDropdownChange(self):
         def on_change(change):
             if change['type'] == 'change':
-                self.job = self.jobs[self.jobTemplate['dropdown'].value]
-                self.rerender(['jobTemplate'])
+                self.jobName = self.jobTemplate['dropdown'].value
+                self.job = self.jobs[self.jobName]
+                self.rerender(['jobTemplate', 'computingResource'])
         return on_change
 
     # helpers
     def init(self):
         if self.jobs == None:
             self.jobs = self.compute.list_git(raw=True)
-            self.job  = self.jobs['hello_world']
+            self.jobName = 'hello_world'
+            self.job  = self.jobs[self.jobName]
         if self.hpcs == None:
             self.hpcs = self.compute.list_hpc(raw=True)
 
