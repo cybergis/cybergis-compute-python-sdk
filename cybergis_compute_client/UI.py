@@ -26,7 +26,6 @@ class UI:
             display(Markdown('Some description about CyberGIS-Compute'))
             display(divider)
             display(self.jobTemplate)
-            display(divider)
             display(self.computingResource)
 
         # assemble into tabs
