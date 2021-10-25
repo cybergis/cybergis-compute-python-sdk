@@ -10,6 +10,8 @@ class UI:
         # selection
         self.job = None
         self.jobName = None
+        self.hpc = None
+        self.hpcName = None
         # components
         self.jobTemplate = { 'output': None }
         self.computingResource = { 'output': None }
@@ -45,7 +47,7 @@ class UI:
             self.jobTemplate['output'] = widgets.Output()
         # create components
         self.jobTemplate['dropdown'] = widgets.Dropdown(options=[i for i in self.jobs], value=self.jobName, description='📦 Job Templates:', style=self.style)
-        self.jobTemplate['description'] = Markdown('**Description:** ' + self.job['description'])
+        self.jobTemplate['description'] = Markdown('**' + self.jobName + 'Description:** ' + self.job['description'])
         self.jobTemplate['estimated_runtime'] = Markdown('**Estimated Runtime:** ' + self.job['estimated_runtime'])
         self.jobTemplate['dropdown'].observe(self.onJobDropdownChange())
         with self.jobTemplate['output']:
@@ -55,10 +57,11 @@ class UI:
         if self.computingResource['output'] == None:
             self.computingResource['output'] = widgets.Output()
         # create components
-        hpcName = self.job['default_hpc']
-        self.computingResource['dropdown'] = widgets.Dropdown(options=[i for i in self.job['supported_hpc']], value=hpcName, description='🖥 Computing Recourse:', style=self.style)
-        self.computingResource['description'] = widgets.Label(value=self.hpcs[hpcName]['description'])
-        self.computingResource['accordion'] = widgets.Accordion(children=( widgets.VBox(children=(self.computingResource['dropdown'], self.computingResource['description'])), ), titles=('Computing Resource'))
+        self.computingResource['dropdown'] = widgets.Dropdown(options=[i for i in self.job['supported_hpc']], value=self.hpcName, description='🖥 Computing Recourse:', style=self.style)
+        self.computingResource['description'] = widgets.Label(value=self.hpcName + ' Description: ' + self.hpc['description'])
+        self.computingResource['accordion'] = widgets.Accordion(children=( widgets.VBox(children=(self.computingResource['dropdown'], self.computingResource['description'])), ))
+        self.computingResource['accordion'].set_title(0, 'Computing Resource')
+        self.computingResource['dropdown'].observe(self.onComputingResourceDropdownChange())
         with self.computingResource['output']:
             display(self.computingResource['accordion'])
 
@@ -71,8 +74,17 @@ class UI:
             if change['type'] == 'change':
                 self.jobName = self.jobTemplate['dropdown'].value
                 self.job = self.jobs[self.jobName]
+                self.hpcName = self.job['default_hpc']
+                self.hpc = self.hpcs[self.hpcName]
                 self.rerender(['jobTemplate', 'computingResource'])
         return on_change
+
+    def onComputingResourceDropdownChange(self):
+        def on_change(change):
+            if change['type'] == 'change':
+                self.hpcName = self.computingResource['dropdown'].value
+                self.hpc = self.hpcs[self.hpcName]
+                self.rerender(['computingResource'])
 
     # helpers
     def init(self):
@@ -82,8 +94,13 @@ class UI:
             self.job  = self.jobs[self.jobName]
         if self.hpcs == None:
             self.hpcs = self.compute.list_hpc(raw=True)
+            self.hpcName = self.job['default_hpc']
+            self.hpc = self.hpcs[self.hpcName]
 
     def rerender(self, components = []):
         for c in components:
+            cl = list(c)
+            cl[0] = cl[0].upper()
+            ct = ''.join(cl)
             getattr(self, c)['output'].clear_output()
-            getattr(self, 'render' + c.title())
+            getattr(self, 'render' + ct)
