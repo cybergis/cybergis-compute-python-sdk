@@ -6,6 +6,7 @@ import os
 from IPython.display import Javascript
 from IPython.display import display, Markdown
 import ipywidgets as widgets
+import random
 
 class CyberGISCompute:
     # static variable
@@ -542,15 +543,15 @@ class CyberGISCompute:
                     self.job.set(resultFolder='globus://' + jupyter_globus['endpoint'] + ':' + path.join(jupyter_globus['root_path'], filepath), printJob=False)
 
                 if d['globus']['jupyter_upload']['is_globus_upload']:
-                    filepath = d['globus']['upload']['globus_upload_path'].strip('/')
+                    filepath = d['globus']['jupyter_upload']['globus_upload_path'].strip('/')
                     self.job.set(dataFolder='globus://' + jupyter_globus['endpoint'] + ':' + path.join(jupyter_globus['root_path'], filepath), printJob=False)
 
             else:
                 if d['globus']['custom_download']['is_globus_download']:
-                    self.job.set(resultFolder='globus://' + d['globus']['download']['globus_download_endpoint'] + ':' + d['globus']['download']['globus_download_path'], printJob=False)
+                    self.job.set(resultFolder='globus://' + d['globus']['custom_download']['globus_download_endpoint'] + ':' + d['globus']['custom_download']['globus_download_path'], printJob=False)
 
                 if d['globus']['custom_upload']['is_globus_upload']:
-                    self.job.set(dataFolder='globus://' + d['globus']['upload']['globus_upload_endpoint'] + ':' + d['globus']['upload']['globus_upload_path'], printJob=False)
+                    self.job.set(dataFolder='globus://' + d['globus']['custom_upload']['globus_upload_endpoint'] + ':' + d['globus']['custom_upload']['globus_upload_path'], printJob=False)
 
             with job_output:
                 self.job.submit()
