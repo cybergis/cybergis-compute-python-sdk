@@ -20,6 +20,8 @@ class UI:
         self.slurm = { 'output': None }
         self.email = { 'output': None }
         self.submit = { 'output': None }
+        # main
+        self.tab = None
 
     def render(self):
         self.init()
@@ -37,13 +39,20 @@ class UI:
             display(self.slurm['output'])
             display(self.email['output'])
             display(self.submit['output'])
+        
+        # 2. job status
+        job_status = widgets.Output()
+        with job_status:
+            display(123)
 
         # assemble into tabs
-        tab = widgets.Tab(children=[
-            job_config
+        self.tab = widgets.Tab(children=[
+            job_config,
+            job_status
         ])
-        tab.set_title(0, 'Job Configuration')
-        display(tab)
+        self.tab.set_title(0, 'Job Configuration')
+        self.tab.set_title(1, 'Your Job Status')
+        display(self.tab)
 
     def renderCompoenets(self):
         self.renderJobTemplate()
@@ -158,11 +167,12 @@ class UI:
         with self.submit['output']:
             display(self.submit['button'])
 
-
     # events
     def onSubmitButtonClick(self):
         def on_click(change):
-            return
+            data = self.get_data()
+            self.compute.job = self.compute.create_job(hpc=data['computing_resource'], printJob=False)
+            self.compute.job.set(executableFolder='git://' + data['job_template'], printJob=False)
         return on_click
 
     def onJobDropdownChange(self):
@@ -202,3 +212,37 @@ class UI:
             cl[0] = cl[0].upper()
             ct = ''.join(cl)
             getattr(self, 'render' + ct)()
+
+    # data
+    def get_data(self):
+        return {
+                'job_template': self.jobTemplate['dropdown'].value,
+                'computing_resource': self.computingResource['dropdown'].value,
+                'slurm': {
+                    'partition': None if self.slurm['partition'] == None else self.slurm['partition'].value,
+                    'total_gpu': None if self.slurm['total_gpu'] == None else self.slurm['total_gpu'].value,
+                    'num_of_task': None if self.slurm['num_of_task'] == None else self.slurm['num_of_task'].value,
+                    'cpu_per_task': None if self.slurm['cpu_per_task'] == None else self.slurm['cpu_per_task'].value,
+                    'gpus_per_task': None if self.slurm['gpus_per_task'] == None else self.slurm['gpus_per_task'].value,
+                },
+                'email': self.email['text'].value if self.email['checkbox'] else None,
+                # 'globus': {
+                #     'custom_download': {
+                #         'globus_download_endpoint': globus_download_endpoint.value,
+                #         'globus_download_path': globus_download_path.value,
+                #         'is_globus_download': globus_download_cbox.value
+                #     },
+                #     'custom_upload': {
+                #         'globus_upload_endpoint': globus_upload_endpoint.value,
+                #         'globus_upload_path': globus_upload_path.value,
+                #         'is_globus_upload': globus_upload_cbox.value
+                #     },
+                #     'jupyter_download': {
+                #         'is_globus_download': globus_jupyter_download_cbox.value
+                #     },
+                #     'jupyter_upload': {
+                #         'globus_upload_path': globus_jupyter_upload_path.value,
+                #         'is_globus_upload': globus_jupyter_upload_cbox.value
+                #     }
+                # }
+            }
