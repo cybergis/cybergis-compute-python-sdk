@@ -12,10 +12,14 @@ class UI:
         self.jobName = None
         self.hpc = None
         self.hpcName = None
+        # state
+        self.submitted = False
         # components
         self.jobTemplate = { 'output': None }
         self.computingResource = { 'output': None }
         self.slurm = { 'output': None }
+        self.email = { 'output': None }
+        self.submit = { 'output': None }
 
     def render(self):
         self.init()
@@ -30,6 +34,9 @@ class UI:
             display(divider)
             display(self.jobTemplate['output'])
             display(self.computingResource['output'])
+            display(self.slurm['output'])
+            display(self.email['output'])
+            display(self.submit['output'])
 
         # assemble into tabs
         tab = widgets.Tab(children=[
@@ -41,6 +48,9 @@ class UI:
     def renderCompoenets(self):
         self.renderJobTemplate()
         self.renderComputingResource()
+        self.renderSlurm()
+        self.renderEmail()
+        self.renderSubmit()
 
     # components
     def renderJobTemplate(self):
@@ -65,6 +75,16 @@ class UI:
         self.computingResource['dropdown'].observe(self.onComputingResourceDropdownChange())
         with self.computingResource['output']:
             display(self.computingResource['accordion'])
+
+    def renderEmail(self):
+        if self.email['output'] == None:
+            self.email['output'] = widgets.Output()
+        # create components
+        self.email['checkbox'] = widgets.Checkbox(description='receive email on job status? ', value=False, style=self.style)
+        self.email['text'] = widgets.Text(value='example@illinois.edu', style=self.style)
+        self.email['hbox'] = widgets.HBox([self.email['checkbox'], self.email['text']])
+        with self.email['output']:
+            display(self.email['hbox'])
 
     def renderSlurm(self):
         if self.slurm['output'] == None:
@@ -126,7 +146,25 @@ class UI:
         with self.slurm['output']:
             display(self.slurm['accordion'])
 
+    def renderSubmit(self):
+        if self.submit['output'] == None:
+            self.submit['output'] = widgets.Output()
+        # create components
+        if self.submitted:
+            self.submit['button'] = widgets.Button(description="Job Submitted ✅", disabled=True)
+        else:
+            self.submit['button'] = widgets.Button(description="Submit Job")
+        self.submit['button'].on_click(self.onSubmitButtonClick())
+        with self.submit['output']:
+            display(self.submit['button'])
+
+
     # events
+    def onSubmitButtonClick(self):
+        def on_click(change):
+            return
+        return on_click
+
     def onJobDropdownChange(self):
         def on_change(change):
             if change['type'] == 'change':
