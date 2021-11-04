@@ -109,14 +109,14 @@ class Job:
         if printJob:
             self._print_job(job)
 
-    def events(self, liveOutput=True, basic=True, refreshRateInSeconds = 10):
-        if not liveOutput:
-            return self.status()['events']
+    def events(self, raw=False, basic=True, refreshRateInSeconds = 10):
+        if raw:
+            return self.status(raw=True)['events']
 
         isEnd = False
         while (not isEnd):
             self._clear()
-            out = self.status()['events']
+            out = self.status(raw=True)['events']
             headers = ['types', 'message', 'time']
             events = []
             for o in out:
@@ -143,15 +143,15 @@ class Job:
             if not isEnd:
                 time.sleep(refreshRateInSeconds)
 
-    def logs(self, liveOutput=True, refreshRateInSeconds = 15):
-        if not liveOutput:
-            return self.status()['logs']
+    def logs(self, raw=False, refreshRateInSeconds = 15):
+        if raw:
+            return self.status(raw=True)['logs']
 
         logs = []
         isEnd = False
         while (not isEnd):
             self._clear()
-            status = self.status()
+            status = self.status(raw=True)
             headers = ['message', 'time']
             logs = []
 
@@ -176,13 +176,17 @@ class Job:
             if not isEnd:
                 time.sleep(refreshRateInSeconds)
 
-    def status(self):
+    def status(self, raw=False):
         if self.id is None:
             raise Exception('missing job ID, submit/register job first')
 
-        return self.client.request('GET', '/job/' + self.id, {
+        job = self.client.request('GET', '/job/' + self.id, {
             'accessToken': self.JAT.getAccessToken()
         })
+
+        if raw:
+            return job
+        self._print_job(job)
 
     def get_statistic(self, raw=False):
         statistic = self.client.request('GET', '/statistic/job/' + self.id, { 

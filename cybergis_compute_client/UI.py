@@ -20,6 +20,7 @@ class UI:
         self.slurm = { 'output': None }
         self.email = { 'output': None }
         self.submit = { 'output': None }
+        self.result = { 'output': None }
         # main
         self.tab = None
 
@@ -167,12 +168,27 @@ class UI:
         with self.submit['output']:
             display(self.submit['button'])
 
+    def randerResult(self):
+        if self.result['output'] == None:
+            self.result['output'] = widgets.Output()
+        # create components
+        if self.submitted:
+            with self.result['output']:
+                display(self.compute.job.status())
+                display(self.compute.job.events())
+                display(self.compute.job.logs())
+        else:
+            with self.result['output']:
+                display('lol')
+
     # events
     def onSubmitButtonClick(self):
         def on_click(change):
             data = self.get_data()
             self.compute.job = self.compute.create_job(hpc=data['computing_resource'], printJob=False)
             self.compute.job.set(executableFolder='git://' + data['job_template'], printJob=False)
+            self.compute.job.submit()
+            self.tab.selected_index = 1
         return on_click
 
     def onJobDropdownChange(self):
