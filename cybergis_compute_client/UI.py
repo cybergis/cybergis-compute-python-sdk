@@ -85,6 +85,7 @@ class UI:
                 self.hpcName = self.computingResource['dropdown'].value
                 self.hpc = self.hpcs[self.hpcName]
                 self.rerender(['computingResource'])
+        return on_change
 
     # helpers
     def init(self):
@@ -103,4 +104,4 @@ class UI:
             cl[0] = cl[0].upper()
             ct = ''.join(cl)
             getattr(self, c)['output'].clear_output()
-            getattr(self, 'render' + ct)
+            getattr(self, 'render' + ct)()
