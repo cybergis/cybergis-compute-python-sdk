@@ -102,6 +102,8 @@ class UI:
         # create components
         self.slurm['description'] = widgets.Label(value='All configs are optional. Please refer to Slurm official documentation at https://slurm.schedmd.com/sbatch.html')
         # settings
+        self.slurm['partition'] = widgets.Text(value='partition')
+
         self.slurm['total_gpu'] = widgets.IntSlider(
             value=1,
             min=1,
