@@ -15,6 +15,7 @@ class UI:
         # components
         self.jobTemplate = { 'output': None }
         self.computingResource = { 'output': None }
+        self.slurm = { 'output': None }
 
     def render(self):
         self.init()
@@ -59,14 +60,71 @@ class UI:
         # create components
         self.computingResource['dropdown'] = widgets.Dropdown(options=[i for i in self.job['supported_hpc']], value=self.hpcName, description='🖥 Computing Recourse:', style=self.style)
         self.computingResource['description'] = widgets.Label(value=self.hpcName + ' Description: ' + self.hpc['description'])
-        self.computingResource['accordion'] = widgets.Accordion(children=( widgets.VBox(children=(self.computingResource['dropdown'], self.computingResource['description'])), ))
+        self.computingResource['accordion'] = widgets.Accordion(children=( widgets.VBox(children=(self.computingResource['dropdown'], self.computingResource['description'])), ), selected_index=None)
         self.computingResource['accordion'].set_title(0, 'Computing Resource')
         self.computingResource['dropdown'].observe(self.onComputingResourceDropdownChange())
         with self.computingResource['output']:
             display(self.computingResource['accordion'])
 
-    def createSlurm(self):
-        return
+    def renderSlurm(self):
+        if self.slurm['output'] == None:
+            self.slurm['output'] = widgets.Output()
+        # create components
+        self.slurm['description'] = widgets.Label(value='All configs are optional. Please refer to Slurm official documentation at https://slurm.schedmd.com/sbatch.html')
+        # settings
+        self.slurm['total_gpu'] = widgets.IntSlider(
+            value=1,
+            min=1,
+            max=20,
+            step=1,
+            disabled=False,
+            continuous_update=False,
+            orientation='horizontal',
+            readout=True,
+            readout_format='d'
+        )
+
+        self.slurm['num_of_task'] = widgets.IntSlider(
+            value=1,
+            min=1,
+            max=20,
+            step=1,
+            disabled=False,
+            continuous_update=False,
+            orientation='horizontal',
+            readout=True,
+            readout_format='d'
+        )
+
+        self.slurm['cpu_per_task'] = widgets.IntSlider(
+            value=1,
+            min=1,
+            max=20,
+            step=1,
+            disabled=False,
+            continuous_update=False,
+            orientation='horizontal',
+            readout=True,
+            readout_format='d'
+        )
+
+        self.slurm['gpus_per_task'] = widgets.IntSlider(
+            value=1,
+            min=1,
+            max=20,
+            step=1,
+            disabled=False,
+            continuous_update=False,
+            orientation='horizontal',
+            readout=True,
+            readout_format='d'
+        )
+
+        # settings end
+        self.slurm['accordion'] = widgets.Accordion(children=( widgets.VBox(children=(self.slurm['description'], self.slurm['total_gpu'])), ), selected_index=None)
+        self.slurm['accordion'].set_title(0, 'Slurm Computing Configurations')
+        with self.slurm['output']:
+            display(self.slurm['accordion'])
 
     # events
     def onJobDropdownChange(self):
@@ -76,7 +134,7 @@ class UI:
                 self.job = self.jobs[self.jobName]
                 self.hpcName = self.job['default_hpc']
                 self.hpc = self.hpcs[self.hpcName]
-                self.rerender(['jobTemplate', 'computingResource'])
+                self.rerender(['jobTemplate', 'computingResource', 'slurm'])
         return on_change
 
     def onComputingResourceDropdownChange(self):
@@ -84,7 +142,7 @@ class UI:
             if change['type'] == 'change':
                 self.hpcName = self.computingResource['dropdown'].value
                 self.hpc = self.hpcs[self.hpcName]
-                self.rerender(['computingResource'])
+                self.rerender(['computingResource', 'slurm'])
         return on_change
 
     # helpers
@@ -100,8 +158,9 @@ class UI:
 
     def rerender(self, components = []):
         for c in components:
+            getattr(self, c)['output'].clear_output()
+        for c in components:
             cl = list(c)
             cl[0] = cl[0].upper()
             ct = ''.join(cl)
-            getattr(self, c)['output'].clear_output()
             getattr(self, 'render' + ct)()
