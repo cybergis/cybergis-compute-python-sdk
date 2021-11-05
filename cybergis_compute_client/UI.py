@@ -1,5 +1,6 @@
 from IPython.display import display, Markdown
 import ipywidgets as widgets
+from ipyfilechooser import FileChooser
 
 class UI:
     def __init__(self, compute):
@@ -14,6 +15,7 @@ class UI:
         self.hpcName = None
         # state
         self.submitted = False
+        self.jobFinished = False
         # components
         self.jobTemplate = { 'output': None }
         self.computingResource = { 'output': None }
@@ -54,13 +56,11 @@ class UI:
             display(divider)
             display(Markdown('## 📋 job logs'))
             display(self.resultLogs['output'])
-            display(divider)
-            display(Markdown('## ✅ your job is finished'))
 
         # 3. download
         download = widgets.Output()
         with download:
-            display(Markdown('# Download Job Result'))
+            return
 
         # assemble into tabs
         self.tab = widgets.Tab(children=[
@@ -89,7 +89,7 @@ class UI:
             self.jobTemplate['output'] = widgets.Output()
         # create components
         self.jobTemplate['dropdown'] = widgets.Dropdown(options=[i for i in self.jobs], value=self.jobName, description='📦 Job Templates:', style=self.style)
-        self.jobTemplate['description'] = Markdown('**' + self.jobName + 'Description:** ' + self.job['description'])
+        self.jobTemplate['description'] = Markdown('**' + self.jobName + ' Description:** ' + self.job['description'])
         self.jobTemplate['estimated_runtime'] = Markdown('**Estimated Runtime:** ' + self.job['estimated_runtime'])
         self.jobTemplate['dropdown'].observe(self.onJobDropdownChange())
         with self.jobTemplate['output']:
@@ -123,7 +123,7 @@ class UI:
         # create components
         self.slurm['description'] = widgets.Label(value='All configs are optional. Please refer to Slurm official documentation at https://slurm.schedmd.com/sbatch.html')
         # settings
-        self.slurm['partition'] = widgets.Text(value='partition')
+        self.slurm['partition'] = widgets.Text(value='xxx', description='partition')
 
         self.slurm['gpus'] = widgets.IntSlider(
             value=1,
@@ -134,7 +134,8 @@ class UI:
             continuous_update=False,
             orientation='horizontal',
             readout=True,
-            readout_format='d'
+            readout_format='d',
+            description='gpus'
         )
 
         self.slurm['gpus_per_node'] = widgets.IntSlider(
@@ -146,7 +147,8 @@ class UI:
             continuous_update=False,
             orientation='horizontal',
             readout=True,
-            readout_format='d'
+            readout_format='d',
+            description='gpus_per_node'
         )
 
         self.slurm['gpus_per_task'] = widgets.IntSlider(
@@ -158,7 +160,8 @@ class UI:
             continuous_update=False,
             orientation='horizontal',
             readout=True,
-            readout_format='d'
+            readout_format='d',
+            description='gpus_per_task'
         )
 
         self.slurm['memory_in_mb'] = widgets.IntSlider(
@@ -170,7 +173,8 @@ class UI:
             continuous_update=False,
             orientation='horizontal',
             readout=True,
-            readout_format='d'
+            readout_format='d',
+            description='gpus_per_task'
         )
 
         self.slurm['memory_in_gb'] = widgets.IntSlider(
@@ -182,7 +186,8 @@ class UI:
             continuous_update=False,
             orientation='horizontal',
             readout=True,
-            readout_format='d'
+            readout_format='d',
+            description='memory_in_gb'
         )
 
         self.slurm['memory_per_cpu_in_mb'] = widgets.IntSlider(
@@ -194,7 +199,8 @@ class UI:
             continuous_update=False,
             orientation='horizontal',
             readout=True,
-            readout_format='d'
+            readout_format='d',
+            description='memory_per_cpu_in_mb'
         )
 
         self.slurm['memory_per_cpu_in_gb'] = widgets.IntSlider(
@@ -206,7 +212,8 @@ class UI:
             continuous_update=False,
             orientation='horizontal',
             readout=True,
-            readout_format='d'
+            readout_format='d',
+            description='memory_per_cpu_in_gb'
         )
 
         self.slurm['memory_per_gpu_in_mb'] = widgets.IntSlider(
@@ -218,7 +225,8 @@ class UI:
             continuous_update=False,
             orientation='horizontal',
             readout=True,
-            readout_format='d'
+            readout_format='d',
+            description='memory_per_gpu_in_mb'
         )
 
         self.slurm['memory_per_gpu_in_gb'] = widgets.IntSlider(
@@ -230,7 +238,8 @@ class UI:
             continuous_update=False,
             orientation='horizontal',
             readout=True,
-            readout_format='d'
+            readout_format='d',
+            description='memory_per_gpu_in_gb'
         )
 
         self.slurm['num_of_task'] = widgets.IntSlider(
@@ -242,7 +251,8 @@ class UI:
             continuous_update=False,
             orientation='horizontal',
             readout=True,
-            readout_format='d'
+            readout_format='d',
+            description='num_of_task'
         )
 
         self.slurm['cpu_per_task'] = widgets.IntSlider(
@@ -254,7 +264,8 @@ class UI:
             continuous_update=False,
             orientation='horizontal',
             readout=True,
-            readout_format='d'
+            readout_format='d',
+            description='cpu_per_task'
         )
 
         self.slurm['gpus_per_task'] = widgets.IntSlider(
@@ -266,7 +277,8 @@ class UI:
             continuous_update=False,
             orientation='horizontal',
             readout=True,
-            readout_format='d'
+            readout_format='d',
+            description='gpus_per_task'
         )
 
         self.slurm['gpus_per_node'] = widgets.IntSlider(
@@ -278,7 +290,8 @@ class UI:
             continuous_update=False,
             orientation='horizontal',
             readout=True,
-            readout_format='d'
+            readout_format='d',
+            description='gpus_per_node'
         )
 
         w = []
@@ -306,12 +319,35 @@ class UI:
             display(self.submit['button'])
 
 
+    def renderDownload(self):
+        if self.download['output'] == None:
+            self.download['output'] = widgets.Output()
+        # create components
+        self.download['selector'] = None
+        if self.jobFinished:
+            self.download['selector'] = FileChooser('./')
+            self.download['button'] = widgets.Button(description="👇 Download")
+        else:
+            self.download['button'] = widgets.Button(description="👇 Download", disabled=True)
+        self.download['button'].on_click(self.onDownloadButtonClick())
+        
+        with self.download['output']:
+            if self.jobFinished:
+                display(Markdown('# ☁️ Download Job Result'))
+                display('CyberGIS-Compute uses Globus to download ')
+                display(self.submit['selector'])
+            else:
+                display(Markdown('# ⏳ Waiting for Job to Finish...'))
+            display(self.submit['button'])
+
+
     def renderResultStatus(self):
         if self.resultStatus['output'] == None:
             self.resultStatus['output'] = widgets.Output()
         
         if not self.submitted:
             with self.resultStatus['output']:
+                display(Markdown('# 😴 No Job to Work On'))
                 display('you need to submit your job first')
             return
 
@@ -341,6 +377,9 @@ class UI:
             self.compute.job.logs()
             self.tab.set_title(1, '✅ Your Job Status')
             self.tab.set_title(2, '✅ Download Job Result')
+            display(Markdown('***'))
+            display(Markdown('## ✅ your job completed'))
+            self.jobFinished = True
         return
 
     # events
