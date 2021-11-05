@@ -288,6 +288,7 @@ class UI:
     def renderResult(self):
         if self.result['output'] == None:
             self.result['output'] = widgets.Output()
+
         # create components
         if 'output_status' not in self.result:
             self.result['output_status'] = widgets.Output()
@@ -297,15 +298,16 @@ class UI:
             self.result['output_logs'] = widgets.Output()
 
         if self.submitted:
+            divider = Markdown('***')
             with self.result['output_status']:
-                display('✅ job submitted with ID: ' + self.compute.job.id)
+                display(widgets.Label(value='✅ job submitted with ID: ' + self.compute.job.id))
                 display(self.compute.job.status())
             with self.result['output_events']:
                 display(self.compute.job.events())
             with self.result['output_logs']:
                 display(self.compute.job.logs())
             with self.result['output']:
-                display(self.result['output_status'], self.result['output_events'], self.result['output_logs'])
+                display(self.result['output_status'], divider, self.result['output_events'], divider, self.result['output_logs'])
         else:
             with self.result['output']:
                 display('you need to submit your job first')
