@@ -298,6 +298,7 @@ class UI:
 
         if self.submitted:
             with self.result['output_status']:
+                display('✅ job submitted with ID: ' + self.compute.job.id)
                 display(self.compute.job.status())
             with self.result['output_events']:
                 display(self.compute.job.events())
