@@ -20,7 +20,9 @@ class UI:
         self.slurm = { 'output': None }
         self.email = { 'output': None }
         self.submit = { 'output': None }
-        self.result = { 'output': None }
+        self.resultStatus = { 'output': None }
+        self.resultEvents = { 'output': None }
+        self.resultLogs = { 'output': None }
         # main
         self.tab = None
 
@@ -44,7 +46,9 @@ class UI:
         # 2. job status
         job_status = widgets.Output()
         with job_status:
-            display(self.result['output'])
+            display(self.resultStatus['output'])
+            display(self.resultEvents['output'])
+            display(self.resultLogs['output'])
 
         # assemble into tabs
         self.tab = widgets.Tab(children=[
@@ -61,7 +65,9 @@ class UI:
         self.renderSlurm()
         self.renderEmail()
         self.renderSubmit()
-        self.renderResult()
+        self.renderResultStatus()
+        self.renderResultEvents()
+        self.renderResultLogs()
 
     # components
     def renderJobTemplate(self):
@@ -285,36 +291,42 @@ class UI:
         with self.submit['output']:
             display(self.submit['button'])
 
-    def renderResult(self):
-        if self.result['output'] == None:
-            self.result['output'] = widgets.Output()
 
-        # create components
-        if 'output_status' not in self.result:
-            self.result['output_status'] = widgets.Output()
-        if 'output_events' not in self.result:
-            self.result['output_events'] = widgets.Output()
-        if 'output_logs' not in self.result:
-            self.result['output_logs'] = widgets.Output()
-
-        if self.submitted:
-            divider = Markdown('***')
-            with self.result['output_status']:
-                display(widgets.Label(value='✅ job submitted with ID: ' + self.compute.job.id))
-                display(self.compute.job.status())
-            with self.result['output_events']:
-                display(self.compute.job.events())
-            with self.result['output_logs']:
-                display(self.compute.job.logs())
-            with self.result['output']:
-                display(self.result['output_status'])
-                display(divider) 
-                display(self.result['output_events']) 
-                display(divider) 
-                display(self.result['output_logs'])
-        else:
-            with self.result['output']:
+    def renderResultStatus(self):
+        if self.resultStatus['output'] == None:
+            self.resultStatus['output'] = widgets.Output()
+        
+        if not self.submitted:
+            with self.resultStatus['output']:
                 display('you need to submit your job first')
+            return
+
+        with self.resultStatus['output']:
+            display(widgets.Label(value='✅ job submitted with ID: ' + self.compute.job.id))
+            display(self.compute.job.status())
+        return
+
+    def renderResultEvents(self):
+        if self.resultEvents['output'] == None:
+            self.resultEvents['output'] = widgets.Output()
+        
+        if not self.submitted:
+            return
+
+        with self.resultEvents['output']:
+            display(self.compute.job.events())
+        return
+
+    def renderResultLogs(self):
+        if self.resultLogs['output'] == None:
+            self.resultLogs['output'] = widgets.Output()
+        
+        if not self.submitted:
+            return
+
+        with self.resultLogs['output']:
+            display(self.compute.job.logs())
+        return
 
     # events
     def onSubmitButtonClick(self):
@@ -327,7 +339,7 @@ class UI:
             self.compute.job.submit()
             self.tab.selected_index = 1
             self.submitted = True
-            self.rerender(['result', 'submit'])
+            self.rerender(['resultStatus', 'resultEvents', 'resultLogs', 'submit'])
         return on_click
 
     def onJobDropdownChange(self):
