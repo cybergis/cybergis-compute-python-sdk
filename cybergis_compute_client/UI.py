@@ -307,7 +307,11 @@ class UI:
             with self.result['output_logs']:
                 display(self.compute.job.logs())
             with self.result['output']:
-                display(self.result['output_status'], divider, self.result['output_events'], divider, self.result['output_logs'])
+                display(self.result['output_status'])
+                display(divider) 
+                display(self.result['output_events']) 
+                display(divider) 
+                display(self.result['output_logs'])
         else:
             with self.result['output']:
                 display('you need to submit your job first')
