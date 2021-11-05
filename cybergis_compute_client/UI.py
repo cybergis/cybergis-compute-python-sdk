@@ -385,6 +385,11 @@ class UI:
         return
 
     # events
+    def onDownloadButtonClick(self):
+        def on_click(change):
+            return
+        return on_click
+
     def onSubmitButtonClick(self):
         def on_click(change):
             if self.submitted:
