@@ -175,18 +175,30 @@ class UI:
         if self.result['output'] == None:
             self.result['output'] = widgets.Output()
         # create components
+        if 'output_status' not in self.result:
+            self.result['output_status'] = widgets.Output()
+        if 'output_events' not in self.result:
+            self.result['output_events'] = widgets.Output()
+        if 'output_logs' not in self.result:
+            self.result['output_logs'] = widgets.Output()
+
         if self.submitted:
             with self.result['output']:
-                display(self.compute.job.status())
-                display(self.compute.job.events())
-                display(self.compute.job.logs())
+                with self.result['output_status']:
+                    display(self.compute.job.status())
+                with self.result['output_events']:
+                    display(self.compute.job.events())
+                with self.result['output_logs']:
+                    display(self.compute.job.logs())
         else:
             with self.result['output']:
-                display('you job is not submitted')
+                display('you need to submit your job first')
 
     # events
     def onSubmitButtonClick(self):
         def on_click(change):
+            if self.submitted:
+                return
             data = self.get_data()
             self.compute.job = self.compute.create_job(hpc=data['computing_resource'], printJob=False)
             self.compute.job.set(executableFolder='git://' + data['job_template'], printJob=False)
@@ -199,6 +211,8 @@ class UI:
     def onJobDropdownChange(self):
         def on_change(change):
             if change['type'] == 'change':
+                if self.submitted:
+                    return
                 self.jobName = self.jobTemplate['dropdown'].value
                 self.job = self.jobs[self.jobName]
                 self.hpcName = self.job['default_hpc']
@@ -209,6 +223,8 @@ class UI:
     def onComputingResourceDropdownChange(self):
         def on_change(change):
             if change['type'] == 'change':
+                if self.submitted:
+                    return
                 self.hpcName = self.computingResource['dropdown'].value
                 self.hpc = self.hpcs[self.hpcName]
                 self.rerender(['computingResource', 'slurm'])
