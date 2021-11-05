@@ -44,7 +44,7 @@ class UI:
         # 2. job status
         job_status = widgets.Output()
         with job_status:
-            display(123)
+            display(self.result['output'])
 
         # assemble into tabs
         self.tab = widgets.Tab(children=[
@@ -61,6 +61,7 @@ class UI:
         self.renderSlurm()
         self.renderEmail()
         self.renderSubmit()
+        self.renderResult()
 
     # components
     def renderJobTemplate(self):
@@ -170,7 +171,7 @@ class UI:
         with self.submit['output']:
             display(self.submit['button'])
 
-    def randerResult(self):
+    def renderResult(self):
         if self.result['output'] == None:
             self.result['output'] = widgets.Output()
         # create components
@@ -181,7 +182,7 @@ class UI:
                 display(self.compute.job.logs())
         else:
             with self.result['output']:
-                display('lol')
+                display('you job is not submitted')
 
     # events
     def onSubmitButtonClick(self):
@@ -191,6 +192,7 @@ class UI:
             self.compute.job.set(executableFolder='git://' + data['job_template'], printJob=False)
             self.compute.job.submit()
             self.tab.selected_index = 1
+            self.rerender(['result'])
         return on_click
 
     def onJobDropdownChange(self):
