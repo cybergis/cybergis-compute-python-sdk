@@ -382,6 +382,7 @@ class UI:
             display(Markdown('***'))
             display(Markdown('## ✅ your job completed'))
             self.jobFinished = True
+            self.rerender(['download'])
         return
 
     # events
