@@ -6,6 +6,7 @@ class UI:
     def __init__(self, compute):
         self.compute = compute
         self.style = {'description_width': 'auto'}
+        self.layout = widgets.Layout(width='60%')
         self.jobs = None
         self.hpcs = None
         # selection
@@ -125,7 +126,7 @@ class UI:
         # create components
         self.slurm['description'] = widgets.Label(value='All configs are optional. Please refer to Slurm official documentation at https://slurm.schedmd.com/sbatch.html')
         # settings
-        self.slurm['partition'] = widgets.Text(value='xxx', description='partition')
+        self.slurm['partition'] = widgets.Text(value='xxx', description='partition', style=self.style)
 
         self.slurm['gpus'] = widgets.IntSlider(
             value=1,
@@ -138,7 +139,7 @@ class UI:
             readout=True,
             readout_format='d',
             description='gpus',
-            style=self.style
+            style=self.style, layout=self.layout
         )
 
         self.slurm['gpus_per_node'] = widgets.IntSlider(
@@ -152,7 +153,7 @@ class UI:
             readout=True,
             readout_format='d',
             description='gpus_per_node',
-            style=self.style
+            style=self.style, layout=self.layout
         )
 
         self.slurm['gpus_per_task'] = widgets.IntSlider(
@@ -166,7 +167,7 @@ class UI:
             readout=True,
             readout_format='d',
             description='gpus_per_task',
-            style=self.style
+            style=self.style, layout=self.layout
         )
 
         self.slurm['memory_in_mb'] = widgets.IntSlider(
@@ -180,7 +181,7 @@ class UI:
             readout=True,
             readout_format='d',
             description='gpus_per_task',
-            style=self.style
+            style=self.style, layout=self.layout
         )
 
         self.slurm['memory_in_gb'] = widgets.IntSlider(
@@ -194,7 +195,7 @@ class UI:
             readout=True,
             readout_format='d',
             description='memory_in_gb',
-            style=self.style
+            style=self.style, layout=self.layout
         )
 
         self.slurm['memory_per_cpu_in_mb'] = widgets.IntSlider(
@@ -208,7 +209,7 @@ class UI:
             readout=True,
             readout_format='d',
             description='memory_per_cpu_in_mb',
-            style=self.style
+            style=self.style, layout=self.layout
         )
 
         self.slurm['memory_per_cpu_in_gb'] = widgets.IntSlider(
@@ -222,7 +223,7 @@ class UI:
             readout=True,
             readout_format='d',
             description='memory_per_cpu_in_gb',
-            style=self.style
+            style=self.style, layout=self.layout
         )
 
         self.slurm['memory_per_gpu_in_mb'] = widgets.IntSlider(
@@ -236,7 +237,7 @@ class UI:
             readout=True,
             readout_format='d',
             description='memory_per_gpu_in_mb',
-            style=self.style
+            style=self.style, layout=self.layout
         )
 
         self.slurm['memory_per_gpu_in_gb'] = widgets.IntSlider(
@@ -250,7 +251,7 @@ class UI:
             readout=True,
             readout_format='d',
             description='memory_per_gpu_in_gb',
-            style=self.style
+            style=self.style, layout=self.layout
         )
 
         self.slurm['num_of_task'] = widgets.IntSlider(
@@ -264,7 +265,7 @@ class UI:
             readout=True,
             readout_format='d',
             description='num_of_task',
-            style=self.style
+            style=self.style, layout=self.layout
         )
 
         self.slurm['cpu_per_task'] = widgets.IntSlider(
@@ -278,7 +279,7 @@ class UI:
             readout=True,
             readout_format='d',
             description='cpu_per_task',
-            style=self.style
+            style=self.style, layout=self.layout
         )
 
         self.slurm['gpus_per_task'] = widgets.IntSlider(
@@ -292,7 +293,7 @@ class UI:
             readout=True,
             readout_format='d',
             description='gpus_per_task',
-            style=self.style
+            style=self.style, layout=self.layout
         )
 
         self.slurm['gpus_per_node'] = widgets.IntSlider(
@@ -306,7 +307,7 @@ class UI:
             readout=True,
             readout_format='d',
             description='gpus_per_node',
-            style=self.style
+            style=self.style, layout=self.layout
         )
 
         w = []
