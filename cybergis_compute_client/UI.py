@@ -46,9 +46,19 @@ class UI:
         # 2. job status
         job_status = widgets.Output()
         with job_status:
+            display(Markdown('# ✅ Your Job is Here!'))
             display(self.resultStatus['output'])
+            display(divider)
+            display(Markdown('## 📋 job events (live refresh)'))
             display(self.resultEvents['output'])
+            display(divider)
+            display(Markdown('## 📋 job logs'))
             display(self.resultLogs['output'])
+
+        # 3. download
+        download = widgets.Output()
+        with download:
+            display(Markdown('# Download Job Result'))
 
         # assemble into tabs
         self.tab = widgets.Tab(children=[
@@ -57,6 +67,7 @@ class UI:
         ])
         self.tab.set_title(0, 'Job Configuration')
         self.tab.set_title(1, 'Your Job Status')
+        self.tab.set_title(2, 'Download Job Result')
         display(self.tab)
 
     def renderCompoenets(self):
@@ -271,10 +282,10 @@ class UI:
         for i in ['partition', 'gpus', 'gpus_per_node', 'gpus_per_task', 'memory_in_mb', 'memory_in_gb', 'memory_per_cpu_in_mb', 'memory_per_cpu_in_gb', 'memory_per_gpu_in_mb', 'memory_per_gpu_in_gb', 'num_of_task', 'cpu_per_task', 'gpus_per_task', 'gpus_per_node']:
             if self.slurm[i] != None:
                 w.append(self.slurm[i])
-        self.slurm['hbox'] = widgets.HBox(w)
+        self.slurm['vbox'] = widgets.VBox(w)
 
         # settings end
-        self.slurm['accordion'] = widgets.Accordion(children=( widgets.VBox(children=(self.slurm['description'], self.slurm['hbox'])), ), selected_index=None)
+        self.slurm['accordion'] = widgets.Accordion(children=( widgets.VBox(children=(self.slurm['description'], self.slurm['vbox'])), ), selected_index=None)
         self.slurm['accordion'].set_title(0, 'Slurm Computing Configurations')
         with self.slurm['output']:
             display(self.slurm['accordion'])
@@ -302,8 +313,7 @@ class UI:
             return
 
         with self.resultStatus['output']:
-            display(widgets.Label(value='✅ job submitted with ID: ' + self.compute.job.id))
-            display(self.compute.job.status())
+            self.compute.job.status()
         return
 
     def renderResultEvents(self):
@@ -314,7 +324,7 @@ class UI:
             return
 
         with self.resultEvents['output']:
-            display(self.compute.job.events())
+            self.compute.job.events()
         return
 
     def renderResultLogs(self):
@@ -325,7 +335,8 @@ class UI:
             return
 
         with self.resultLogs['output']:
-            display(self.compute.job.logs())
+            self.compute.job.logs()
+            self.tab.set_title(2, '✅ Download Job Result')
         return
 
     # events
@@ -340,6 +351,7 @@ class UI:
             self.tab.selected_index = 1
             self.submitted = True
             self.rerender(['resultStatus', 'resultEvents', 'resultLogs', 'submit'])
+            self.tab.set_title(1, '✅ Your Job Status')
         return on_click
 
     def onJobDropdownChange(self):
