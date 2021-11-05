@@ -412,6 +412,12 @@ class UI:
                 return
             data = self.get_data()
             self.compute.job = self.compute.create_job(hpc=data['computing_resource'], printJob=False)
+            # slurm
+            slurm = {}
+            if data['email'] != None:
+                slurm['mail_user'] = [data['email']]
+                slurm['mail_type'] = ['FAIL', 'END', 'BEGIN']
+            # submit
             self.compute.job.set(executableFolder='git://' + data['job_template'], printJob=False)
             self.compute.job.submit()
             self.tab.selected_index = 1
