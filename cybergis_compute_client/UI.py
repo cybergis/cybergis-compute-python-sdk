@@ -25,6 +25,7 @@ class UI:
         self.resultStatus = { 'output': None }
         self.resultEvents = { 'output': None }
         self.resultLogs = { 'output': None }
+        self.download = { 'output': None }
         # main
         self.tab = None
 
@@ -60,7 +61,7 @@ class UI:
         # 3. download
         download = widgets.Output()
         with download:
-            return
+            display(self.download['output'])
 
         # assemble into tabs
         self.tab = widgets.Tab(children=[
@@ -82,6 +83,7 @@ class UI:
         self.renderResultStatus()
         self.renderResultEvents()
         self.renderResultLogs()
+        self.renderDownload()
 
     # components
     def renderJobTemplate(self):
