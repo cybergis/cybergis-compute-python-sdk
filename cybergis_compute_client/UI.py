@@ -105,7 +105,103 @@ class UI:
         # settings
         self.slurm['partition'] = widgets.Text(value='partition')
 
-        self.slurm['total_gpu'] = widgets.IntSlider(
+        self.slurm['gpus'] = widgets.IntSlider(
+            value=1,
+            min=1,
+            max=20,
+            step=1,
+            disabled=False,
+            continuous_update=False,
+            orientation='horizontal',
+            readout=True,
+            readout_format='d'
+        )
+
+        self.slurm['gpus_per_node'] = widgets.IntSlider(
+            value=1,
+            min=1,
+            max=20,
+            step=1,
+            disabled=False,
+            continuous_update=False,
+            orientation='horizontal',
+            readout=True,
+            readout_format='d'
+        )
+
+        self.slurm['gpus_per_task'] = widgets.IntSlider(
+            value=1,
+            min=1,
+            max=20,
+            step=1,
+            disabled=False,
+            continuous_update=False,
+            orientation='horizontal',
+            readout=True,
+            readout_format='d'
+        )
+
+        self.slurm['memory_in_mb'] = widgets.IntSlider(
+            value=1,
+            min=1,
+            max=20,
+            step=1,
+            disabled=False,
+            continuous_update=False,
+            orientation='horizontal',
+            readout=True,
+            readout_format='d'
+        )
+
+        self.slurm['memory_in_gb'] = widgets.IntSlider(
+            value=1,
+            min=1,
+            max=20,
+            step=1,
+            disabled=False,
+            continuous_update=False,
+            orientation='horizontal',
+            readout=True,
+            readout_format='d'
+        )
+
+        self.slurm['memory_per_cpu_in_mb'] = widgets.IntSlider(
+            value=1,
+            min=1,
+            max=20,
+            step=1,
+            disabled=False,
+            continuous_update=False,
+            orientation='horizontal',
+            readout=True,
+            readout_format='d'
+        )
+
+        self.slurm['memory_per_cpu_in_gb'] = widgets.IntSlider(
+            value=1,
+            min=1,
+            max=20,
+            step=1,
+            disabled=False,
+            continuous_update=False,
+            orientation='horizontal',
+            readout=True,
+            readout_format='d'
+        )
+
+        self.slurm['memory_per_gpu_in_mb'] = widgets.IntSlider(
+            value=1,
+            min=1,
+            max=20,
+            step=1,
+            disabled=False,
+            continuous_update=False,
+            orientation='horizontal',
+            readout=True,
+            readout_format='d'
+        )
+
+        self.slurm['memory_per_gpu_in_gb'] = widgets.IntSlider(
             value=1,
             min=1,
             max=20,
@@ -153,8 +249,26 @@ class UI:
             readout_format='d'
         )
 
+        self.slurm['gpus_per_node'] = widgets.IntSlider(
+            value=1,
+            min=1,
+            max=20,
+            step=1,
+            disabled=False,
+            continuous_update=False,
+            orientation='horizontal',
+            readout=True,
+            readout_format='d'
+        )
+
+        w = []
+        for i in ['partition', 'gpus', 'gpus_per_node', 'gpus_per_task', 'memory_in_mb', 'memory_in_gb', 'memory_per_cpu_in_mb', 'memory_per_cpu_in_gb', 'memory_per_gpu_in_mb', 'memory_per_gpu_in_gb', 'num_of_task', 'cpu_per_task', 'gpus_per_task', 'gpus_per_node']:
+            if self.slurm[i] != None:
+                w.append(self.slurm[i])
+        self.slurm['hbox'] = widgets.HBox(w)
+
         # settings end
-        self.slurm['accordion'] = widgets.Accordion(children=( widgets.VBox(children=(self.slurm['description'], self.slurm['total_gpu'])), ), selected_index=None)
+        self.slurm['accordion'] = widgets.Accordion(children=( widgets.VBox(children=(self.slurm['description'], self.slurm['hbox'])), ), selected_index=None)
         self.slurm['accordion'].set_title(0, 'Slurm Computing Configurations')
         with self.slurm['output']:
             display(self.slurm['accordion'])
@@ -183,13 +297,14 @@ class UI:
             self.result['output_logs'] = widgets.Output()
 
         if self.submitted:
+            with self.result['output_status']:
+                display(self.compute.job.status())
+            with self.result['output_events']:
+                display(self.compute.job.events())
+            with self.result['output_logs']:
+                display(self.compute.job.logs())
             with self.result['output']:
-                with self.result['output_status']:
-                    display(self.compute.job.status())
-                with self.result['output_events']:
-                    display(self.compute.job.events())
-                with self.result['output_logs']:
-                    display(self.compute.job.logs())
+                display(self.result['output_status'], self.result['output_events'], self.result['output_logs'])
         else:
             with self.result['output']:
                 display('you need to submit your job first')
