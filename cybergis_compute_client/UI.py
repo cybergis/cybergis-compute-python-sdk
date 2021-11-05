@@ -192,7 +192,8 @@ class UI:
             self.compute.job.set(executableFolder='git://' + data['job_template'], printJob=False)
             self.compute.job.submit()
             self.tab.selected_index = 1
-            self.rerender(['result'])
+            self.submitted = True
+            self.rerender(['result', 'submit'])
         return on_click
 
     def onJobDropdownChange(self):
