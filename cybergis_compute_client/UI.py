@@ -137,7 +137,8 @@ class UI:
             orientation='horizontal',
             readout=True,
             readout_format='d',
-            description='gpus'
+            description='gpus',
+            style=self.style
         )
 
         self.slurm['gpus_per_node'] = widgets.IntSlider(
@@ -150,7 +151,8 @@ class UI:
             orientation='horizontal',
             readout=True,
             readout_format='d',
-            description='gpus_per_node'
+            description='gpus_per_node',
+            style=self.style
         )
 
         self.slurm['gpus_per_task'] = widgets.IntSlider(
@@ -163,7 +165,8 @@ class UI:
             orientation='horizontal',
             readout=True,
             readout_format='d',
-            description='gpus_per_task'
+            description='gpus_per_task',
+            style=self.style
         )
 
         self.slurm['memory_in_mb'] = widgets.IntSlider(
@@ -176,7 +179,8 @@ class UI:
             orientation='horizontal',
             readout=True,
             readout_format='d',
-            description='gpus_per_task'
+            description='gpus_per_task',
+            style=self.style
         )
 
         self.slurm['memory_in_gb'] = widgets.IntSlider(
@@ -189,7 +193,8 @@ class UI:
             orientation='horizontal',
             readout=True,
             readout_format='d',
-            description='memory_in_gb'
+            description='memory_in_gb',
+            style=self.style
         )
 
         self.slurm['memory_per_cpu_in_mb'] = widgets.IntSlider(
@@ -202,7 +207,8 @@ class UI:
             orientation='horizontal',
             readout=True,
             readout_format='d',
-            description='memory_per_cpu_in_mb'
+            description='memory_per_cpu_in_mb',
+            style=self.style
         )
 
         self.slurm['memory_per_cpu_in_gb'] = widgets.IntSlider(
@@ -215,7 +221,8 @@ class UI:
             orientation='horizontal',
             readout=True,
             readout_format='d',
-            description='memory_per_cpu_in_gb'
+            description='memory_per_cpu_in_gb',
+            style=self.style
         )
 
         self.slurm['memory_per_gpu_in_mb'] = widgets.IntSlider(
@@ -228,7 +235,8 @@ class UI:
             orientation='horizontal',
             readout=True,
             readout_format='d',
-            description='memory_per_gpu_in_mb'
+            description='memory_per_gpu_in_mb',
+            style=self.style
         )
 
         self.slurm['memory_per_gpu_in_gb'] = widgets.IntSlider(
@@ -241,7 +249,8 @@ class UI:
             orientation='horizontal',
             readout=True,
             readout_format='d',
-            description='memory_per_gpu_in_gb'
+            description='memory_per_gpu_in_gb',
+            style=self.style
         )
 
         self.slurm['num_of_task'] = widgets.IntSlider(
@@ -254,7 +263,8 @@ class UI:
             orientation='horizontal',
             readout=True,
             readout_format='d',
-            description='num_of_task'
+            description='num_of_task',
+            style=self.style
         )
 
         self.slurm['cpu_per_task'] = widgets.IntSlider(
@@ -267,7 +277,8 @@ class UI:
             orientation='horizontal',
             readout=True,
             readout_format='d',
-            description='cpu_per_task'
+            description='cpu_per_task',
+            style=self.style
         )
 
         self.slurm['gpus_per_task'] = widgets.IntSlider(
@@ -280,7 +291,8 @@ class UI:
             orientation='horizontal',
             readout=True,
             readout_format='d',
-            description='gpus_per_task'
+            description='gpus_per_task',
+            style=self.style
         )
 
         self.slurm['gpus_per_node'] = widgets.IntSlider(
@@ -293,7 +305,8 @@ class UI:
             orientation='horizontal',
             readout=True,
             readout_format='d',
-            description='gpus_per_node'
+            description='gpus_per_node',
+            style=self.style
         )
 
         w = []
@@ -336,11 +349,10 @@ class UI:
         with self.download['output']:
             if self.jobFinished:
                 display(Markdown('# ☁️ Download Job Result'))
-                display('CyberGIS-Compute uses Globus to download ')
-                display(self.submit['selector'])
+                display(self.download['selector'])
             else:
                 display(Markdown('# ⏳ Waiting for Job to Finish...'))
-            display(self.submit['button'])
+            display(self.download['button'])
 
 
     def renderResultStatus(self):
