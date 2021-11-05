@@ -341,6 +341,8 @@ class UI:
         self.download['selector'] = None
         if self.jobFinished:
             self.download['selector'] = FileChooser('./')
+            self.download['selector'].show_only_dirs = True
+            self.download['selector'].title = 'Please Select a Folder'
             self.download['button'] = widgets.Button(description="👇 Download")
         else:
             self.download['button'] = widgets.Button(description="👇 Download", disabled=True)
