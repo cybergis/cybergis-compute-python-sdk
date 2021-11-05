@@ -46,7 +46,7 @@ class UI:
         # 2. job status
         job_status = widgets.Output()
         with job_status:
-            display(Markdown('# ✅ Your Job is Here!'))
+            display(Markdown('# ✌️ Your Job is Here!'))
             display(self.resultStatus['output'])
             display(divider)
             display(Markdown('## 📋 job events (live refresh)'))
@@ -54,6 +54,8 @@ class UI:
             display(divider)
             display(Markdown('## 📋 job logs'))
             display(self.resultLogs['output'])
+            display(divider)
+            display(Markdown('## ✅ your job is finished'))
 
         # 3. download
         download = widgets.Output()
@@ -63,7 +65,8 @@ class UI:
         # assemble into tabs
         self.tab = widgets.Tab(children=[
             job_config,
-            job_status
+            job_status,
+            download
         ])
         self.tab.set_title(0, 'Job Configuration')
         self.tab.set_title(1, 'Your Job Status')
@@ -336,6 +339,7 @@ class UI:
 
         with self.resultLogs['output']:
             self.compute.job.logs()
+            self.tab.set_title(1, '✅ Your Job Status')
             self.tab.set_title(2, '✅ Download Job Result')
         return
 
@@ -350,8 +354,8 @@ class UI:
             self.compute.job.submit()
             self.tab.selected_index = 1
             self.submitted = True
+            self.tab.set_title(1, '⏳ Your Job Status')
             self.rerender(['resultStatus', 'resultEvents', 'resultLogs', 'submit'])
-            self.tab.set_title(1, '✅ Your Job Status')
         return on_click
 
     def onJobDropdownChange(self):
