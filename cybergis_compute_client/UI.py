@@ -308,21 +308,16 @@ class UI:
                 with self.download['alert_output']:
                     clear_output(wait=True)
                     display(Markdown('⚠️ download process is running in background...'))
-                    time.sleep(5)
-                    clear_output(wait=True)
                     return
 
-            self.downloading = True
             with self.download['result_output']:
                 dir = self.download['selector'].selected
                 if dir == None:
                     with self.download['alert_output']:
                         clear_output(wait=True)
                         display(Markdown('⚠️ please select a folder before download...'))
-                        time.sleep(5)
-                        clear_output(wait=True)
                         return
-                print(dir)
+                self.downloading = True
                 self.compute.job.download_result_folder(dir=dir)
                 self.downloading = False
         return on_click
