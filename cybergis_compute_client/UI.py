@@ -260,11 +260,7 @@ class UI:
         if self.download['result_output'] == None:
             self.download['result_output'] = widgets.Output()
         # create components
-        self.download['selector'] = None
         if self.jobFinished:
-            self.download['selector'] = FileChooser('./')
-            self.download['selector'].show_only_dirs = True
-            self.download['selector'].title = 'Please Select a Folder'
             self.download['button'] = widgets.Button(description="Download")
             self.download['button'].on_click(self.onDownloadButtonClick())
         else:
@@ -273,7 +269,6 @@ class UI:
         with self.download['output']:
             if self.jobFinished:
                 display(Markdown('# ☁️ Download Job Output Files'))
-                display(self.download['selector'])
                 display(self.download['alert_output'])
                 display(self.download['result_output'])
             else:
@@ -327,27 +322,21 @@ class UI:
     def onDownloadButtonClick(self):
         def on_click(change):
             if self.downloading:
+                self.download['alert_output'].clear_output(wait=True)
                 with self.download['alert_output']:
-                    clear_output(wait=True)
                     display(Markdown('⚠️ download process is running in background...'))
                     return
 
             with self.download['result_output']:
-                dir = self.download['selector'].selected
-                if dir == None:
-                    with self.download['alert_output']:
-                        clear_output(wait=True)
-                        display(Markdown('⚠️ please select a folder before download...'))
-                        return
-                with self.download['alert_output']:
-                    clear_output(wait=True)
+                self.download['alert_output'].clear_output(wait=True)
                 self.downloading = True
                 display(Markdown('initializing download...'))
                 jupyter_globus = self.compute.get_user_jupyter_globus()
-                filepath = 'globus_download_' + self.compute.job.id
-                self.compute.job.set(resultFolder='globus://' + jupyter_globus['endpoint'] + ':' + os.path.join(jupyter_globus['root_path'], filepath), printJob=False)
+                filename = 'globus_download_' + self.compute.job.id
+                self.compute.job.set(resultFolder='globus://' + jupyter_globus['endpoint'] + ':' + os.path.join(jupyter_globus['root_path'], filename), printJob=False)
                 clear_output(wait=True)
-                self.compute.job.download_result_folder(dir=dir)
+                self.compute.job.download_result_folder()
+                print('please check your data at your root folder under "' + filename + '"')
                 self.downloading = False
         return on_click
 
@@ -368,6 +357,7 @@ class UI:
                         return
                 else:
                     jupyter_globus = self.compute.get_user_jupyter_globus()
+                    dataFolder = dataFolder.replace(jupyter_globus['container_home_path'].strip('/'), '')
                     dataFolder='globus://' + jupyter_globus['endpoint'] + ':' + os.path.join(jupyter_globus['root_path'], dataFolder.strip('/'))
 
             data = self.get_data()

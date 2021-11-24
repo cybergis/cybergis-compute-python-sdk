@@ -235,9 +235,9 @@ class Job:
             # exit loop
             self._clear()
             if status == 'SUCCEEDED':
-                print('✅ download succeeded! Please check your selected file path.')
+                print('✅ download success!')
             else:
-                print('❌ download failed!')
+                print('❌ download fail!')
 
         if (fileType == 'local'):
             dir = os.path.join(dir, fileId)
