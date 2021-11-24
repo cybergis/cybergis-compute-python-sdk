@@ -235,7 +235,7 @@ class Job:
             # exit loop
             self._clear()
             if status == 'SUCCEEDED':
-                print('✅ download succeeded!')
+                print('✅ download succeeded! Please check your selected file path.')
             else:
                 print('❌ download failed!')
 
