@@ -1,4 +1,5 @@
 import time
+import math
 import ipywidgets as widgets
 from ipyfilechooser import FileChooser
 from IPython.display import Markdown, display, clear_output
@@ -25,10 +26,19 @@ class UI:
         self.slurm = { 'output': None }
         self.email = { 'output': None }
         self.submit = { 'output': None }
+        self.param = { 'output': None }
         self.resultStatus = { 'output': None }
         self.resultEvents = { 'output': None }
         self.resultLogs = { 'output': None }
         self.download = { 'output': None, 'alert_output': None, 'result_output': None }
+        # slurm configs
+        self.slurm_configs = ['num_of_node', 'num_of_task', 'time', 'cpu_per_task', 'memory_per_cpu', 'memory_per_gpu', 'memory', 'gpus', 'gpus_per_node', 'gpus_per_socket', 'gpus_per_task', 'partition']
+        self.slurm_integer_configs = ['num_of_node', 'num_of_task', 'time', 'cpu_per_task', 'memory_per_cpu', 'memory_per_gpu', 'memory', 'gpus', 'gpus_per_node', 'gpus_per_socket', 'gpus_per_task']
+        self.slurm_integer_storage_unit_config = ['memory_per_cpu', 'memory_per_gpu', 'memory']
+        self.slurm_integer_time_unit_config = ['time']
+        self.slurm_integer_none_unit_config = ['cpu_per_task', 'num_of_node', 'num_of_task', 'gpus', 'gpus_per_node', 'gpus_per_socket', 'gpus_per_task']
+        self.slurm_string_option_configs = ['partition']
+
         # main
         self.tab = None
 
@@ -46,6 +56,7 @@ class UI:
             display(self.jobTemplate['output'])
             display(self.computingResource['output'])
             display(self.slurm['output'])
+            display(self.param['output'])
             display(self.email['output'])
             display(self.submit['output'])
         
@@ -82,6 +93,7 @@ class UI:
         self.renderSlurm()
         self.renderEmail()
         self.renderSubmit()
+        self.renderParam()
         self.renderResultStatus()
         self.renderResultEvents()
         self.renderResultLogs()
@@ -124,195 +136,48 @@ class UI:
     def renderSlurm(self):
         if self.slurm['output'] == None:
             self.slurm['output'] = widgets.Output()
+        # check if necessary to render
+        if self.job['slurm_input_rules'] == {}:
+            return
         # create components
-        self.slurm['description'] = widgets.Label(value='All configs are optional. Please refer to Slurm official documentation at https://slurm.schedmd.com/sbatch.html')
+        self.slurm['description'] = widgets.Label(value='All configs are optional. Please refer to Slurm official documentation at 🔗 https://slurm.schedmd.com/sbatch.html')
         # settings
-        self.slurm['partition'] = widgets.Text(value='xxx', description='partition', style=self.style)
+        for i in self.job['slurm_input_rules']:
+            config = self.job['slurm_input_rules'][i]
 
-        self.slurm['gpus'] = widgets.IntSlider(
-            value=1,
-            min=1,
-            max=20,
-            step=1,
-            disabled=False,
-            continuous_update=False,
-            orientation='horizontal',
-            readout=True,
-            readout_format='d',
-            description='gpus',
-            style=self.style, layout=self.layout
-        )
+            if i in self.slurm_integer_configs:
+                default_val = config['default_value']
+                max_val = config['max']
+                min_val = config['min']
+                step_val = config['step']
+                unit = config['unit']
+                description = i + '(' + unit + ')' if unit != 'None' else i
+                self.slurm[i] = widgets.IntSlider(
+                    value=default_val,
+                    min=min_val,
+                    max=max_val,
+                    step=step_val,
+                    disabled=False,
+                    continuous_update=False,
+                    orientation='horizontal',
+                    readout=True,
+                    readout_format='d',
+                    description=description,
+                    style=self.style, layout=self.layout
+                )
 
-        self.slurm['gpus_per_node'] = widgets.IntSlider(
-            value=1,
-            min=1,
-            max=20,
-            step=1,
-            disabled=False,
-            continuous_update=False,
-            orientation='horizontal',
-            readout=True,
-            readout_format='d',
-            description='gpus_per_node',
-            style=self.style, layout=self.layout
-        )
-
-        self.slurm['gpus_per_task'] = widgets.IntSlider(
-            value=1,
-            min=1,
-            max=20,
-            step=1,
-            disabled=False,
-            continuous_update=False,
-            orientation='horizontal',
-            readout=True,
-            readout_format='d',
-            description='gpus_per_task',
-            style=self.style, layout=self.layout
-        )
-
-        self.slurm['memory_in_mb'] = widgets.IntSlider(
-            value=1,
-            min=1,
-            max=20,
-            step=1,
-            disabled=False,
-            continuous_update=False,
-            orientation='horizontal',
-            readout=True,
-            readout_format='d',
-            description='gpus_per_task',
-            style=self.style, layout=self.layout
-        )
-
-        self.slurm['memory_in_gb'] = widgets.IntSlider(
-            value=1,
-            min=1,
-            max=20,
-            step=1,
-            disabled=False,
-            continuous_update=False,
-            orientation='horizontal',
-            readout=True,
-            readout_format='d',
-            description='memory_in_gb',
-            style=self.style, layout=self.layout
-        )
-
-        self.slurm['memory_per_cpu_in_mb'] = widgets.IntSlider(
-            value=1,
-            min=1,
-            max=20,
-            step=1,
-            disabled=False,
-            continuous_update=False,
-            orientation='horizontal',
-            readout=True,
-            readout_format='d',
-            description='memory_per_cpu_in_mb',
-            style=self.style, layout=self.layout
-        )
-
-        self.slurm['memory_per_cpu_in_gb'] = widgets.IntSlider(
-            value=1,
-            min=1,
-            max=20,
-            step=1,
-            disabled=False,
-            continuous_update=False,
-            orientation='horizontal',
-            readout=True,
-            readout_format='d',
-            description='memory_per_cpu_in_gb',
-            style=self.style, layout=self.layout
-        )
-
-        self.slurm['memory_per_gpu_in_mb'] = widgets.IntSlider(
-            value=1,
-            min=1,
-            max=20,
-            step=1,
-            disabled=False,
-            continuous_update=False,
-            orientation='horizontal',
-            readout=True,
-            readout_format='d',
-            description='memory_per_gpu_in_mb',
-            style=self.style, layout=self.layout
-        )
-
-        self.slurm['memory_per_gpu_in_gb'] = widgets.IntSlider(
-            value=1,
-            min=1,
-            max=20,
-            step=1,
-            disabled=False,
-            continuous_update=False,
-            orientation='horizontal',
-            readout=True,
-            readout_format='d',
-            description='memory_per_gpu_in_gb',
-            style=self.style, layout=self.layout
-        )
-
-        self.slurm['num_of_task'] = widgets.IntSlider(
-            value=1,
-            min=1,
-            max=20,
-            step=1,
-            disabled=False,
-            continuous_update=False,
-            orientation='horizontal',
-            readout=True,
-            readout_format='d',
-            description='num_of_task',
-            style=self.style, layout=self.layout
-        )
-
-        self.slurm['cpu_per_task'] = widgets.IntSlider(
-            value=1,
-            min=1,
-            max=20,
-            step=1,
-            disabled=False,
-            continuous_update=False,
-            orientation='horizontal',
-            readout=True,
-            readout_format='d',
-            description='cpu_per_task',
-            style=self.style, layout=self.layout
-        )
-
-        self.slurm['gpus_per_task'] = widgets.IntSlider(
-            value=1,
-            min=1,
-            max=20,
-            step=1,
-            disabled=False,
-            continuous_update=False,
-            orientation='horizontal',
-            readout=True,
-            readout_format='d',
-            description='gpus_per_task',
-            style=self.style, layout=self.layout
-        )
-
-        self.slurm['gpus_per_node'] = widgets.IntSlider(
-            value=1,
-            min=1,
-            max=20,
-            step=1,
-            disabled=False,
-            continuous_update=False,
-            orientation='horizontal',
-            readout=True,
-            readout_format='d',
-            description='gpus_per_node',
-            style=self.style, layout=self.layout
-        )
+            if i in self.slurm_string_option_configs:
+                default_val = config['default_value']
+                options = config['options']
+                self.slurm[i] = widgets.Dropdown(
+                    options=options,
+                    value=default_val,
+                    description=i,
+                    style=self.style
+                )
 
         w = []
-        for i in ['partition', 'gpus', 'gpus_per_node', 'gpus_per_task', 'memory_in_mb', 'memory_in_gb', 'memory_per_cpu_in_mb', 'memory_per_cpu_in_gb', 'memory_per_gpu_in_mb', 'memory_per_gpu_in_gb', 'num_of_task', 'cpu_per_task', 'gpus_per_task', 'gpus_per_node']:
+        for i in self.slurm_configs:
             if self.slurm[i] != None:
                 w.append(self.slurm[i])
         self.slurm['vbox'] = widgets.VBox(w)
@@ -322,6 +187,58 @@ class UI:
         self.slurm['accordion'].set_title(0, 'Slurm Computing Configurations')
         with self.slurm['output']:
             display(self.slurm['accordion'])
+
+    def renderParam(self):
+        if self.param['output'] == None:
+            self.param['output'] = widgets.Output()
+        # check if necessary to render
+        if self.job['param_rules'] == {}:
+            return
+        # render param
+        for i in self.job['param_rules']:
+            config = self.job['param_rules'][i]
+
+            if config['type'] == 'integer':
+                default_val = config['default_value']
+                max_val = config['max']
+                min_val = config['min']
+                step_val = config['step']
+                description = i
+                self.param[i] = widgets.IntSlider(
+                    value=default_val,
+                    min=min_val,
+                    max=max_val,
+                    step=step_val,
+                    disabled=False,
+                    continuous_update=False,
+                    orientation='horizontal',
+                    readout=True,
+                    readout_format='d',
+                    description=description,
+                    style=self.style, layout=self.layout
+                )
+
+            if config['type'] == 'string_option':
+                default_val = config['default_value']
+                options = config['options']
+                self.param[i] = widgets.Dropdown(
+                    options=options,
+                    value=default_val,
+                    description=i,
+                    style=self.style
+                )
+
+            if config['type'] == 'string_input':
+                default_val = config['default_value']
+                self.param[i] = widgets.Text(description=i, value=default_val, style=self.style)
+
+        # render all
+        self.param['vbox'] = widgets.VBox([self.param[i] for i in self.job['param_rules']])
+        # settings end
+        self.param['accordion'] = widgets.Accordion(children=( widgets.VBox(children=(self.param['vbox'])), ), selected_index=None)
+        self.param['accordion'].set_title(0, 'Input Parameters')
+        with self.param['output']:
+            display(self.param['accordion'])
 
     def renderSubmit(self):
         if self.submit['output'] == None:
@@ -489,43 +406,46 @@ class UI:
 
     # data
     def get_data(self):
-        return {
-                'job_template': self.jobTemplate['dropdown'].value,
-                'computing_resource': self.computingResource['dropdown'].value,
-                'slurm': {
-                    'partition': None if self.slurm['partition'] == None else self.slurm['partition'].value,
-                    'gpus': None if self.slurm['gpus'] == None else self.slurm['gpus'].value,
-                    'gpus_per_node': None if self.slurm['gpus'] == None else self.slurm['gpus'].value,
-                    'gpus_per_task': None if self.slurm['gpus_per_task'] == None else self.slurm['gpus_per_task'].value,
-                    'memory_in_mb': None if self.slurm['memory_in_mb'] == None else self.slurm['memory_in_mb'].value,
-                    'memory_in_gb': None if self.slurm['memory_in_gb'] == None else self.slurm['memory_in_gb'].value,
-                    'memory_per_cpu_in_mb': None if self.slurm['memory_per_cpu_in_mb'] == None else self.slurm['memory_per_cpu_in_mb'].value,
-                    'memory_per_cpu_in_gb': None if self.slurm['memory_per_cpu_in_gb'] == None else self.slurm['memory_per_cpu_in_gb'].value,
-                    'memory_per_gpu_in_mb': None if self.slurm['memory_per_gpu_in_mb'] == None else self.slurm['memory_per_gpu_in_mb'].value,
-                    'memory_per_gpu_in_gb': None if self.slurm['memory_per_gpu_in_gb'] == None else self.slurm['memory_per_gpu_in_gb'].value,
-                    'num_of_task': None if self.slurm['num_of_task'] == None else self.slurm['num_of_task'].value,
-                    'cpu_per_task': None if self.slurm['cpu_per_task'] == None else self.slurm['cpu_per_task'].value,
-                    'gpus_per_task': None if self.slurm['gpus_per_task'] == None else self.slurm['gpus_per_task'].value,
-                    'gpus_per_node': None if self.slurm['gpus_per_node'] == None else self.slurm['gpus_per_node'].value,
-                },
-                'email': self.email['text'].value if self.email['checkbox'] else None,
-                # 'globus': {
-                #     'custom_download': {
-                #         'globus_download_endpoint': globus_download_endpoint.value,
-                #         'globus_download_path': globus_download_path.value,
-                #         'is_globus_download': globus_download_cbox.value
-                #     },
-                #     'custom_upload': {
-                #         'globus_upload_endpoint': globus_upload_endpoint.value,
-                #         'globus_upload_path': globus_upload_path.value,
-                #         'is_globus_upload': globus_upload_cbox.value
-                #     },
-                #     'jupyter_download': {
-                #         'is_globus_download': globus_jupyter_download_cbox.value
-                #     },
-                #     'jupyter_upload': {
-                #         'globus_upload_path': globus_jupyter_upload_path.value,
-                #         'is_globus_upload': globus_jupyter_upload_cbox.value
-                #     }
-                # }
-            }
+        out = {
+            'job_template': self.jobTemplate['dropdown'].value,
+            'computing_resource': self.computingResource['dropdown'].value,
+            'slurm': {},
+            'email': self.email['text'].value if self.email['checkbox'] else None,
+        }
+
+        for i in self.slurm_configs:
+            if i in self.slurm:
+                if i in self.slurm_integer_storage_unit_config:
+                    out['slurm'][i] = str(self.slurm[i].value) + str(self.slurm[i].unit)
+                elif i in self.slurm_integer_time_unit_config:
+                    seconds = self.unitTimeToSecond(self.slurm[i].unit, self.slurm[i].value)
+                    out['slurm'][i] = self.secondsToTime(seconds)
+                else:
+                    out['slurm'][i] = self.slurm[i].value
+
+        return out
+
+    def secondsToTime(self, seconds):
+        days = math.floor(seconds / (60 * 60 * 24))
+        hours = math.floor(seconds / (60 * 60) - (days * 24))
+        minutes = math.floor(seconds / 60 -  (days * 60 * 24) - (hours * 60))
+
+        d = '0' + str(days) if days < 10 else str(days)
+        h = '0' + str(hours) if days < 10 else str(hours)
+        m = '0' + str(minutes) if days < 10 else str(minutes)
+
+        if days == 0:
+            if hours == 0:
+                return m + ':00'
+            else:
+                return h + ':' + m + ':00'
+        else:
+            return d + '-' + h + ':' + m + ':00'
+
+    def unitTimeToSecond(self, unit, time):
+        if unit == 'Minutes':
+            return time * 60
+        elif unit == 'Hours':
+            return time * 60 * 60
+        elif unit == 'Days':
+            return time * 60 * 60 * 24
