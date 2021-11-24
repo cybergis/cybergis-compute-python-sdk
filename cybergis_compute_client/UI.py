@@ -158,7 +158,7 @@ class UI:
 
         w = []
         for i in self.slurm_configs:
-            if self.slurm[i] != None:
+            if i in self.slurm:
                 w.append(self.slurm[i])
         self.slurm['vbox'] = widgets.VBox(w)
 
