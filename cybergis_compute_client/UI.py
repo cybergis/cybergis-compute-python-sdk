@@ -365,7 +365,7 @@ class UI:
     def init(self):
         # selection
         self.job = None
-        self.jobName = None
+        self.jobName = 'hello_world'
         self.hpc = None
         self.hpcName = None
         # state
@@ -388,7 +388,6 @@ class UI:
         # information
         if self.jobs == None:
             self.jobs = self.compute.list_git(raw=True)
-            self.jobName = 'hello_world'
             self.job  = self.jobs[self.jobName]
         if self.hpcs == None:
             self.hpcs = self.compute.list_hpc(raw=True)
