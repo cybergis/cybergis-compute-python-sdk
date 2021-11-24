@@ -322,7 +322,7 @@ class UI:
                 self.downloading = True
                 jupyter_globus = self.compute.get_user_jupyter_globus()
                 filepath = 'globus_download_' + self.compute.job.id
-                self.job.set(resultFolder='globus://' + jupyter_globus['endpoint'] + ':' + os.path.join(jupyter_globus['root_path'], filepath), printJob=False)
+                self.compute.job.set(resultFolder='globus://' + jupyter_globus['endpoint'] + ':' + os.path.join(jupyter_globus['root_path'], filepath), printJob=False)
                 self.compute.job.download_result_folder(dir=dir)
                 self.downloading = False
         return on_click
