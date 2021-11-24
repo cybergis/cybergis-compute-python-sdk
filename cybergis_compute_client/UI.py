@@ -11,26 +11,6 @@ class UI:
         self.layout = widgets.Layout(width='60%')
         self.jobs = None
         self.hpcs = None
-        # selection
-        self.job = None
-        self.jobName = None
-        self.hpc = None
-        self.hpcName = None
-        # state
-        self.submitted = False
-        self.jobFinished = False
-        self.downloading = False
-        # components
-        self.jobTemplate = { 'output': None }
-        self.computingResource = { 'output': None }
-        self.slurm = { 'output': None }
-        self.email = { 'output': None }
-        self.submit = { 'output': None }
-        self.param = { 'output': None }
-        self.resultStatus = { 'output': None }
-        self.resultEvents = { 'output': None }
-        self.resultLogs = { 'output': None }
-        self.download = { 'output': None, 'alert_output': None, 'result_output': None }
         # slurm configs
         self.slurm_configs = ['num_of_node', 'num_of_task', 'time', 'cpu_per_task', 'memory_per_cpu', 'memory_per_gpu', 'memory', 'gpus', 'gpus_per_node', 'gpus_per_socket', 'gpus_per_task', 'partition']
         self.slurm_integer_configs = ['num_of_node', 'num_of_task', 'time', 'cpu_per_task', 'memory_per_cpu', 'memory_per_gpu', 'memory', 'gpus', 'gpus_per_node', 'gpus_per_socket', 'gpus_per_task']
@@ -386,6 +366,27 @@ class UI:
 
     # helpers
     def init(self):
+        # selection
+        self.job = None
+        self.jobName = None
+        self.hpc = None
+        self.hpcName = None
+        # state
+        self.submitted = False
+        self.jobFinished = False
+        self.downloading = False
+        # components
+        self.jobTemplate = { 'output': None }
+        self.computingResource = { 'output': None }
+        self.slurm = { 'output': None }
+        self.email = { 'output': None }
+        self.submit = { 'output': None }
+        self.param = { 'output': None }
+        self.resultStatus = { 'output': None }
+        self.resultEvents = { 'output': None }
+        self.resultLogs = { 'output': None }
+        self.download = { 'output': None, 'alert_output': None, 'result_output': None }
+        # information
         if self.jobs == None:
             self.jobs = self.compute.list_git(raw=True)
             self.jobName = 'hello_world'
