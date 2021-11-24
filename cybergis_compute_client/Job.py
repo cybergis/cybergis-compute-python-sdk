@@ -62,9 +62,9 @@ class Job:
                 body['jupyterhubApiToken'] = self.jupyterhubApiToken
             job = self.client.request('POST', '/job/' + self.id + '/submit', body)
             print('✅ job submitted')
-        except:
-            print('❌ job already submitted or in queue')
-            job = self.client.request('GET', '/job', { 'accessToken': self.JAT.getAccessToken() })
+        except Exception as e:
+            print('❌ ' + str(e))
+            job = self.client.request('GET', '/job/' + self.id, { 'accessToken': self.JAT.getAccessToken() })
 
         self._print_job(job)
         return self
@@ -203,7 +203,7 @@ class Job:
         else:
             print(tabulate(data, headers, tablefmt="presto"))
 
-    def download_result_folder(self, dir=None):
+    def download_result_folder(self, dir=None, raw=False):
         if self.id is None:
             raise Exception('missing job ID, submit/register job first')
 
@@ -220,10 +220,24 @@ class Job:
         fileId = i[1]
 
         if (fileType == 'globus'):
-            return self.client.request('GET', '/file', {
-                'accessToken': self.JAT.getAccessToken(),
-                "fileUrl": jobStatus['resultFolder']
-            })
+            status = None
+            while status not in ['SUCCEEDED', 'FAILED']:
+                out = self.client.request('GET', '/file', {
+                    'accessToken': self.JAT.getAccessToken(),
+                    "fileUrl": jobStatus['resultFolder']
+                })
+                status = out['status']
+                if raw:
+                    return out
+                # UI
+                self._clear()
+                print('⏳ waiting for file to download using Globus')
+            # exit loop
+            self._clear()
+            if status == 'SUCCEEDED':
+                print('✅ download succeeded!')
+            else:
+                print('❌ download failed!')
 
         if (fileType == 'local'):
             dir = os.path.join(dir, fileId)

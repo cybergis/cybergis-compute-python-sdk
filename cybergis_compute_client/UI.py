@@ -1,6 +1,7 @@
-from IPython.display import display, Markdown
+import time
 import ipywidgets as widgets
 from ipyfilechooser import FileChooser
+from IPython.display import Markdown, display, clear_output
 
 class UI:
     def __init__(self, compute):
@@ -17,6 +18,7 @@ class UI:
         # state
         self.submitted = False
         self.jobFinished = False
+        self.downloading = False
         # components
         self.jobTemplate = { 'output': None }
         self.computingResource = { 'output': None }
@@ -50,7 +52,6 @@ class UI:
         # 2. job status
         job_status = widgets.Output()
         with job_status:
-            display(Markdown('# ✌️ Your Job is Here!'))
             display(self.resultStatus['output'])
             display(divider)
             display(Markdown('## 📋 job events (live refresh)'))
@@ -338,25 +339,30 @@ class UI:
     def renderDownload(self):
         if self.download['output'] == None:
             self.download['output'] = widgets.Output()
+        if self.download['alert_output'] == None:
+            self.download['alert_output'] = widgets.Output()
+        if self.download['result_output'] == None:
+            self.download['result_output'] = widgets.Output()
         # create components
         self.download['selector'] = None
         if self.jobFinished:
             self.download['selector'] = FileChooser('./')
             self.download['selector'].show_only_dirs = True
             self.download['selector'].title = 'Please Select a Folder'
-            self.download['button'] = widgets.Button(description="👇 Download")
+            self.download['button'] = widgets.Button(description="Download")
+            self.download['button'].on_click(self.onDownloadButtonClick())
         else:
-            self.download['button'] = widgets.Button(description="👇 Download", disabled=True)
-        self.download['button'].on_click(self.onDownloadButtonClick())
+            self.download['button'] = widgets.Button(description="Download", disabled=True)
         
         with self.download['output']:
             if self.jobFinished:
-                display(Markdown('# ☁️ Download Job Result'))
+                display(Markdown('# ☁️ Download Job Output Files'))
                 display(self.download['selector'])
+                display(self.download['alert_output'])
+                display(self.download['result_output'])
             else:
                 display(Markdown('# ⏳ Waiting for Job to Finish...'))
             display(self.download['button'])
-
 
     def renderResultStatus(self):
         if self.resultStatus['output'] == None:
@@ -365,10 +371,11 @@ class UI:
         if not self.submitted:
             with self.resultStatus['output']:
                 display(Markdown('# 😴 No Job to Work On'))
-                display('you need to submit your job first')
+                display(Markdown('you need to submit your job first'))
             return
 
         with self.resultStatus['output']:
+            display(Markdown('# ✌️ Your Job is Here!'))
             self.compute.job.status()
         return
 
@@ -403,7 +410,19 @@ class UI:
     # events
     def onDownloadButtonClick(self):
         def on_click(change):
-            return
+            if self.downloading:
+                with self.download['alert_output']:
+                    clear_output(wait=True)
+                    display(Markdown('⚠️ download process is running in background...'))
+                    time.sleep(5)
+                    clear_output(wait=True)
+                    return
+
+            self.downloading = True
+            with self.download['result_output']:
+                dir = self.download['selector'].selected
+                self.compute.job.download_result_folder(dir=dir)
+                self.downloading = False
         return on_click
 
     def onSubmitButtonClick(self):
