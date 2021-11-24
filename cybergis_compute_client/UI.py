@@ -368,7 +368,7 @@ class UI:
                         return
                 else:
                     jupyter_globus = self.compute.get_user_jupyter_globus()
-                    dataFolder='globus://' + jupyter_globus['endpoint'] + ':' + os.path.join(jupyter_globus['root_path'], dataFolder)
+                    dataFolder='globus://' + jupyter_globus['endpoint'] + ':' + os.path.join(jupyter_globus['root_path'], dataFolder.strip('/'))
       
             data = self.get_data()
             self.compute.job = self.compute.create_job(hpc=data['computing_resource'], printJob=False)
