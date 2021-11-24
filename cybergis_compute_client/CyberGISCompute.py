@@ -6,7 +6,6 @@ import os
 from IPython.display import Javascript
 from IPython.display import display, Markdown
 import ipywidgets as widgets
-import random
 
 class CyberGISCompute:
     # static variable
