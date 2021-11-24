@@ -412,6 +412,10 @@ class UI:
 
     # helpers
     def init(self):
+        silent = widgets.Output()
+        with silent:
+            self.login()
+
         if self.jobs == None:
             self.jobs = self.compute.list_git(raw=True)
         if self.hpcs == None:
