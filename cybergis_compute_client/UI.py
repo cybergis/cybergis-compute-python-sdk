@@ -365,7 +365,7 @@ class UI:
     def init(self):
         # selection
         self.job = None
-        self.jobName = 'hello_world'
+        self.jobName = None
         self.hpc = None
         self.hpcName = None
         # state
@@ -388,11 +388,12 @@ class UI:
         # information
         if self.jobs == None:
             self.jobs = self.compute.list_git(raw=True)
-            self.job  = self.jobs[self.jobName]
+        self.jobName = 'hello_world'
+        self.job  = self.jobs[self.jobName]
         if self.hpcs == None:
             self.hpcs = self.compute.list_hpc(raw=True)
-            self.hpcName = self.job['default_hpc']
-            self.hpc = self.hpcs[self.hpcName]
+        self.hpcName = self.job['default_hpc']
+        self.hpc = self.hpcs[self.hpcName]
 
     def rerender(self, components = []):
         for c in components:
