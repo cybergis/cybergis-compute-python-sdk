@@ -315,6 +315,7 @@ class UI:
             self.downloading = True
             with self.download['result_output']:
                 dir = self.download['selector'].selected
+                print(dir)
                 self.compute.job.download_result_folder(dir=dir)
                 self.downloading = False
         return on_click
@@ -408,7 +409,7 @@ class UI:
             'computing_resource': self.computingResource['dropdown'].value,
             'slurm': {},
             'param': {},
-            'email': self.email['text'].value if self.email['checkbox'] else None,
+            'email': self.email['text'].value if self.email['checkbox'].value else None,
         }
 
         for i in self.slurm_configs:
@@ -434,8 +435,8 @@ class UI:
         minutes = math.floor(seconds / 60 -  (days * 60 * 24) - (hours * 60))
 
         d = '0' + str(days) if days < 10 else str(days)
-        h = '0' + str(hours) if days < 10 else str(hours)
-        m = '0' + str(minutes) if days < 10 else str(minutes)
+        h = '0' + str(hours) if hours < 10 else str(hours)
+        m = '0' + str(minutes) if minutes < 10 else str(minutes)
 
         if days == 0:
             if hours == 0:

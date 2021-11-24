@@ -207,7 +207,7 @@ class Job:
         if self.id is None:
             raise Exception('missing job ID, submit/register job first')
 
-        jobStatus = self.status()
+        jobStatus = self.status(raw=True)
 
         if 'resultFolder' not in jobStatus:
             raise Exception('executable folder is not ready')
