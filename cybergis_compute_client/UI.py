@@ -34,6 +34,7 @@ class UI:
             display(self.computingResource['output'])
             display(self.slurm['output'])
             display(self.param['output'])
+            display(self.uploadData['output'])
             display(self.email['output'])
             display(self.submit['output'])
         
@@ -71,6 +72,7 @@ class UI:
         self.renderEmail()
         self.renderSubmit()
         self.renderParam()
+        self.renderUploadData()
         self.renderResultStatus()
         self.renderResultEvents()
         self.renderResultLogs()
@@ -165,6 +167,22 @@ class UI:
         with self.slurm['output']:
             display(self.slurm['accordion'])
 
+    def renderUploadData(self):
+        if self.uploadData['output'] == None:
+            self.uploadData['output'] = widgets.Output()
+        # check if necessary to render
+        if not self.job['require_upload_data']:
+            return
+        # render all
+        self.uploadData['selector'] = FileChooser('./')
+        self.uploadData['selector'].show_only_dirs = True
+        self.uploadData['selector'].title = 'Job requires upload data. Please select a folder to upload'
+        # settings end
+        self.uploadData['accordion'] = widgets.Accordion(children=( self.uploadData['selector'], ), selected_index=None)
+        self.uploadData['accordion'].set_title(0, 'Input Parameters')
+        with self.uploadData['output']:
+            display(self.uploadData['accordion'])
+
     def renderParam(self):
         if self.param['output'] == None:
             self.param['output'] = widgets.Output()
@@ -220,13 +238,17 @@ class UI:
     def renderSubmit(self):
         if self.submit['output'] == None:
             self.submit['output'] = widgets.Output()
+        if self.submit['alert_output'] == None:
+            self.submit['alert_output'] = widgets.Output()
         # create components
         if self.submitted:
             self.submit['button'] = widgets.Button(description="Job Submitted ✅", disabled=True)
         else:
             self.submit['button'] = widgets.Button(description="Submit Job")
         self.submit['button'].on_click(self.onSubmitButtonClick())
+        
         with self.submit['output']:
+            display(self.submit['alert_output'])
             display(self.submit['button'])
 
 
@@ -320,9 +342,11 @@ class UI:
                 with self.download['alert_output']:
                     clear_output(wait=True)
                 self.downloading = True
+                display(Markdown('initializing download...'))
                 jupyter_globus = self.compute.get_user_jupyter_globus()
                 filepath = 'globus_download_' + self.compute.job.id
                 self.compute.job.set(resultFolder='globus://' + jupyter_globus['endpoint'] + ':' + os.path.join(jupyter_globus['root_path'], filepath), printJob=False)
+                clear_output(wait=True)
                 self.compute.job.download_result_folder(dir=dir)
                 self.downloading = False
         return on_click
@@ -331,6 +355,18 @@ class UI:
         def on_click(change):
             if self.submitted:
                 return
+
+            with self.submit['alert_output']:
+                clear_output(wait=True)
+
+            dataFolder = None
+            if self.job['require_upload_data']:
+                dataFolder = self.uploadData['selector'].selected
+                if dataFolder == None:
+                    with self.submit['alert_output']:
+                        display(Markdown('⚠️ please select a folder before upload...'))
+                        return
+                
             data = self.get_data()
             self.compute.job = self.compute.create_job(hpc=data['computing_resource'], printJob=False)
             # slurm
@@ -341,7 +377,7 @@ class UI:
             # param
             param = data['param']
             # submit
-            self.compute.job.set(executableFolder='git://' + data['job_template'], printJob=False, param=param, slurm=slurm)
+            self.compute.job.set(executableFolder='git://' + data['job_template'], dataFolder=dataFolder, printJob=False, param=param, slurm=slurm)
             self.compute.job.submit()
             self.tab.selected_index = 1
             self.submitted = True
@@ -386,8 +422,9 @@ class UI:
         self.computingResource = { 'output': None }
         self.slurm = { 'output': None }
         self.email = { 'output': None }
-        self.submit = { 'output': None }
+        self.submit = { 'output': None, 'alert_output': None }
         self.param = { 'output': None }
+        self.uploadData = { 'output': None }
         self.resultStatus = { 'output': None }
         self.resultEvents = { 'output': None }
         self.resultLogs = { 'output': None }
