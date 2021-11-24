@@ -28,7 +28,7 @@ class UI:
         self.resultStatus = { 'output': None }
         self.resultEvents = { 'output': None }
         self.resultLogs = { 'output': None }
-        self.download = { 'output': None }
+        self.download = { 'output': None, 'alert_output': None, 'result_output': None }
         # main
         self.tab = None
 
