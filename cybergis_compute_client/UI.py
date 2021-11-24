@@ -366,7 +366,10 @@ class UI:
                     with self.submit['alert_output']:
                         display(Markdown('⚠️ please select a folder before upload...'))
                         return
-                
+                else:
+                    jupyter_globus = self.get_user_jupyter_globus()
+                    dataFolder='globus://' + jupyter_globus['endpoint'] + ':' + os.path.join(jupyter_globus['root_path'], dataFolder)
+      
             data = self.get_data()
             self.compute.job = self.compute.create_job(hpc=data['computing_resource'], printJob=False)
             # slurm
