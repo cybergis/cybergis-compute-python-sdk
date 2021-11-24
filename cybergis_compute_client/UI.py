@@ -212,7 +212,7 @@ class UI:
         # render all
         self.param['vbox'] = widgets.VBox([self.param[i] for i in self.job['param_rules']])
         # settings end
-        self.param['accordion'] = widgets.Accordion(children=( widgets.VBox(children=(self.param['vbox'])), ), selected_index=None)
+        self.param['accordion'] = widgets.Accordion(children=( self.param['vbox'], ), selected_index=None)
         self.param['accordion'].set_title(0, 'Input Parameters')
         with self.param['output']:
             display(self.param['accordion'])
