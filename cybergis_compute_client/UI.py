@@ -413,10 +413,11 @@ class UI:
 
         for i in self.slurm_configs:
             if i in self.slurm:
+                config = self.job['slurm_input_rules'][i]
                 if i in self.slurm_integer_storage_unit_config:
-                    out['slurm'][i] = str(self.slurm[i].value) + str(self.slurm[i].unit)
+                    out['slurm'][i] = str(self.slurm[i].value) + str(config.unit)
                 elif i in self.slurm_integer_time_unit_config:
-                    seconds = self.unitTimeToSecond(self.slurm[i].unit, self.slurm[i].value)
+                    seconds = self.unitTimeToSecond(config.unit, self.slurm[i].value)
                     out['slurm'][i] = self.secondsToTime(seconds)
                 else:
                     out['slurm'][i] = self.slurm[i].value
