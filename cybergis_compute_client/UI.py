@@ -128,7 +128,7 @@ class UI:
                 min_val = config['min']
                 step_val = config['step']
                 unit = config['unit']
-                description = i + '(' + unit + ')' if unit != 'None' else i
+                description = i + ' (' + unit + ')' if unit != 'None' else i
                 self.slurm[i] = widgets.IntSlider(
                     value=default_val,
                     min=min_val,
@@ -326,12 +326,14 @@ class UI:
             data = self.get_data()
             self.compute.job = self.compute.create_job(hpc=data['computing_resource'], printJob=False)
             # slurm
-            slurm = {}
+            slurm = data['slurm']
             if data['email'] != None:
                 slurm['mail_user'] = [data['email']]
                 slurm['mail_type'] = ['FAIL', 'END', 'BEGIN']
+            # param
+            param = data['param']
             # submit
-            self.compute.job.set(executableFolder='git://' + data['job_template'], printJob=False)
+            self.compute.job.set(executableFolder='git://' + data['job_template'], printJob=False, param=param, slurm=slurm)
             self.compute.job.submit()
             self.tab.selected_index = 1
             self.submitted = True
@@ -405,6 +407,7 @@ class UI:
             'job_template': self.jobTemplate['dropdown'].value,
             'computing_resource': self.computingResource['dropdown'].value,
             'slurm': {},
+            'param': {},
             'email': self.email['text'].value if self.email['checkbox'] else None,
         }
 
@@ -417,6 +420,10 @@ class UI:
                     out['slurm'][i] = self.secondsToTime(seconds)
                 else:
                     out['slurm'][i] = self.slurm[i].value
+
+        for i in self.job['param_rules']:
+            if i in self.param:
+                out['param'][i] = self.param[i].value
 
         return out
 
