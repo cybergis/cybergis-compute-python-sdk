@@ -179,7 +179,7 @@ class UI:
         self.uploadData['selector'].title = 'Job requires upload data. Please select a folder to upload'
         # settings end
         self.uploadData['accordion'] = widgets.Accordion(children=( self.uploadData['selector'], ), selected_index=None)
-        self.uploadData['accordion'].set_title(0, 'Input Parameters')
+        self.uploadData['accordion'].set_title(0, 'Upload Data')
         with self.uploadData['output']:
             display(self.uploadData['accordion'])
 
@@ -367,7 +367,7 @@ class UI:
                         display(Markdown('⚠️ please select a folder before upload...'))
                         return
                 else:
-                    jupyter_globus = self.get_user_jupyter_globus()
+                    jupyter_globus = self.compute.get_user_jupyter_globus()
                     dataFolder='globus://' + jupyter_globus['endpoint'] + ':' + os.path.join(jupyter_globus['root_path'], dataFolder)
       
             data = self.get_data()
