@@ -10,7 +10,7 @@ from IPython.display import HTML, display, clear_output
 
 class Job:
     # static variables
-    basicEventTypes = ['JOB_QUEUED', 'JOB_REGISTERED', 'JOB_INIT', 'JOB_ENDED', 'JOB_FAILED']
+    basicEventTypes = ['JOB_QUEUED', 'JOB_REGISTERED', 'JOB_INIT', 'GLOBUS_TRANSFER_INIT_SUCCESS', 'JOB_ENDED', 'JOB_FAILED']
 
     def __init__(self, maintainer=None, hpc=None, id=None, secretToken=None, hpcUsername=None, hpcPassword=None, client=None, isJupyter=None, jupyterhubApiToken=None, printJob=True):
         self.JAT = JAT()
