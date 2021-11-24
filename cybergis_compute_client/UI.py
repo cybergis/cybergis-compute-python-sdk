@@ -19,9 +19,6 @@ class UI:
         self.slurm_integer_none_unit_config = ['cpu_per_task', 'num_of_node', 'num_of_task', 'gpus', 'gpus_per_node', 'gpus_per_socket', 'gpus_per_task']
         self.slurm_string_option_configs = ['partition']
 
-        # main
-        self.tab = None
-
     def render(self):
         self.init()
         self.renderCompoenets()
@@ -386,6 +383,8 @@ class UI:
         self.resultEvents = { 'output': None }
         self.resultLogs = { 'output': None }
         self.download = { 'output': None, 'alert_output': None, 'result_output': None }
+        # main
+        self.tab = None
         # information
         if self.jobs == None:
             self.jobs = self.compute.list_git(raw=True)
