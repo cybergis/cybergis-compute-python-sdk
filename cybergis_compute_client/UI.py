@@ -414,7 +414,7 @@ class UI:
     def init(self):
         silent = widgets.Output()
         with silent:
-            self.login()
+            self.compute.login()
 
         if self.jobs == None:
             self.jobs = self.compute.list_git(raw=True)
