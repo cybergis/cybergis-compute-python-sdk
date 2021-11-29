@@ -397,7 +397,7 @@ class UI:
                 self.job = self.jobs[self.jobName]
                 self.hpcName = self.job['default_hpc']
                 self.hpc = self.hpcs[self.hpcName]
-                self.rerender(['jobDescription', 'computingResource', 'slurm', 'param'])
+                self.rerender(['jobDescription', 'computingResource', 'slurm', 'param', 'uploadData'])
         return on_change
 
     def onComputingResourceDropdownChange(self):
@@ -407,7 +407,7 @@ class UI:
                     return
                 self.hpcName = self.computingResource['dropdown'].value
                 self.hpc = self.hpcs[self.hpcName]
-                self.rerender(['computingResource', 'slurm', 'param'])
+                self.rerender(['computingResource', 'slurm', 'param', 'uploadData'])
         return on_change
 
     # helpers
