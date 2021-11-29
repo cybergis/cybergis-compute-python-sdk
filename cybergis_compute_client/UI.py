@@ -31,6 +31,7 @@ class UI:
             display(Markdown('Some description about CyberGIS-Compute'))
             display(divider)
             display(self.jobTemplate['output'])
+            display(self.jobDescription['output'])
             display(self.computingResource['output'])
             display(self.slurm['output'])
             display(self.param['output'])
@@ -67,6 +68,7 @@ class UI:
 
     def renderCompoenets(self):
         self.renderJobTemplate()
+        self.renderJobDescription()
         self.renderComputingResource()
         self.renderSlurm()
         self.renderEmail()
@@ -344,6 +346,7 @@ class UI:
                 clear_output(wait=True)
                 self.compute.job.download_result_folder()
                 print('please check your data at your root folder under "' + filename + '"')
+                self.compute.recentDownloadPath = os.path.join(jupyter_globus['container_home_path'], filename)
                 self.downloading = False
         return on_click
 

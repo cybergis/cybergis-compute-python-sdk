@@ -21,6 +21,9 @@ class CyberGISCompute:
         self.ui = UI(self)
         if isJupyter:
             self.enable_jupyter()
+        # job
+        self.job = None
+        self.recentDownloadPath = None
 
     def login(self, manualLogin = True):
         if self.jupyterhubApiToken != None:
