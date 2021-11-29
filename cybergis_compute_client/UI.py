@@ -84,11 +84,18 @@ class UI:
             self.jobTemplate['output'] = widgets.Output()
         # create components
         self.jobTemplate['dropdown'] = widgets.Dropdown(options=[i for i in self.jobs], value=self.jobName, description='📦 Job Templates:', style=self.style)
-        self.jobTemplate['description'] = Markdown('**' + self.jobName + ' Description:** ' + self.job['description'])
-        self.jobTemplate['estimated_runtime'] = Markdown('**Estimated Runtime:** ' + self.job['estimated_runtime'])
         self.jobTemplate['dropdown'].observe(self.onJobDropdownChange())
         with self.jobTemplate['output']:
-            display(self.jobTemplate['dropdown'], self.jobTemplate['description'], self.jobTemplate['estimated_runtime'])
+            display(self.jobTemplate['dropdown'])
+
+    def renderJobDescription(self):
+        if self.jobDescription['output'] == None:
+                self.jobDescription['output'] = widgets.Output()
+        self.jobDescription['description'] = Markdown('**' + self.jobName + ' Description:** ' + self.job['description'])
+        self.jobDescription['estimated_runtime'] = Markdown('**Estimated Runtime:** ' + self.job['estimated_runtime'])
+        with self.jobDescription['output']:
+            display(self.jobDescription['description'], self.jobDescription['estimated_runtime'])
+
 
     def renderComputingResource(self):
         if self.computingResource['output'] == None:
@@ -387,7 +394,7 @@ class UI:
                 self.job = self.jobs[self.jobName]
                 self.hpcName = self.job['default_hpc']
                 self.hpc = self.hpcs[self.hpcName]
-                self.rerender(['jobTemplate', 'computingResource', 'slurm'])
+                self.rerender(['jobDescription', 'computingResource', 'slurm'])
         return on_change
 
     def onComputingResourceDropdownChange(self):
@@ -416,6 +423,7 @@ class UI:
         self.downloading = False
         # components
         self.jobTemplate = { 'output': None }
+        self.jobDescription = { 'output': None }
         self.computingResource = { 'output': None }
         self.slurm = { 'output': None }
         self.email = { 'output': None }
