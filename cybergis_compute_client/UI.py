@@ -86,7 +86,7 @@ class UI:
         if self.jobTemplate['output'] == None:
             self.jobTemplate['output'] = widgets.Output()
         # create components
-        self.jobTemplate['dropdown'] = widgets.Dropdown(options=[i for i in self.jobs], value=self.jobName, description='📦 Job Templates:', style=self.style)
+        self.jobTemplate['dropdown'] = widgets.Dropdown(options=[i for i in self.jobs], value=self.jobName, description='📦 Job Templates:', style=self.style, layout=self.layout)
         self.jobTemplate['dropdown'].observe(self.onJobDropdownChange())
         with self.jobTemplate['output']:
             display(self.jobTemplate['dropdown'])
@@ -94,8 +94,8 @@ class UI:
     def renderDescription(self):
         if self.description['output'] == None:
                 self.description['output'] = widgets.Output()
-        self.description['job_description'] = Markdown('**' + self.jobName + ' Description:** ' + self.job['description'])
-        self.description['computing_resource_description'] = Markdown('**' + self.hpcName + ' Description**: ' + self.hpc['description'])
+        self.description['job_description'] = Markdown('**' + self.jobName + ' Job Description:** ' + self.job['description'])
+        self.description['computing_resource_description'] = Markdown('**' + self.hpcName + ' HPC Description**: ' + self.hpc['description'])
         self.description['estimated_runtime'] = Markdown('**Estimated Runtime:** ' + self.job['estimated_runtime'])
         with self.description['output']:
             display(self.description['job_description'], self.description['computing_resource_description'], self.description['estimated_runtime'])
@@ -104,7 +104,7 @@ class UI:
         if self.computingResource['output'] == None:
             self.computingResource['output'] = widgets.Output()
         # create components
-        self.computingResource['dropdown'] = widgets.Dropdown(options=[i for i in self.job['supported_hpc']], value=self.hpcName, description='🖥 Computing Recourse:', style=self.style)
+        self.computingResource['dropdown'] = widgets.Dropdown(options=[i for i in self.job['supported_hpc']], value=self.hpcName, description='🖥 Computing Recourse:', style=self.style, layout=self.layout)
         self.computingResource['accordion'] = widgets.Accordion(children=( self.computingResource['dropdown'], ), selected_index=None)
         self.computingResource['accordion'].set_title(0, 'Computing Resource')
         self.computingResource['dropdown'].observe(self.onComputingResourceDropdownChange())

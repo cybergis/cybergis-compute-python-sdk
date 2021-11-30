@@ -3,8 +3,7 @@ from .Job import *
 from .UI import *
 import base64
 import os
-from IPython.display import Javascript
-from IPython.display import display, Markdown
+from IPython.display import display, Markdown, Javascript
 import ipywidgets as widgets
 
 class CyberGISCompute:
@@ -590,7 +589,11 @@ class CyberGISCompute:
     def enable_jupyter(self):
         self.isJupyter = True
         # get jupyter variable
-        display(Javascript('IPython.notebook.kernel.execute(`CyberGISCompute.jupyterhubHost = "${window.location.host}"`);'))
+        url = os.getenv('JUPYTER_INSTANCE_URL')
+        if url != None:
+            CyberGISCompute.jupyterhubHost = url.replace('https://').replace('http://')
+        else:
+            display(Javascript('IPython.notebook.kernel.execute(`CyberGISCompute.jupyterhubHost = "${window.location.host}"`);'))
 
     def get_user_jupyter_globus(self):
         return self.client.request('GET', '/user/jupyter-globus', { "jupyterhubApiToken": self.jupyterhubApiToken })
