@@ -591,7 +591,7 @@ class CyberGISCompute:
         # get jupyter variable
         url = os.getenv('JUPYTER_INSTANCE_URL')
         if url != None:
-            CyberGISCompute.jupyterhubHost = url.replace('https://').replace('http://')
+            CyberGISCompute.jupyterhubHost = url.replace('https://', '').replace('http://', '')
         else:
             display(Javascript('IPython.notebook.kernel.execute(`CyberGISCompute.jupyterhubHost = "${window.location.host}"`);'))
 

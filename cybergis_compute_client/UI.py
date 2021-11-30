@@ -19,6 +19,8 @@ class UI:
         self.slurm_integer_time_unit_config = ['time']
         self.slurm_integer_none_unit_config = ['cpu_per_task', 'num_of_node', 'num_of_task', 'gpus', 'gpus_per_node', 'gpus_per_socket', 'gpus_per_task']
         self.slurm_string_option_configs = ['partition']
+        self.globus_filename = None
+        self.jupyter_globus = None
 
     def render(self):
         self.init()
@@ -339,14 +341,9 @@ class UI:
             with self.download['result_output']:
                 self.download['alert_output'].clear_output(wait=True)
                 self.downloading = True
-                display(Markdown('initializing download...'))
-                jupyter_globus = self.compute.get_user_jupyter_globus()
-                filename = 'globus_download_' + self.compute.job.id
-                self.compute.job.set(resultFolder='globus://' + jupyter_globus['endpoint'] + ':' + os.path.join(jupyter_globus['root_path'], filename), printJob=False)
-                clear_output(wait=True)
                 self.compute.job.download_result_folder()
-                print('please check your data at your root folder under "' + filename + '"')
-                self.compute.recentDownloadPath = os.path.join(jupyter_globus['container_home_path'], filename)
+                print('please check your data at your root folder under "' + self.globus_filename + '"')
+                self.compute.recentDownloadPath = os.path.join(self.jupyter_globus['container_home_path'], self.globus_filename)
                 self.downloading = False
         return on_click
 
@@ -359,6 +356,7 @@ class UI:
                 clear_output(wait=True)
 
             dataFolder = None
+            self.jupyter_globus = self.compute.get_user_jupyter_globus()
             if self.job['require_upload_data']:
                 dataFolder = self.uploadData['selector'].selected
                 if dataFolder == None:
@@ -366,9 +364,8 @@ class UI:
                         display(Markdown('⚠️ please select a folder before upload...'))
                         return
                 else:
-                    jupyter_globus = self.compute.get_user_jupyter_globus()
-                    dataFolder = dataFolder.replace(jupyter_globus['container_home_path'].strip('/'), '')
-                    dataFolder='globus://' + jupyter_globus['endpoint'] + ':' + os.path.join(jupyter_globus['root_path'], dataFolder.strip('/'))
+                    dataFolder = dataFolder.replace(self.jupyter_globus['container_home_path'].strip('/'), '')
+                    dataFolder='globus://' + self.jupyter_globus['endpoint'] + ':' + os.path.join(self.jupyter_globus['root_path'], dataFolder.strip('/'))
 
             data = self.get_data()
             self.compute.job = self.compute.create_job(hpc=data['computing_resource'], printJob=False)
@@ -379,8 +376,12 @@ class UI:
                 slurm['mail_type'] = ['FAIL', 'END', 'BEGIN']
             # param
             param = data['param']
+            # download
+            self.globus_filename = 'globus_download_' + self.compute.job.id
+            resultFolder = 'globus://' + self.jupyter_globus['endpoint'] + ':' + os.path.join(self.jupyter_globus['root_path'], self.globus_filename)
+
             # submit
-            self.compute.job.set(executableFolder='git://' + data['job_template'], dataFolder=dataFolder, printJob=False, param=param, slurm=slurm)
+            self.compute.job.set(executableFolder='git://' + data['job_template'], dataFolder=dataFolder, resultFolder=resultFolder, printJob=False, param=param, slurm=slurm)
             self.compute.job.submit()
             self.tab.selected_index = 1
             self.submitted = True
