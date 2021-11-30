@@ -5,12 +5,13 @@ from ipyfilechooser import FileChooser
 from IPython.display import Markdown, display, clear_output
 
 class UI:
-    def __init__(self, compute):
+    def __init__(self, compute, defaultJobName="hello_world"):
         self.compute = compute
         self.style = {'description_width': 'auto'}
         self.layout = widgets.Layout(width='60%')
         self.jobs = None
         self.hpcs = None
+        self.defaultJobName = defaultJobName
         # slurm configs
         self.slurm_configs = ['num_of_node', 'num_of_task', 'time', 'cpu_per_task', 'memory_per_cpu', 'memory_per_gpu', 'memory', 'gpus', 'gpus_per_node', 'gpus_per_socket', 'gpus_per_task', 'partition']
         self.slurm_integer_configs = ['num_of_node', 'num_of_task', 'time', 'cpu_per_task', 'memory_per_cpu', 'memory_per_gpu', 'memory', 'gpus', 'gpus_per_node', 'gpus_per_socket', 'gpus_per_task']
@@ -31,7 +32,7 @@ class UI:
             display(Markdown('Some description about CyberGIS-Compute'))
             display(divider)
             display(self.jobTemplate['output'])
-            display(self.jobDescription['output'])
+            display(self.description['output'])
             display(self.computingResource['output'])
             display(self.slurm['output'])
             display(self.param['output'])
@@ -68,7 +69,7 @@ class UI:
 
     def renderCompoenets(self):
         self.renderJobTemplate()
-        self.renderJobDescription()
+        self.renderDescription()
         self.renderComputingResource()
         self.renderSlurm()
         self.renderEmail()
@@ -90,22 +91,21 @@ class UI:
         with self.jobTemplate['output']:
             display(self.jobTemplate['dropdown'])
 
-    def renderJobDescription(self):
-        if self.jobDescription['output'] == None:
-                self.jobDescription['output'] = widgets.Output()
-        self.jobDescription['description'] = Markdown('**' + self.jobName + ' Description:** ' + self.job['description'])
-        self.jobDescription['estimated_runtime'] = Markdown('**Estimated Runtime:** ' + self.job['estimated_runtime'])
-        with self.jobDescription['output']:
-            display(self.jobDescription['description'], self.jobDescription['estimated_runtime'])
-
+    def renderDescription(self):
+        if self.description['output'] == None:
+                self.description['output'] = widgets.Output()
+        self.description['job_description'] = Markdown('**' + self.jobName + ' Description:** ' + self.job['description'])
+        self.description['computing_resource_description'] = Markdown('**' + self.hpcName + ' Description**: ' + self.hpc['description'])
+        self.description['estimated_runtime'] = Markdown('**Estimated Runtime:** ' + self.job['estimated_runtime'])
+        with self.description['output']:
+            display(self.description['job_description'], self.description['computing_resource_description'], self.description['estimated_runtime'])
 
     def renderComputingResource(self):
         if self.computingResource['output'] == None:
             self.computingResource['output'] = widgets.Output()
         # create components
         self.computingResource['dropdown'] = widgets.Dropdown(options=[i for i in self.job['supported_hpc']], value=self.hpcName, description='🖥 Computing Recourse:', style=self.style)
-        self.computingResource['description'] = widgets.Label(value=self.hpcName + ' Description: ' + self.hpc['description'])
-        self.computingResource['accordion'] = widgets.Accordion(children=( widgets.VBox(children=(self.computingResource['dropdown'], self.computingResource['description'])), ), selected_index=None)
+        self.computingResource['accordion'] = widgets.Accordion(children=( self.computingResource['dropdown'], ), selected_index=None)
         self.computingResource['accordion'].set_title(0, 'Computing Resource')
         self.computingResource['dropdown'].observe(self.onComputingResourceDropdownChange())
         with self.computingResource['output']:
@@ -397,7 +397,7 @@ class UI:
                 self.job = self.jobs[self.jobName]
                 self.hpcName = self.job['default_hpc']
                 self.hpc = self.hpcs[self.hpcName]
-                self.rerender(['jobDescription', 'computingResource', 'slurm', 'param', 'uploadData'])
+                self.rerender(['description', 'computingResource', 'slurm', 'param', 'uploadData'])
         return on_change
 
     def onComputingResourceDropdownChange(self):
@@ -407,7 +407,7 @@ class UI:
                     return
                 self.hpcName = self.computingResource['dropdown'].value
                 self.hpc = self.hpcs[self.hpcName]
-                self.rerender(['computingResource', 'slurm', 'param', 'uploadData'])
+                self.rerender(['description', 'slurm', 'param', 'uploadData'])
         return on_change
 
     # helpers
@@ -426,7 +426,7 @@ class UI:
         self.downloading = False
         # components
         self.jobTemplate = { 'output': None }
-        self.jobDescription = { 'output': None }
+        self.description = { 'output': None }
         self.computingResource = { 'output': None }
         self.slurm = { 'output': None }
         self.email = { 'output': None }
@@ -440,7 +440,7 @@ class UI:
         # main
         self.tab = None
         # information
-        self.jobName = 'hello_world'
+        self.jobName = self.defaultJobName
         self.job  = self.jobs[self.jobName]
         self.hpcName = self.job['default_hpc']
         self.hpc = self.hpcs[self.hpcName]

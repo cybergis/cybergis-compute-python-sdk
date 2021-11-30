@@ -271,7 +271,8 @@ class CyberGISCompute:
             print('🤖 Maintainers:')
             self.list_maintainer()
 
-    def test_ui(self):
+    def create_job_by_ui(self, defaultJob="hello_world"):
+        self.ui.defaultJobName = defaultJob
         self.ui.render()
 
     def create_job_by_UI(self):
