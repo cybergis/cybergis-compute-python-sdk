@@ -192,6 +192,7 @@ class UI:
         # render all
         self.uploadData['selector'] = FileChooser(self.defaultDataFolder)
         self.uploadData['selector'].show_only_dirs = True
+        self.uploadData['selector'].default_path = self.defaultDataFolder
         self.uploadData['selector'].title = 'Job requires upload data. Please select a folder to upload'
         # settings end
         self.uploadData['accordion'] = widgets.Accordion(children=( self.uploadData['selector'], ), selected_index=None)
