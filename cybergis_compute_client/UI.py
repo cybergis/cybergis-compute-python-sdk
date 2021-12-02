@@ -5,13 +5,14 @@ from ipyfilechooser import FileChooser
 from IPython.display import Markdown, display, clear_output
 
 class UI:
-    def __init__(self, compute, defaultJobName="hello_world"):
+    def __init__(self, compute, defaultJobName="hello_world", defaultDataFolder="./"):
         self.compute = compute
         self.style = {'description_width': 'auto'}
         self.layout = widgets.Layout(width='60%')
         self.jobs = None
         self.hpcs = None
         self.defaultJobName = defaultJobName
+        self.defaultDataFolder = defaultDataFolder
         # slurm configs
         self.slurm_configs = ['num_of_node', 'num_of_task', 'time', 'cpu_per_task', 'memory_per_cpu', 'memory_per_gpu', 'memory', 'gpus', 'gpus_per_node', 'gpus_per_socket', 'gpus_per_task', 'partition']
         self.slurm_integer_configs = ['num_of_node', 'num_of_task', 'time', 'cpu_per_task', 'memory_per_cpu', 'memory_per_gpu', 'memory', 'gpus', 'gpus_per_node', 'gpus_per_socket', 'gpus_per_task']
@@ -132,7 +133,11 @@ class UI:
         # create components
         self.slurm['description'] = widgets.Label(value='All configs are optional. Please refer to Slurm official documentation at 🔗 https://slurm.schedmd.com/sbatch.html')
         # settings
-        for i in self.job['slurm_input_rules']:
+        for i in self.slurm_configs:
+            if i not in self.job['slurm_input_rules']:
+                self.slurm[i] = None
+                continue
+
             config = self.job['slurm_input_rules'][i]
 
             if i in self.slurm_integer_configs:
@@ -168,7 +173,7 @@ class UI:
 
         w = []
         for i in self.slurm_configs:
-            if i in self.slurm:
+            if self.slurm[i] != None:
                 w.append(self.slurm[i])
         self.slurm['vbox'] = widgets.VBox(w)
 
@@ -185,7 +190,7 @@ class UI:
         if not self.job['require_upload_data']:
             return
         # render all
-        self.uploadData['selector'] = FileChooser('./')
+        self.uploadData['selector'] = FileChooser(self.defaultDataFolder)
         self.uploadData['selector'].show_only_dirs = True
         self.uploadData['selector'].title = 'Job requires upload data. Please select a folder to upload'
         # settings end

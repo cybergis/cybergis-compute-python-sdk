@@ -270,8 +270,9 @@ class CyberGISCompute:
             print('🤖 Maintainers:')
             self.list_maintainer()
 
-    def create_job_by_ui(self, defaultJob="hello_world"):
+    def create_job_by_ui(self, defaultJob="hello_world", defaultDataFolder="./"):
         self.ui.defaultJobName = defaultJob
+        self.ui.defaultDataFolder = defaultDataFolder
         self.ui.render()
 
     def create_job_by_UI(self):

@@ -222,6 +222,8 @@ class Job:
         if (fileType == 'globus'):
             status = None
             while status not in ['SUCCEEDED', 'FAILED']:
+                self._clear()
+                print('⏳ waiting for file to download using Globus')
                 out = self.client.request('GET', '/file', {
                     'accessToken': self.JAT.getAccessToken(),
                     "fileUrl": jobStatus['resultFolder']
@@ -229,9 +231,6 @@ class Job:
                 status = out['status']
                 if raw:
                     return out
-                # UI
-                self._clear()
-                print('⏳ waiting for file to download using Globus')
             # exit loop
             self._clear()
             if status == 'SUCCEEDED':
