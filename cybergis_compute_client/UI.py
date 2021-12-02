@@ -190,7 +190,7 @@ class UI:
         if not self.job['require_upload_data']:
             return
         # render all
-        self.uploadData['selector'] = FileChooser(self.defaultDataFolder, select_default=True if self.defaultDataFolder == './' else False)
+        self.uploadData['selector'] = FileChooser(self.defaultDataFolder, select_default=True if self.defaultDataFolder != './' else False)
         self.uploadData['selector'].show_only_dirs = True
         self.uploadData['selector'].title = 'Job requires upload data. Please select a folder to upload'
         # settings end
