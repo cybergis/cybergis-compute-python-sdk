@@ -205,6 +205,11 @@ class UI:
         # check if necessary to render
         if self.job['param_rules'] == {}:
             return
+        # clear config
+        for i in self.param:
+            if i != 'output':
+                self.param[i] = None
+
         # render param
         for i in self.job['param_rules']:
             config = self.job['param_rules'][i]
@@ -471,7 +476,7 @@ class UI:
         }
 
         for i in self.slurm_configs:
-            if i in self.slurm:
+            if self.slurm[i] != None:
                 config = self.job['slurm_input_rules'][i]
                 if i in self.slurm_integer_storage_unit_config:
                     out['slurm'][i] = str(self.slurm[i].value) + str(config['unit'])
