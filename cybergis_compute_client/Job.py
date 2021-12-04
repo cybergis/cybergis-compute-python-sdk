@@ -86,8 +86,8 @@ class Job:
         return response
 
     def set(self, executableFolder=None, dataFolder=None, resultFolder=None, param=None, env=None, slurm=None, printJob=True):
-        body = {}
-        
+        body = {'jupyterhubApiToken': self.jupyterhubApiToken}
+
         if executableFolder:
             body['executableFolder'] = executableFolder
         if dataFolder:
@@ -101,7 +101,7 @@ class Job:
         if slurm:
             body['slurm'] = slurm
 
-        if (body == {}):
+        if (len(list(body)) == 1):
             print('❌ please set at least one parmeter')
 
         body['accessToken'] = self.JAT.getAccessToken()

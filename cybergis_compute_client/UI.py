@@ -365,6 +365,7 @@ class UI:
             with self.submit['alert_output']:
                 clear_output(wait=True)
 
+            self.compute.login()
             dataFolder = None
             self.jupyter_globus = self.compute.get_user_jupyter_globus()
             if self.job['require_upload_data']:
