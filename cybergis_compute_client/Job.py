@@ -56,16 +56,11 @@ class Job:
             self._print_job(job)
 
     def submit(self):
-        try:
-            body = { 'accessToken': self.JAT.getAccessToken() }
-            if (self.jupyterhubApiToken != None):
-                body['jupyterhubApiToken'] = self.jupyterhubApiToken
-            job = self.client.request('POST', '/job/' + self.id + '/submit', body)
-            print('✅ job submitted')
-        except Exception as e:
-            print('❌ ' + str(e))
-            job = self.client.request('GET', '/job/' + self.id, { 'accessToken': self.JAT.getAccessToken() })
-
+        body = { 'accessToken': self.JAT.getAccessToken() }
+        if (self.jupyterhubApiToken != None):
+            body['jupyterhubApiToken'] = self.jupyterhubApiToken
+        job = self.client.request('POST', '/job/' + self.id + '/submit', body)
+        print('✅ job submitted')
         self._print_job(job)
         return self
 
