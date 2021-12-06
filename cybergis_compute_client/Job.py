@@ -10,7 +10,7 @@ from IPython.display import HTML, display, clear_output
 
 class Job:
     # static variables
-    basicEventTypes = ['JOB_QUEUED', 'JOB_REGISTERED', 'JOB_INIT', 'JOB_ENDED', 'JOB_FAILED']
+    basicEventTypes = ['JOB_QUEUED', 'JOB_REGISTERED', 'JOB_INIT', 'GLOBUS_TRANSFER_INIT_SUCCESS', 'JOB_ENDED', 'JOB_FAILED']
 
     def __init__(self, maintainer=None, hpc=None, id=None, secretToken=None, hpcUsername=None, hpcPassword=None, client=None, isJupyter=None, jupyterhubApiToken=None, printJob=True):
         self.JAT = JAT()
@@ -62,9 +62,9 @@ class Job:
                 body['jupyterhubApiToken'] = self.jupyterhubApiToken
             job = self.client.request('POST', '/job/' + self.id + '/submit', body)
             print('✅ job submitted')
-        except:
-            print('❌ job already submitted or in queue')
-            job = self.client.request('GET', '/job', { 'accessToken': self.JAT.getAccessToken() })
+        except Exception as e:
+            print('❌ ' + str(e))
+            job = self.client.request('GET', '/job/' + self.id, { 'accessToken': self.JAT.getAccessToken() })
 
         self._print_job(job)
         return self
@@ -86,8 +86,8 @@ class Job:
         return response
 
     def set(self, executableFolder=None, dataFolder=None, resultFolder=None, param=None, env=None, slurm=None, printJob=True):
-        body = {}
-        
+        body = {'jupyterhubApiToken': self.jupyterhubApiToken}
+
         if executableFolder:
             body['executableFolder'] = executableFolder
         if dataFolder:
@@ -101,7 +101,7 @@ class Job:
         if slurm:
             body['slurm'] = slurm
 
-        if (body == {}):
+        if (len(list(body)) == 1):
             print('❌ please set at least one parmeter')
 
         body['accessToken'] = self.JAT.getAccessToken()
@@ -109,14 +109,14 @@ class Job:
         if printJob:
             self._print_job(job)
 
-    def events(self, liveOutput=True, basic=True, refreshRateInSeconds = 10):
-        if not liveOutput:
-            return self.status()['events']
+    def events(self, raw=False, liveOutput=True, basic=True, refreshRateInSeconds = 10):
+        if raw:
+            return self.status(raw=True)['events']
 
         isEnd = False
         while (not isEnd):
             self._clear()
-            out = self.status()['events']
+            out = self.status(raw=True)['events']
             headers = ['types', 'message', 'time']
             events = []
             for o in out:
@@ -132,9 +132,7 @@ class Job:
                 events.append(i)
                 isEnd =  isEnd or o['type'] == 'JOB_ENDED' or o['type'] == 'JOB_FAILED'
 
-            print('📋 Job events:')
             print('📮 Job ID: ' + self.id)
-            print('🖥 HPC: ' + self.hpc)
             if self.isJupyter:
                 display(HTML(tabulate(events, headers, tablefmt='html')))
             else:
@@ -143,15 +141,15 @@ class Job:
             if not isEnd:
                 time.sleep(refreshRateInSeconds)
 
-    def logs(self, liveOutput=True, refreshRateInSeconds = 15):
-        if not liveOutput:
-            return self.status()['logs']
+    def logs(self, raw=False, liveOutput=True, refreshRateInSeconds = 15):
+        if raw:
+            return self.status(raw=True)['logs']
 
         logs = []
         isEnd = False
         while (not isEnd):
             self._clear()
-            status = self.status()
+            status = self.status(raw=True)
             headers = ['message', 'time']
             logs = []
 
@@ -165,9 +163,7 @@ class Job:
                 ]
                 logs.append(i)
 
-            print('📋 Job logs:')
             print('📮 Job ID: ' + self.id)
-            print('🖥 HPC: ' + self.hpc)
             if self.isJupyter:
                 display(HTML(tabulate(logs, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', "<td style='text-align:left'>")))
             else:
@@ -176,13 +172,17 @@ class Job:
             if not isEnd:
                 time.sleep(refreshRateInSeconds)
 
-    def status(self):
+    def status(self, raw=False):
         if self.id is None:
             raise Exception('missing job ID, submit/register job first')
 
-        return self.client.request('GET', '/job/' + self.id, {
+        job = self.client.request('GET', '/job/' + self.id, {
             'accessToken': self.JAT.getAccessToken()
         })
+
+        if raw:
+            return job
+        self._print_job(job)
 
     def get_statistic(self, raw=False):
         statistic = self.client.request('GET', '/statistic/job/' + self.id, { 
@@ -203,11 +203,11 @@ class Job:
         else:
             print(tabulate(data, headers, tablefmt="presto"))
 
-    def download_result_folder(self, dir=None):
+    def download_result_folder(self, dir=None, raw=False):
         if self.id is None:
             raise Exception('missing job ID, submit/register job first')
 
-        jobStatus = self.status()
+        jobStatus = self.status(raw=True)
 
         if 'resultFolder' not in jobStatus:
             raise Exception('executable folder is not ready')
@@ -220,10 +220,23 @@ class Job:
         fileId = i[1]
 
         if (fileType == 'globus'):
-            return self.client.request('GET', '/file', {
-                'accessToken': self.JAT.getAccessToken(),
-                "fileUrl": jobStatus['resultFolder']
-            })
+            status = None
+            while status not in ['SUCCEEDED', 'FAILED']:
+                self._clear()
+                print('⏳ waiting for file to download using Globus')
+                out = self.client.request('GET', '/file', {
+                    'accessToken': self.JAT.getAccessToken(),
+                    "fileUrl": jobStatus['resultFolder']
+                })
+                status = out['status']
+                if raw:
+                    return out
+            # exit loop
+            self._clear()
+            if status == 'SUCCEEDED':
+                print('✅ download success!')
+            else:
+                print('❌ download fail!')
 
         if (fileType == 'local'):
             dir = os.path.join(dir, fileId)

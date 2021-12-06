@@ -3,10 +3,8 @@ from .Job import *
 from .UI import *
 import base64
 import os
-from IPython.display import Javascript
-from IPython.display import display, Markdown
+from IPython.display import display, Markdown, Javascript
 import ipywidgets as widgets
-import random
 
 class CyberGISCompute:
     # static variable
@@ -22,6 +20,9 @@ class CyberGISCompute:
         self.ui = UI(self)
         if isJupyter:
             self.enable_jupyter()
+        # job
+        self.job = None
+        self.recentDownloadPath = None
 
     def login(self, manualLogin = True):
         if self.jupyterhubApiToken != None:
@@ -269,7 +270,9 @@ class CyberGISCompute:
             print('🤖 Maintainers:')
             self.list_maintainer()
 
-    def test_ui(self):
+    def create_job_by_ui(self, defaultJob="hello_world", defaultDataFolder="./"):
+        self.ui.defaultJobName = defaultJob
+        self.ui.defaultDataFolder = defaultDataFolder
         self.ui.render()
 
     def create_job_by_UI(self):
@@ -587,7 +590,11 @@ class CyberGISCompute:
     def enable_jupyter(self):
         self.isJupyter = True
         # get jupyter variable
-        display(Javascript('IPython.notebook.kernel.execute(`CyberGISCompute.jupyterhubHost = "${window.location.host}"`);'))
+        url = os.getenv('JUPYTER_INSTANCE_URL')
+        if url != None:
+            CyberGISCompute.jupyterhubHost = url.replace('https://', '').replace('http://', '')
+        else:
+            display(Javascript('IPython.notebook.kernel.execute(`CyberGISCompute.jupyterhubHost = "${window.location.host}"`);'))
 
     def get_user_jupyter_globus(self):
         return self.client.request('GET', '/user/jupyter-globus', { "jupyterhubApiToken": self.jupyterhubApiToken })
