@@ -270,9 +270,10 @@ class Job:
     def _print_job(self, job):
         if job == None:
             return
-        headers = ['id', 'hpc', 'executableFolder', 'dataFolder', 'resultFolder', 'param', 'slurm', 'userId', 'maintainer', 'createdAt']
+        headers = ['id', 'slurmId', 'hpc', 'executableFolder', 'dataFolder', 'resultFolder', 'param', 'slurm', 'userId', 'maintainer', 'createdAt']
         data = [[
             job['id'],
+            job['slurmId'],
             job['hpc'],
             job['executableFolder'],
             job['dataFolder'],
