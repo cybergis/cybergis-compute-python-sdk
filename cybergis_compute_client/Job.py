@@ -268,6 +268,7 @@ class Job:
             _ = system('clear')
 
     def _print_job(self, job):
+        print(job)
         if job == None:
             return
         headers = ['id', 'slurmId', 'hpc', 'executableFolder', 'dataFolder', 'resultFolder', 'param', 'slurm', 'userId', 'maintainer', 'createdAt']
