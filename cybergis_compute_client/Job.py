@@ -111,7 +111,8 @@ class Job:
         isEnd = False
         while (not isEnd):
             self._clear()
-            out = self.status(raw=True)['events']
+            status = self.status(raw=True)
+            out = status['events']
             headers = ['types', 'message', 'time']
             events = []
             for o in out:
@@ -128,6 +129,7 @@ class Job:
                 isEnd =  isEnd or o['type'] == 'JOB_ENDED' or o['type'] == 'JOB_FAILED'
 
             print('📮 Job ID: ' + self.id)
+            if 'slurmId' in status: print('🤖 Slurm ID: ' + status['slurmId'])
             if self.isJupyter:
                 display(HTML(tabulate(events, headers, tablefmt='html')))
             else:
@@ -159,6 +161,7 @@ class Job:
                 logs.append(i)
 
             print('📮 Job ID: ' + self.id)
+            if 'slurmId' in status: print('🤖 Slurm ID: ' + status['slurmId'])
             if self.isJupyter:
                 display(HTML(tabulate(logs, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', "<td style='text-align:left'>")))
             else:
@@ -268,9 +271,7 @@ class Job:
             _ = system('clear')
 
     def _print_job(self, job):
-        print(job)
-        if job == None:
-            return
+        if job == None: return
         headers = ['id', 'slurmId', 'hpc', 'executableFolder', 'dataFolder', 'resultFolder', 'param', 'slurm', 'userId', 'maintainer', 'createdAt']
         data = [[
             job['id'],
