@@ -94,20 +94,13 @@ class CyberGISCompute:
             print('❌ job with id ' + id + ' was not found')
         return Job(secretToken=token, client=self.client, id=id, isJupyter=self.isJupyter, jupyterhubApiToken=self.jupyterhubApiToken)
 
-    def get_statistic(self, raw=False):
-        statistic = self.client.request('GET', '/statistic', { "jupyterhubApiToken": self.jupyterhubApiToken })
-        if raw:
-            return statistic
+    def get_slurm_usage(self, raw=False):
+        usage = self.client.request('GET', '/user/slurm-usage', { "jupyterhubApiToken": self.jupyterhubApiToken })
+        if raw: return usage
+        display("Nodes: {}\nAllocated CPUs: {}\nTotal CPU Time: {}\nMemory Utilized: {}\nTotal Allocated Memory: {}\nTotal Walltime: {}".format(\
+            usage['nodes'], usage['cpus'], usage['cpuTime'], usage['memory'], usage['memoryUsage'], usage['walltime'])\
+        )
 
-        headers = ['HPC Type', 'Total Runtime in Hours']
-        data = []
-        for key in statistic['runtime_in_seconds']:
-            data.append([key, statistic['runtime_in_seconds'][key] / (60 * 60)])
-
-        if self.isJupyter:
-            display(HTML(tabulate(data, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', '<td style="text-align:left">').replace('<th>', '<th style="text-align:left">')))
-        else:
-            print(tabulate(data, headers, tablefmt="presto"))
 
     def list_job(self, raw=False):
         self.login()

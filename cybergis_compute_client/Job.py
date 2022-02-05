@@ -182,25 +182,6 @@ class Job:
             return job
         self._print_job(job)
 
-    def get_statistic(self, raw=False):
-        statistic = self.client.request('GET', '/statistic/job/' + self.id, { 
-            'jupyterhubApiToken': self.jupyterhubApiToken,
-            'accessToken': self.JAT.getAccessToken()
-        })
-        if raw:
-            return statistic
-
-        headers = ['Job Runtime in Hours', '']
-        data = [[
-            statistic['runtime_in_seconds'] / (60 * 60) if statistic['runtime_in_seconds'] != None else 'job not finished',
-            ''
-        ]]
-
-        if self.isJupyter:
-            display(HTML(tabulate(data, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', '<td style="text-align:left">').replace('<th>', '<th style="text-align:left">')))
-        else:
-            print(tabulate(data, headers, tablefmt="presto"))
-
     def download_result_folder(self, dir=None, raw=False):
         if self.id is None:
             raise Exception('missing job ID, submit/register job first')
