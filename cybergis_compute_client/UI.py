@@ -282,7 +282,8 @@ class UI:
             self.download['result_output'] = widgets.Output()
         # create components
         if self.jobFinished:
-            self.download['dropdown'] = widgets.Dropdown(options=self.compute.job.result_folder_content(), value='/', description='select file/folder')
+            result_folder_content = self.compute.job.result_folder_content()
+            self.download['dropdown'] = widgets.Dropdown(options=result_folder_content, value=result_folder_content[0], description='select file/folder')
             self.download['button'] = widgets.Button(description="Download")
             self.download['button'].on_click(self.onDownloadButtonClick())
         else:
