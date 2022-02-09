@@ -97,9 +97,8 @@ class CyberGISCompute:
     def get_slurm_usage(self, raw=False):
         usage = self.client.request('GET', '/user/slurm-usage', { "jupyterhubApiToken": self.jupyterhubApiToken })
         if raw: return usage
-        display("Nodes: {}\nAllocated CPUs: {}\nTotal CPU Time: {}\nMemory Utilized: {}\nTotal Allocated Memory: {}\nTotal Walltime: {}".format(\
-            usage['nodes'], usage['cpus'], usage['cpuTime'], usage['memory'], usage['memoryUsage'], usage['walltime'])\
-        )
+        display(Markdown("Nodes: {}\nAllocated CPUs: {}\nTotal CPU Time: {}\nMemory Utilized: {}\nTotal Allocated Memory: {}\nTotal Walltime: {}".format(\
+            usage['nodes'], usage['cpus'], usage['cpuTime'], usage['memory'], usage['memoryUsage'], usage['walltime'])))
 
     def list_job(self, raw=False):
         self.login()
