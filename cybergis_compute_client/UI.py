@@ -293,6 +293,7 @@ class UI:
                 display(Markdown('# ☁️ Download Job Output Files'))
                 display(self.download['alert_output'])
                 display(self.download['result_output'])
+                display(self.download['dropdown'])
             else:
                 display(Markdown('# ⏳ Waiting for Job to Finish...'))
             display(self.download['button'])
