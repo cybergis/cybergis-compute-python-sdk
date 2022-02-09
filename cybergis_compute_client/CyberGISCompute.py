@@ -101,7 +101,6 @@ class CyberGISCompute:
             usage['nodes'], usage['cpus'], usage['cpuTime'], usage['memory'], usage['memoryUsage'], usage['walltime'])\
         )
 
-
     def list_job(self, raw=False):
         self.login()
         if self.jupyterhubApiToken == None:

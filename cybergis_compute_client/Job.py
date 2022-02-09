@@ -182,6 +182,14 @@ class Job:
             return job
         self._print_job(job)
 
+    def result_folder_content(self):
+        if self.id is None:
+            raise Exception('missing job ID, submit/register job first')
+        out = self.client.request('GET', '/job/' + self.id + '/result-folder-content', {
+            'accessToken': self.JAT.getAccessToken()
+        })
+        return out
+
     def download_result_folder(self, dir=None, raw=False):
         if self.id is None:
             raise Exception('missing job ID, submit/register job first')
