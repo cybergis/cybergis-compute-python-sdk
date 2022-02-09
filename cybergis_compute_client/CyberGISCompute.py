@@ -95,6 +95,7 @@ class CyberGISCompute:
         return Job(secretToken=token, client=self.client, id=id, isJupyter=self.isJupyter, jupyterhubApiToken=self.jupyterhubApiToken)
 
     def get_slurm_usage(self, raw=False):
+        self.login()
         usage = self.client.request('GET', '/user/slurm-usage', { "jupyterhubApiToken": self.jupyterhubApiToken })
         if raw: return usage
         display(Markdown("Nodes: {}\nAllocated CPUs: {}\nTotal CPU Time: {}\nMemory Utilized: {}\nTotal Allocated Memory: {}\nTotal Walltime: {}".format(\
