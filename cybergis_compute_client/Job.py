@@ -190,18 +190,14 @@ class Job:
         })
         return out
 
-    def download_result_folder(self, dir=None, raw=False):
-        if self.id is None:
-            raise Exception('missing job ID, submit/register job first')
+    def download_result_folder(self, localPath=None, remotePath=None, raw=False):
+        if self.id is None: raise Exception('missing job ID, submit/register job first')
 
         jobStatus = self.status(raw=True)
-
-        if 'resultFolder' not in jobStatus:
-            raise Exception('executable folder is not ready')
+        if 'resultFolder' not in jobStatus: raise Exception('executable folder is not ready')
 
         i = jobStatus['resultFolder'].split('://')
-        if (len(i) != 2):
-            raise Exception('invalid result folder formate provided')
+        if (len(i) != 2): raise Exception('invalid result folder formate provided')
 
         fileType = i[0]
         fileId = i[1]
@@ -211,33 +207,28 @@ class Job:
             while status not in ['SUCCEEDED', 'FAILED']:
                 self._clear()
                 print('⏳ waiting for file to download using Globus')
-                out = self.client.request('GET', '/file', {
-                    'accessToken': self.JAT.getAccessToken(),
-                    "fileUrl": jobStatus['resultFolder']
+                out = self.client.request('GET', '/file/result-folder/globus-download', {
+                    "accessToken": self.JAT.getAccessToken(),
+                    "downloadTo": jobStatus['resultFolder'],
+                    "downloadFrom": remotePath
                 })
                 status = out['status']
-                if raw:
-                    return out
+                if raw: return out
             # exit loop
             self._clear()
-            if status == 'SUCCEEDED':
-                print('✅ download success!')
-            else:
-                print('❌ download fail!')
+            if status == 'SUCCEEDED': print('✅ download success!')
+            else: print('❌ download fail!')
 
         if (fileType == 'local'):
-            dir = os.path.join(dir, fileId)
-            dir = self.client.download('/file', {
-                "accessToken": self.JAT.getAccessToken(),
-                "fileUrl": jobStatus['resultFolder']
-            }, dir)
-            print('file successfully downloaded under: ' + dir)
-            return dir
+            localPath = os.path.join(localPath, fileId)
+            localPath = self.client.download('/file/result-folder/direct-download', {
+                "accessToken": self.JAT.getAccessToken()
+            }, localPath)
+            print('file successfully downloaded under: ' + localPath)
+            return localPath
 
     def query_globus_task_status(self):
-        if self.id is None:
-            raise Exception('missing job ID, submit/register job first')
-
+        if self.id is None: raise Exception('missing job ID, submit/register job first')
         return self.client.request('GET', '/file/' + self.id + '/globus_task_status', {
             'accessToken': self.JAT.getAccessToken()
         })
@@ -250,8 +241,7 @@ class Job:
 
     # Helpers
     def _clear(self):
-        if self.isJupyter:
-            clear_output(wait=True)
+        if self.isJupyter: clear_output(wait=True)
         # for windows
         if name == 'nt':
             _ = system('cls')

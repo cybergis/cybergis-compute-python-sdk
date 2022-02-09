@@ -353,7 +353,7 @@ class UI:
             with self.download['result_output']:
                 self.download['alert_output'].clear_output(wait=True)
                 self.downloading = True
-                self.compute.job.download_result_folder()
+                self.compute.job.download_result_folder(remotePath=self.download['dropdown'].value)
                 print('please check your data at your root folder under "' + self.globus_filename + '"')
                 self.compute.recentDownloadPath = os.path.join(self.jupyter_globus['container_home_path'], self.globus_filename)
                 self.downloading = False
@@ -378,7 +378,7 @@ class UI:
                         return
                 else:
                     dataFolder = dataFolder.replace(self.jupyter_globus['container_home_path'].strip('/'), '')
-                    dataFolder='globus://' + self.jupyter_globus['endpoint'] + ':' + os.path.join(self.jupyter_globus['root_path'], dataFolder.strip('/'))
+                    dataFolder = 'globus://' + self.jupyter_globus['endpoint'] + ':' + os.path.join(self.jupyter_globus['root_path'], dataFolder.strip('/'))
 
             data = self.get_data()
             self.compute.job = self.compute.create_job(hpc=data['computing_resource'], printJob=False)
