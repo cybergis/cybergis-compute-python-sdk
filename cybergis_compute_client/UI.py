@@ -5,14 +5,14 @@ from ipyfilechooser import FileChooser
 from IPython.display import Markdown, display, clear_output
 
 class UI:
-    def __init__(self, compute, defaultJobName="hello_world", defaultDataFolder="./", defaultResultFolder="/"):
+    def __init__(self, compute, defaultJobName="hello_world", defaultDataFolder="./", defaultRemoteResultFolder="/"):
         self.compute = compute
         self.style = {'description_width': 'auto'}
         self.layout = widgets.Layout(width='60%')
         self.jobs = None
         self.hpcs = None
         self.defaultJobName = defaultJobName
-        self.defaultResultFolder = defaultResultFolder if defaultResultFolder[0] == '/' else '/' + defaultResultFolder
+        self.defaultRemoteResultFolder = defaultRemoteResultFolder if defaultRemoteResultFolder[0] == '/' else '/' + defaultRemoteResultFolder
         self.defaultDataFolder = defaultDataFolder
         # slurm configs
         self.slurm_configs = ['num_of_node', 'num_of_task', 'time', 'cpu_per_task', 'memory_per_cpu', 'memory_per_gpu', 'memory', 'gpus', 'gpus_per_node', 'gpus_per_socket', 'gpus_per_task', 'partition']
@@ -285,7 +285,7 @@ class UI:
             result_folder_content = self.compute.job.result_folder_content()
             # push default value to front
             try:
-                result_folder_content.insert(0, result_folder_content.pop(result_folder_content.index(self.defaultResultFolder)))
+                result_folder_content.insert(0, result_folder_content.pop(result_folder_content.index(self.defaultRemoteResultFolder)))
             except: result_folder_content
             self.download['dropdown'] = widgets.Dropdown(options=result_folder_content, value=result_folder_content[0], description='select file/folder')
             self.download['button'] = widgets.Button(description="Download")
