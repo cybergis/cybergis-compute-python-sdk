@@ -262,11 +262,11 @@ class CyberGISCompute:
             print('🤖 Maintainers:')
             self.list_maintainer()
 
-    def create_job_by_ui(self, defaultJob="hello_world", defaultDataFolder="./"):
+    def create_job_by_ui(self, defaultJob="hello_world", defaultDataFolder="./", defaultResultFolder="/"):
         self.ui.defaultJobName = defaultJob
         self.ui.defaultDataFolder = defaultDataFolder
+        self.ui.defaultResultFolder = defaultResultFolder
         self.ui.render()
-
 
     def get_latest_created_job(self):
         return self.job
