@@ -12,7 +12,7 @@ class UI:
         self.jobs = None
         self.hpcs = None
         self.defaultJobName = defaultJobName
-        self.defaultResultFolder = defaultResultFolder if self.defaultResultFolder[0] == '/' else '/' + defaultResultFolder
+        self.defaultResultFolder = defaultResultFolder if defaultResultFolder[0] == '/' else '/' + defaultResultFolder
         self.defaultDataFolder = defaultDataFolder
         # slurm configs
         self.slurm_configs = ['num_of_node', 'num_of_task', 'time', 'cpu_per_task', 'memory_per_cpu', 'memory_per_gpu', 'memory', 'gpus', 'gpus_per_node', 'gpus_per_socket', 'gpus_per_task', 'partition']
