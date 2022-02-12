@@ -284,7 +284,9 @@ class UI:
         if self.jobFinished:
             result_folder_content = self.compute.job.result_folder_content()
             # push default value to front
-            result_folder_content.insert(0, result_folder_content.pop(result_folder_content.index(self.defaultResultFolder)))
+            try:
+                result_folder_content.insert(0, result_folder_content.pop(result_folder_content.index(self.defaultResultFolder)))
+            except: result_folder_content
             self.download['dropdown'] = widgets.Dropdown(options=result_folder_content, value=result_folder_content[0], description='select file/folder')
             self.download['button'] = widgets.Button(description="Download")
             self.download['button'].on_click(self.onDownloadButtonClick())
