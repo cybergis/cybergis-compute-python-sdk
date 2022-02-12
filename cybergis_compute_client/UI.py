@@ -189,8 +189,7 @@ class UI:
         if self.uploadData['output'] == None:
             self.uploadData['output'] = widgets.Output()
         # check if necessary to render
-        if not self.job['require_upload_data']:
-            return
+        if not self.job['require_upload_data']: return
         # render all
         self.uploadData['selector'] = FileChooser(self.defaultDataFolder, select_default=True if self.defaultDataFolder != './' else False)
         self.uploadData['selector'].show_only_dirs = True
@@ -323,8 +322,7 @@ class UI:
         if self.resultEvents['output'] == None:
             self.resultEvents['output'] = widgets.Output()
         
-        if not self.submitted:
-            return
+        if not self.submitted: return
 
         with self.resultEvents['output']:
             self.compute.job.events()
@@ -333,10 +331,8 @@ class UI:
     def renderResultLogs(self):
         if self.resultLogs['output'] == None:
             self.resultLogs['output'] = widgets.Output()
-        
-        if not self.submitted:
-            return
 
+        if not self.submitted: return
         with self.resultLogs['output']:
             self.compute.job.logs()
             self.tab.set_title(1, '✅ Your Job Status')
@@ -420,8 +416,7 @@ class UI:
     def onComputingResourceDropdownChange(self):
         def on_change(change):
             if change['type'] == 'change':
-                if self.submitted:
-                    return
+                if self.submitted: return
                 self.hpcName = self.computingResource['dropdown'].value
                 self.hpc = self.hpcs[self.hpcName]
                 self.rerender(['description', 'slurm', 'param', 'uploadData'])
@@ -516,9 +511,6 @@ class UI:
             return d + '-' + h + ':' + m + ':00'
 
     def unitTimeToSecond(self, unit, time):
-        if unit == 'Minutes':
-            return time * 60
-        elif unit == 'Hours':
-            return time * 60 * 60
-        elif unit == 'Days':
-            return time * 60 * 60 * 24
+        if unit == 'Minutes': return time * 60
+        elif unit == 'Hours': return time * 60 * 60
+        elif unit == 'Days': return time * 60 * 60 * 24
