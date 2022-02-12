@@ -5,14 +5,15 @@ from ipyfilechooser import FileChooser
 from IPython.display import Markdown, display, clear_output
 
 class UI:
-    def __init__(self, compute, defaultJobName="hello_world", defaultDataFolder="./", defaultRemoteResultFolder="/"):
+    def __init__(self, compute, defaultJobName="hello_world", defaultDataFolder="./", defaultRemoteResultFolder=None):
         self.compute = compute
         self.style = {'description_width': 'auto'}
         self.layout = widgets.Layout(width='60%')
         self.jobs = None
         self.hpcs = None
         self.defaultJobName = defaultJobName
-        self.defaultRemoteResultFolder = defaultRemoteResultFolder if defaultRemoteResultFolder[0] == '/' else '/' + defaultRemoteResultFolder
+        if defaultRemoteResultFolder != None:
+            self.defaultRemoteResultFolder = defaultRemoteResultFolder if defaultRemoteResultFolder[0] == '/' else '/' + defaultRemoteResultFolder
         self.defaultDataFolder = defaultDataFolder
         # slurm configs
         self.slurm_configs = ['num_of_node', 'num_of_task', 'time', 'cpu_per_task', 'memory_per_cpu', 'memory_per_gpu', 'memory', 'gpus', 'gpus_per_node', 'gpus_per_socket', 'gpus_per_task', 'partition']

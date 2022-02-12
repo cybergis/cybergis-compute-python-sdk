@@ -262,10 +262,11 @@ class CyberGISCompute:
             print('🤖 Maintainers:')
             self.list_maintainer()
 
-    def create_job_by_ui(self, defaultJob="hello_world", defaultDataFolder="./", defaultRemoteResultFolder="/"):
+    def create_job_by_ui(self, defaultJob="hello_world", defaultDataFolder="./", defaultRemoteResultFolder=None):
         self.ui.defaultJobName = defaultJob
         self.ui.defaultDataFolder = defaultDataFolder
-        self.ui.defaultRemoteResultFolder = defaultRemoteResultFolder if defaultRemoteResultFolder[0] == '/' else '/' + defaultRemoteResultFolder
+        if defaultRemoteResultFolder != None:
+            self.ui.defaultRemoteResultFolder = defaultRemoteResultFolder if defaultRemoteResultFolder[0] == '/' else '/' + defaultRemoteResultFolder
         self.ui.render()
 
     def get_latest_created_job(self):
