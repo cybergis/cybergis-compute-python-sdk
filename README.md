@@ -7,13 +7,12 @@
 ## Installation
 1. **Requirements**
 - Python3 + pip3
-- Jupyter Server (Hub/Lab) with fixed domain
-- Environment Variables
-  - `JUPYTERHUB_API_TOKEN`: Jupyter server user access token, comes with JupyterHub/JupyterLab
-  - `JUPYTER_INSTANCE_URL`: Jupyter server domain
+- Jupyter server (Hub/Lab) with fixed domain
+- System environment variables:
+  - `JUPYTERHUB_API_TOKEN`: user access token, comes with JupyterHub/Lab.
+  - `JUPYTER_INSTANCE_URL`: server url
 
-
-1. **Install/Update Package**
+2. **Install/Update Package**
 ```bash
 git clone https://github.com/cybergis/cybergis-compute-python-sdk.git
 cd cybergis-compute-python-sdk
