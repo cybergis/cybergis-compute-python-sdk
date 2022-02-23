@@ -1,4 +1,7 @@
 # CyberGIS-Compute Python SDK
+[![PythonCodeQuality](https://github.com/cybergis/cybergis-compute-python-sdk/workflows/Python%20Code%20Quality/badge.svg)](https://github.com/cybergis/cybergis-compute-python-sdk/actions)
+[![PythonCodeTest](https://github.com/cybergis/cybergis-compute-python-sdk/workflows/Python%20Code%20Test/badge.svg)](https://github.com/cybergis/cybergis-compute-python-sdk/actions)
+![GitHub](https://img.shields.io/github/license/cybergis/cybergis-compute-python-sdk)
 
 **CyberGIS-Compute** is a scalable middleware framework for enabling high-performance and data-intensive geospatial research and education on CyberGISX. This API can be used to send [supported jobs]() to various [supported HPC & computing resources]().
 
@@ -10,7 +13,6 @@
   - `JUPYTERHUB_API_TOKEN`: user access token, comes with JupyterHub/Lab.
   - `JUPYTER_INSTANCE_URL`: server url
 
-***
 
 2. **Install/Update Package**
 ```bash
@@ -19,15 +21,40 @@ cd cybergis-compute-python-sdk
 python3 setup.py install
 ```
 
+## Hello World Example
+
+In this example, you will be using the SDK's **Pilot UI** to run the (hello world GitHub project)[https://github.com/cybergis/cybergis-compute-hello-world] on the (Keeling Computing Cluster)[https://cybergis.illinois.edu/infrastructure/hpc-user-guide/]. 
+
+1. Run the **Pilot UI**
+```python
+from cybergis_compute_client import CyberGISCompute
+
+cybergis = CyberGISCompute(url="xxx") # replace xxx with CyberGIS-Compute server url
+cybergis.create_job_by_ui() # run Pilot UI
+```
+
+2. Select `hello world` from **📦 Job Template**
+3. Select `keeling_community` from **🖥 Computing Recourse**
+4. Configure the following, or leave it as default
+	- Slurm Computing Configurations
+	- Input Parameters
+	- Receive Email
+5. Select a file to upload under **Upload Data**
+6. Click Submit
+
+> If you wonder where does the customized configuration options comes from, they are defined in the `manifest.json` file of each project. Please refer to https://github.com/cybergis/cybergis-compute-hello-world/blob/main/manifest.json
+
+
+
 
 
 
 
 # Job Supervisor Python SDK
 
-[![PythonCodeQuality](https://github.com/cybergis/job-supervisor-python-sdk/workflows/Python%20Code%20Quality/badge.svg)](https://github.com/cybergis/job-supervisor-python-sdk/actions)
-[![PythonCodeTest](https://github.com/cybergis/job-supervisor-python-sdk/workflows/Python%20Code%20Test/badge.svg)](https://github.com/cybergis/job-supervisor-python-sdk/actions)
-![GitHub](https://img.shields.io/github/license/cybergis/job-supervisor-python-sdk)
+[![PythonCodeQuality](https://github.com/cybergis/cybergis-compute-python-sdk/workflows/Python%20Code%20Quality/badge.svg)](https://github.com/cybergis/cybergis-compute-python-sdk/actions)
+[![PythonCodeTest](https://github.com/cybergis/cybergis-compute-python-sdk/workflows/Python%20Code%20Test/badge.svg)](https://github.com/cybergis/cybergis-compute-python-sdk/actions)
+![GitHub](https://img.shields.io/github/license/cybergis/cybergis-compute-python-sdk)
 
 RIF meeting iPyWidget demo notebooks: [Open With CyberGISX](https://cybergisx.cigi.illinois.edu/hub/user-redirect/git-pull?repo=https%3A%2F%2Fgithub.com%2Fcybergis%2Fcybergis-compute-python-sdk&branch=v2&urlpath=tree%2Fcybergis-compute-python-sdk%2FRIF_UI_NBK%2FiPython%20Widget.ipynb)
 
@@ -39,8 +66,8 @@ Python SDK client for submitting HPC job to CyberGIS Job Supervisor
 
 1. Install Package
 ```bash
-git clone https://github.com/cybergis/job-supervisor-python-sdk.git
-cd job-supervisor-python-sdk
+git clone https://github.com/cybergis/cybergis-compute-python-sdk.git
+cd cybergis-compute-python-sdk
 python3 setup.py install
 ```
 
