@@ -23,7 +23,7 @@ python3 setup.py install
 
 ## Hello World Example
 
-In this example, you will be using the SDK's **Pilot UI** to run the (hello world GitHub project)[https://github.com/cybergis/cybergis-compute-hello-world] on the (Keeling Computing Cluster)[https://cybergis.illinois.edu/infrastructure/hpc-user-guide/]. 
+In this example, you will be using the SDK's **Pilot UI** to run the [hello world GitHub project](https://github.com/cybergis/cybergis-compute-hello-world) on the [Keeling Computing Cluster](https://cybergis.illinois.edu/infrastructure/hpc-user-guide/). 
 
 1. Run the **Pilot UI**
 ```python
