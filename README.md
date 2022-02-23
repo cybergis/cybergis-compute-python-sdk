@@ -42,11 +42,30 @@ cybergis.create_job_by_ui() # run Pilot UI
 5. Select a file to upload under **Upload Data**
 6. Click Submit
 
-> If you wonder where does the customized configuration options comes from, they are defined in the `manifest.json` file of each project. Please refer to https://github.com/cybergis/cybergis-compute-hello-world/blob/main/manifest.json
+> ❓ If you wonder where does the customized configuration options comes from, they are defined in the `manifest.json` file of each project. Please refer to https://github.com/cybergis/cybergis-compute-hello-world/blob/main/manifest.json
 
+## SDK Usage
+```python
+cybergis = CyberGISCompute(url="xxx")
+```
 
+1. Query and resume jobs that you own. 
+```python
+# CyberGISCompute.list_job -> return a list of jobs that you submitted
+cybergis.list_job()
 
+# CyberGISCompute.get_job_by_id -> return a Job object referred by that id
+cybergis.get_job_by_id(id)
+```
 
+2. Query CyberGIS-Compute server support information
+```python
+# CyberGISCompute.list_hpc -> return a list of hpc resources that the server supports
+cybergis.list_hpc()
+
+# CyberGISCompute.list_git -> return a list of Git projects that the server supports
+cybergis.list_git()
+```
 
 
 
