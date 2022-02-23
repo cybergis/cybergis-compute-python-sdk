@@ -80,10 +80,10 @@ cybergis.get_latest_created_job
 
 4. Submit job using programming style (in progress)
 ```python
+# the Job object is an interface for a job
 # CyberGISCompute.create_job -> return Job object & print the job's information
 job = cybergis.create_job(hpc="some HPC")
 
-# the Job object is an interface for a job
 # Job.submit -> print the job's information
 job.submit()
 ```
