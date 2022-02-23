@@ -12,13 +12,14 @@
   - `JUPYTERHUB_API_TOKEN`: user access token, comes with JupyterHub/Lab.
   - `JUPYTER_INSTANCE_URL`: server url
 
+***
+
 2. **Install/Update Package**
 ```bash
 git clone https://github.com/cybergis/cybergis-compute-python-sdk.git
 cd cybergis-compute-python-sdk
 python3 setup.py install
 ```
-
 
 
 
