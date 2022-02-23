@@ -1,3 +1,30 @@
+# CyberGIS-Compute Python SDK
+
+**CyberGIS-Compute** is a scalable middleware framework for enabling high-performance and data-intensive geospatial research and education on CyberGISX. This API can be used to send [supported jobs]() to various [supported HPC & computing resources]().
+
+***
+
+## Installation
+1. **Requirements**
+- Python3 + pip3
+- Jupyter Server (Hub/Lab) with fixed domain
+- Environment Variables
+  - `JUPYTERHUB_API_TOKEN`: Jupyter server user access token, comes with JupyterHub/JupyterLab
+  - `JUPYTER_INSTANCE_URL`: Jupyter server domain
+
+
+1. **Install/Update Package**
+```bash
+git clone https://github.com/cybergis/cybergis-compute-python-sdk.git
+cd cybergis-compute-python-sdk
+python3 setup.py install
+```
+
+
+
+
+
+
 # Job Supervisor Python SDK
 
 [![PythonCodeQuality](https://github.com/cybergis/job-supervisor-python-sdk/workflows/Python%20Code%20Quality/badge.svg)](https://github.com/cybergis/job-supervisor-python-sdk/actions)
