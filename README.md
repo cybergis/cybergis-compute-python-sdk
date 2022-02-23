@@ -2,8 +2,6 @@
 
 **CyberGIS-Compute** is a scalable middleware framework for enabling high-performance and data-intensive geospatial research and education on CyberGISX. This API can be used to send [supported jobs]() to various [supported HPC & computing resources]().
 
-***
-
 ## Installation
 1. **Requirements**
 - Python3 + pip3
