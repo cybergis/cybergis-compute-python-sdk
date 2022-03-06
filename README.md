@@ -13,7 +13,6 @@
   - `JUPYTERHUB_API_TOKEN`: user access token, comes with JupyterHub/Lab.
   - `JUPYTER_INSTANCE_URL`: server url
 
-
 2. **Install/Update Package**
 ```bash
 git clone https://github.com/cybergis/cybergis-compute-python-sdk.git
@@ -87,3 +86,7 @@ job = cybergis.create_job(hpc="some HPC")
 # Job.submit -> print the job's information
 job.submit()
 ```
+
+## Related Documentations
+- [CyberGIS Compute Core - the server](https://github.com/cybergis/cybergis-compute-core)
+- [CyberGIS Compute Example Hello World Project](https://github.com/cybergis/cybergis-compute-hello-world)
