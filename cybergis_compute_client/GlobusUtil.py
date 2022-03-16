@@ -9,7 +9,7 @@ class GlobusUtil:
             'to': '{}:{}'.format(endpoint, path),
             'hpc': hpc
         })
-    
+
     def upload(self, endpoint, path, hpc):
         self.compute.login()
         return self.compute.client.request('GET', '/globus-util/jupyter/upload', {
