@@ -1,5 +1,9 @@
 ipyfilechooser
+ipywidgets
+ipyfilechooser
 myst-parser
+requests
+tabulate
 nbsphinx
 nbsphinx-link
 sphinx
