@@ -29,7 +29,7 @@ class Zip(object):
         Creates a directory with the name filedir_in_zip
         Args:
             fildir_in_zip(str): Name of the zip_directory
-        Yields:
+        Returns:
             (obj) : this Zip
         """
         # Get a handle to the in-memory zip in append mode
@@ -52,7 +52,7 @@ class Zip(object):
         Args:
             filename_in_zip(str): Name of the zip_file
             file_contents(str): Contents that need to be written to the zip_file
-        Yields:
+        Returns:
             (obj) : this Zip
         """
         # Get a handle to the in-memory zip in append mode
@@ -73,7 +73,7 @@ class Zip(object):
         Reads the contents of the in-memory zip.
         Args:
             None
-        Yields:
+        Returns:
             (str) : contents of the in-memory zip
         """
         self.in_memory_zip.seek(0)
@@ -84,7 +84,7 @@ class Zip(object):
         Writes the in-memory zip to a file
         Args:
             filename(str) : Name of the file that needs to be written
-        Yields:
+        Returns:
             None
         """
         f = open(filename, "wb")
