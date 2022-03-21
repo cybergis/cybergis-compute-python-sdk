@@ -428,10 +428,8 @@ class UI:
         with silent:
             self.compute.login()
 
-        if self.jobs == None:
-            self.jobs = self.compute.list_git(raw=True)
-        if self.hpcs == None:
-            self.hpcs = self.compute.list_hpc(raw=True)
+        self.jobs = self.compute.list_git(raw=True)
+        self.hpcs = self.compute.list_hpc(raw=True)
         # state
         self.submitted = False
         self.jobFinished = False
