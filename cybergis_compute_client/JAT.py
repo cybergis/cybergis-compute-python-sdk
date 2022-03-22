@@ -27,7 +27,7 @@ class JAT:
             id (str): Unique identifier for the job (assigned by the client)
             secretToken (str): Token to generate JAT signature (provided by the client)
             algorithm (str): Algorithm used to hash the signature 
-        Yields:
+        Returns:
             (obj): this JAT
         """
         if (algorithm not in hashlib.algorithms_available):
@@ -42,7 +42,7 @@ class JAT:
         Constructs a compact access token with the given payload
         Args:
             payload (str): payload to be hashed
-        Yields:
+        Returns:
             (str) hashed payload
         """
         self._checkInit()
@@ -55,7 +55,7 @@ class JAT:
         Returns the current date (year, month, day, hour)
         Args:
             none
-        Yields:
+        Returns:
             (str): The current date
         """
         return int(datetime.utcnow().strftime("%Y%m%d%H"))
@@ -63,7 +63,7 @@ class JAT:
     def getAccessToken(self):
         """
         Returns the access token signaure of this job, and adds it to the cache if it is not already there
-        Yields:
+        Returns:
             (str): Access token signature, in the form of 4 Base64-URL strings separated by dots
         """
         self._checkInit()
@@ -90,7 +90,7 @@ class JAT:
         Returns decoded information from the access token in the form of a dictionary
         Args:
             accessToken (str): The job's access token, in the form of 4 Base64-URL strings separated by dots
-        Yields:
+        Returns:
             (dict): Algorithm, payload (both encoded and decoded), id, and the hash associated with a job's secret token, id, and payload.
         """
         aT = accessToken.split('.')
@@ -112,7 +112,7 @@ class JAT:
         Encodes a dictionary into a Base64-URL
         Args:
             target (dict): the dictionary to be encoded
-        Yields:
+        Returns:
             (str): the Base64-URL encoded target
         """
         return b64encode(dumps(target, separators=(',', ':')).encode('ascii')).decode('ascii')
@@ -122,7 +122,7 @@ class JAT:
         Decodes a Base64_URL into a dictionary
         Args:
             target (str): Base64-URL to be decoded into a text dictionary
-        Yields:
+        Returns:
             (dict): Dictionary decoded from the passed target
         """
         return loads(b64decode(target.encode('ascii')).decode('ascii'))
@@ -132,7 +132,7 @@ class JAT:
         Encodes a string into a Base64_URL string
         Args:
             target (str): Text string to be encoded into a Base64-URL string
-        Yields:
+        Returns:
             (str): The Base64-URL encoded target
         """
         return b64encode(target.encode('ascii')).decode('ascii')
@@ -142,7 +142,7 @@ class JAT:
         Decodes a Base64_URL string
         Args:
             target (str): The Base64-URL encoded target
-        Yields:
+        Returns:
             (str): String decoded from the passed target
         """
         return b64decode(target.encode('ascii')).decode('ascii')
