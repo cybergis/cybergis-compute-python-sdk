@@ -8,6 +8,7 @@ from os import system, name
 from tabulate import tabulate
 from IPython.display import HTML, display, clear_output
 
+
 class Job:
     # static variables
     basicEventTypes = ['JOB_QUEUED', 'JOB_REGISTERED', 'JOB_INIT', 'GLOBUS_TRANSFER_INIT_SUCCESS', 'JOB_ENDED', 'JOB_FAILED']
@@ -20,14 +21,14 @@ class Job:
         self.jupyterhubApiToken = jupyterhubApiToken
 
         job = None
-        if (secretToken == None):
-            if maintainer == None:
+        if (secretToken is None):
+            if maintainer is None:
                 raise Exception('maintainer cannot by NoneType')
 
-            req = { 'maintainer': maintainer }
-            if (hpc != None):
+            req = {'maintainer': maintainer}
+            if (hpc is not None):
                 req['hpc'] = hpc
-            if (jupyterhubApiToken != None):
+            if (jupyterhubApiToken is not None):
                 req['jupyterhubApiToken'] = jupyterhubApiToken
 
             if (hpcUsername is None):
@@ -43,7 +44,7 @@ class Job:
             self.JAT.init('md5', id, secretToken)
         else:
             self.JAT.init('md5', id, secretToken)
-            job = self.client.request('GET', '/job/get-by-token', { 'accessToken': self.JAT.getAccessToken() })
+            job = self.client.request('GET', '/job/get-by-token', {'accessToken': self.JAT.getAccessToken()})
             hpc = job['hpc']
 
         if (hpcPassword is not None):
@@ -56,8 +57,8 @@ class Job:
             self._print_job(job)
 
     def submit(self):
-        body = { 'accessToken': self.JAT.getAccessToken() }
-        if (self.jupyterhubApiToken != None):
+        body = {'accessToken': self.JAT.getAccessToken()}
+        if (self.jupyterhubApiToken is not None):
             body['jupyterhubApiToken'] = self.jupyterhubApiToken
         job = self.client.request('POST', '/job/' + self.id + '/submit', body)
         print('✅ job submitted')
@@ -104,7 +105,7 @@ class Job:
         if printJob:
             self._print_job(job)
 
-    def events(self, raw=False, liveOutput=True, basic=True, refreshRateInSeconds = 10):
+    def events(self, raw=False, liveOutput=True, basic=True, refreshRateInSeconds=10):
         if raw:
             return self.status(raw=True)['events']
 
@@ -124,12 +125,13 @@ class Job:
                     o['message'],
                     o['createdAt']
                 ]
-                
+
                 events.append(i)
-                isEnd =  isEnd or o['type'] == 'JOB_ENDED' or o['type'] == 'JOB_FAILED'
+                isEnd = isEnd or o['type'] == 'JOB_ENDED' or o['type'] == 'JOB_FAILED'
 
             print('📮 Job ID: ' + self.id)
-            if 'slurmId' in status: print('🤖 Slurm ID: ' + str(status['slurmId']))
+            if 'slurmId' in status:
+                print('🤖 Slurm ID: ' + str(status['slurmId']))
             if self.isJupyter:
                 display(HTML(tabulate(events, headers, tablefmt='html')))
             else:
@@ -138,7 +140,7 @@ class Job:
             if not isEnd:
                 time.sleep(refreshRateInSeconds)
 
-    def logs(self, raw=False, liveOutput=True, refreshRateInSeconds = 15):
+    def logs(self, raw=False, liveOutput=True, refreshRateInSeconds=15):
         if raw:
             return self.status(raw=True)['logs']
 
@@ -151,7 +153,7 @@ class Job:
             logs = []
 
             for o in status['events']:
-                isEnd =  isEnd or o['type'] == 'JOB_ENDED' or o['type'] == 'JOB_FAILED'
+                isEnd = isEnd or o['type'] == 'JOB_ENDED' or o['type'] == 'JOB_FAILED'
 
             for o in status['logs']:
                 i = [
@@ -161,7 +163,8 @@ class Job:
                 logs.append(i)
 
             print('📮 Job ID: ' + self.id)
-            if 'slurmId' in status: print('🤖 Slurm ID: ' + str(status['slurmId']))
+            if 'slurmId' in status:
+                print('🤖 Slurm ID: ' + str(status['slurmId']))
             if self.isJupyter:
                 display(HTML(tabulate(logs, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', "<td style='text-align:left'>")))
             else:
@@ -191,13 +194,16 @@ class Job:
         return out
 
     def download_result_folder(self, localPath=None, remotePath=None, raw=False):
-        if self.id is None: raise Exception('missing job ID, submit/register job first')
+        if self.id is None:
+            raise Exception('missing job ID, submit/register job first')
 
         jobStatus = self.status(raw=True)
-        if 'resultFolder' not in jobStatus: raise Exception('executable folder is not ready')
+        if 'resultFolder' not in jobStatus:
+            raise Exception('executable folder is not ready')
 
         i = jobStatus['resultFolder'].split('://')
-        if (len(i) != 2): raise Exception('invalid result folder formate provided')
+        if (len(i) != 2):
+            raise Exception('invalid result folder formate provided')
 
         fileType = i[0]
         fileId = i[1]
@@ -213,11 +219,14 @@ class Job:
                     "downloadFrom": remotePath
                 })
                 status = out['status']
-                if raw: return out
+                if raw:
+                    return out
             # exit loop
             self._clear()
-            if status == 'SUCCEEDED': print('✅ download success!')
-            else: print('❌ download fail!')
+            if status == 'SUCCEEDED':
+                print('✅ download success!')
+            else:
+                print('❌ download fail!')
 
         if (fileType == 'local'):
             localPath = os.path.join(localPath, fileId)
@@ -228,7 +237,8 @@ class Job:
             return localPath
 
     def query_globus_task_status(self):
-        if self.id is None: raise Exception('missing job ID, submit/register job first')
+        if self.id is None:
+            raise Exception('missing job ID, submit/register job first')
         return self.client.request('GET', '/file/' + self.id + '/globus_task_status', {
             'accessToken': self.JAT.getAccessToken()
         })
@@ -241,7 +251,8 @@ class Job:
 
     # Helpers
     def _clear(self):
-        if self.isJupyter: clear_output(wait=True)
+        if self.isJupyter:
+            clear_output(wait=True)
         # for windows
         if name == 'nt':
             _ = system('cls')
@@ -250,7 +261,8 @@ class Job:
             _ = system('clear')
 
     def _print_job(self, job):
-        if job == None: return
+        if job is None:
+            return
         headers = ['id', 'slurmId', 'hpc', 'executableFolder', 'dataFolder', 'resultFolder', 'param', 'slurm', 'userId', 'maintainer', 'createdAt']
         data = [[
             job['id'],

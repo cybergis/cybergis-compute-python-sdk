@@ -3,6 +3,7 @@ import requests
 import json
 from os import path
 
+
 class Client:
     def __init__(self, url="cgjobsup.cigi.illinois.edu", port=443, protocol="HTTPS", suffix="v2"):
         self.url = url + ':' + str(port)
@@ -43,7 +44,8 @@ class Client:
             if 'error' in data:
                 msg = ''
                 if 'messages' in data:
-                    msg = str(data['messages'])
+                    # TODO: this msg variable isn't used
+                    msg = str(data['messages'])  # noqa
                 print('❌ server ' + self.url + ' responded with error "' + data['error'] + '"')
 
         if 'tar' in contentType:

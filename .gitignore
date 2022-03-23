@@ -1,6 +1,7 @@
 # my stuff
 access_result/*
 job*.*
+.vscode/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

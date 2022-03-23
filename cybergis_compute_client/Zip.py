@@ -13,7 +13,7 @@ from io import BytesIO
 class Zip(object):
     """
     Zip class
-    An interface that creates an in-memory zip object to 
+    An interface that creates an in-memory zip object to
     avoid disk access
 
     Attributes:
@@ -34,7 +34,7 @@ class Zip(object):
         """
         # Get a handle to the in-memory zip in append mode
         zf = zipfile.ZipFile(self.in_memory_zip, "a", zipfile.ZIP_DEFLATED, False)
-        
+
         # Writes a directory to the in-memory zip
         zf.writestr(filedir_in_zip + '/.placeholder', "b", zipfile.ZIP_DEFLATED)
 
