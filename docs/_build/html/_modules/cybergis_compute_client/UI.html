@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cybergis_compute_client.UI &mdash; CyberGIS-Compute Python SDK v2 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> CyberGIS-Compute Python SDK
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../reference.html">User Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../external.html">Related Projects</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">CyberGIS-Compute Python SDK</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      <li>cybergis_compute_client.UI</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cybergis_compute_client.UI</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">ipywidgets</span> <span class="k">as</span> <span class="nn">widgets</span>
+<span class="kn">from</span> <span class="nn">ipyfilechooser</span> <span class="kn">import</span> <span class="n">FileChooser</span>
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">Markdown</span><span class="p">,</span> <span class="n">display</span><span class="p">,</span> <span class="n">clear_output</span>
+
+
+<div class="viewcode-block" id="UI"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.UI.UI">[docs]</a><span class="k">class</span> <span class="nc">UI</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compute</span><span class="p">,</span> <span class="n">defaultJobName</span><span class="o">=</span><span class="s2">&quot;hello_world&quot;</span><span class="p">,</span> <span class="n">defaultDataFolder</span><span class="o">=</span><span class="s2">&quot;./&quot;</span><span class="p">,</span> <span class="n">defaultRemoteResultFolder</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">compute</span> <span class="o">=</span> <span class="n">compute</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">style</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;description_width&#39;</span><span class="p">:</span> <span class="s1">&#39;auto&#39;</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Layout</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="s1">&#39;60%&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jobs</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hpcs</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">defaultJobName</span> <span class="o">=</span> <span class="n">defaultJobName</span>
+        <span class="k">if</span> <span class="n">defaultRemoteResultFolder</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">defaultRemoteResultFolder</span> <span class="o">=</span> <span class="n">defaultRemoteResultFolder</span> <span class="k">if</span> <span class="n">defaultRemoteResultFolder</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;/&#39;</span> <span class="k">else</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">defaultRemoteResultFolder</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">defaultDataFolder</span> <span class="o">=</span> <span class="n">defaultDataFolder</span>
+        <span class="c1"># slurm configs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slurm_configs</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;num_of_node&#39;</span><span class="p">,</span> <span class="s1">&#39;num_of_task&#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;cpu_per_task&#39;</span><span class="p">,</span> <span class="s1">&#39;memory_per_cpu&#39;</span><span class="p">,</span> <span class="s1">&#39;memory_per_gpu&#39;</span><span class="p">,</span> <span class="s1">&#39;memory&#39;</span><span class="p">,</span> <span class="s1">&#39;gpus&#39;</span><span class="p">,</span> <span class="s1">&#39;gpus_per_node&#39;</span><span class="p">,</span> <span class="s1">&#39;gpus_per_socket&#39;</span><span class="p">,</span> <span class="s1">&#39;gpus_per_task&#39;</span><span class="p">,</span> <span class="s1">&#39;partition&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slurm_integer_configs</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;num_of_node&#39;</span><span class="p">,</span> <span class="s1">&#39;num_of_task&#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;cpu_per_task&#39;</span><span class="p">,</span> <span class="s1">&#39;memory_per_cpu&#39;</span><span class="p">,</span> <span class="s1">&#39;memory_per_gpu&#39;</span><span class="p">,</span> <span class="s1">&#39;memory&#39;</span><span class="p">,</span> <span class="s1">&#39;gpus&#39;</span><span class="p">,</span> <span class="s1">&#39;gpus_per_node&#39;</span><span class="p">,</span> <span class="s1">&#39;gpus_per_socket&#39;</span><span class="p">,</span> <span class="s1">&#39;gpus_per_task&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slurm_integer_storage_unit_config</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;memory_per_cpu&#39;</span><span class="p">,</span> <span class="s1">&#39;memory_per_gpu&#39;</span><span class="p">,</span> <span class="s1">&#39;memory&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slurm_integer_time_unit_config</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slurm_integer_none_unit_config</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;cpu_per_task&#39;</span><span class="p">,</span> <span class="s1">&#39;num_of_node&#39;</span><span class="p">,</span> <span class="s1">&#39;num_of_task&#39;</span><span class="p">,</span> <span class="s1">&#39;gpus&#39;</span><span class="p">,</span> <span class="s1">&#39;gpus_per_node&#39;</span><span class="p">,</span> <span class="s1">&#39;gpus_per_socket&#39;</span><span class="p">,</span> <span class="s1">&#39;gpus_per_task&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slurm_string_option_configs</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;partition&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">globus_filename</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jupyter_globus</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="UI.render"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.UI.UI.render">[docs]</a>    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">renderCompoenets</span><span class="p">()</span>
+        <span class="n">divider</span> <span class="o">=</span> <span class="n">Markdown</span><span class="p">(</span><span class="s1">&#39;***&#39;</span><span class="p">)</span>
+        <span class="c1"># render main UI</span>
+        <span class="c1"># 1. job template</span>
+        <span class="n">job_config</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Output</span><span class="p">()</span>
+        <span class="k">with</span> <span class="n">job_config</span><span class="p">:</span>
+            <span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="s1">&#39;# Welcome to CyberGIS-Compute&#39;</span><span class="p">))</span>
+            <span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="s1">&#39;Some description about CyberGIS-Compute&#39;</span><span class="p">))</span>
+            <span class="n">display</span><span class="p">(</span><span class="n">divider</span><span class="p">)</span>
+            <span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jobTemplate</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">])</span>
+            <span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">])</span>
+            <span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">computingResource</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">])</span>
+            <span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">slurm</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">])</span>
+            <span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">])</span>
+            <span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uploadData</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">])</span>
+            <span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">email</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">])</span>
+            <span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">submit</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">])</span>
+
+        <span class="c1"># 2. job status</span>
+        <span class="n">job_status</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Output</span><span class="p">()</span>
+        <span class="k">with</span> <span class="n">job_status</span><span class="p">:</span>
+            <span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resultStatus</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">])</span>
+            <span class="n">display</span><span class="p">(</span><span class="n">divider</span><span class="p">)</span>
+            <span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="s1">&#39;## 📋 job events (live refresh)&#39;</span><span class="p">))</span>
+            <span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resultEvents</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">])</span>
+            <span class="n">display</span><span class="p">(</span><span class="n">divider</span><span class="p">)</span>
+            <span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="s1">&#39;## 📋 job logs&#39;</span><span class="p">))</span>
+            <span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resultLogs</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">])</span>
+
+        <span class="c1"># 3. download</span>
+        <span class="n">download</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Output</span><span class="p">()</span>
+        <span class="k">with</span> <span class="n">download</span><span class="p">:</span>
+            <span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">download</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">])</span>
+
+        <span class="c1"># assemble into tabs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tab</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Tab</span><span class="p">(</span><span class="n">children</span><span class="o">=</span><span class="p">[</span>
+            <span class="n">job_config</span><span class="p">,</span>
+            <span class="n">job_status</span><span class="p">,</span>
+            <span class="n">download</span>
+        <span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tab</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Job Configuration&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tab</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Your Job Status&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tab</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;Download Job Result&#39;</span><span class="p">)</span>
+        <span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tab</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="UI.renderCompoenets"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.UI.UI.renderCompoenets">[docs]</a>    <span class="k">def</span> <span class="nf">renderCompoenets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">renderJobTemplate</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">renderDescription</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">renderComputingResource</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">renderSlurm</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">renderEmail</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">renderSubmit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">renderParam</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">renderUploadData</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">renderResultStatus</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">renderResultEvents</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">renderResultLogs</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">renderDownload</span><span class="p">()</span></div>
+
+    <span class="c1"># components</span>
+<div class="viewcode-block" id="UI.renderJobTemplate"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.UI.UI.renderJobTemplate">[docs]</a>    <span class="k">def</span> <span class="nf">renderJobTemplate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">jobTemplate</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">jobTemplate</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Output</span><span class="p">()</span>
+        <span class="c1"># create components</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jobTemplate</span><span class="p">[</span><span class="s1">&#39;dropdown&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Dropdown</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">jobs</span><span class="p">],</span> <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">jobName</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;📦 Job Templates:&#39;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">style</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jobTemplate</span><span class="p">[</span><span class="s1">&#39;dropdown&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onJobDropdownChange</span><span class="p">())</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">jobTemplate</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]:</span>
+            <span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jobTemplate</span><span class="p">[</span><span class="s1">&#39;dropdown&#39;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="UI.renderDescription"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.UI.UI.renderDescription">[docs]</a>    <span class="k">def</span> <span class="nf">renderDescription</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Output</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">[</span><span class="s1">&#39;job_description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Markdown</span><span class="p">(</span><span class="s1">&#39;**&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">jobName</span> <span class="o">+</span> <span class="s1">&#39; Job Description:** &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">[</span><span class="s1">&#39;computing_resource_description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Markdown</span><span class="p">(</span><span class="s1">&#39;**&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">hpcName</span> <span class="o">+</span> <span class="s1">&#39; HPC Description**: &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">hpc</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">[</span><span class="s1">&#39;estimated_runtime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Markdown</span><span class="p">(</span><span class="s1">&#39;**Estimated Runtime:** &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="p">[</span><span class="s1">&#39;estimated_runtime&#39;</span><span class="p">])</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]:</span>
+            <span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">[</span><span class="s1">&#39;job_description&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">[</span><span class="s1">&#39;computing_resource_description&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">[</span><span class="s1">&#39;estimated_runtime&#39;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="UI.renderComputingResource"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.UI.UI.renderComputingResource">[docs]</a>    <span class="k">def</span> <span class="nf">renderComputingResource</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">computingResource</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">computingResource</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Output</span><span class="p">()</span>
+        <span class="c1"># create components</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">computingResource</span><span class="p">[</span><span class="s1">&#39;dropdown&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Dropdown</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="p">[</span><span class="s1">&#39;supported_hpc&#39;</span><span class="p">]],</span> <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hpcName</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;🖥 Computing Recourse:&#39;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">style</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">computingResource</span><span class="p">[</span><span class="s1">&#39;accordion&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Accordion</span><span class="p">(</span><span class="n">children</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">computingResource</span><span class="p">[</span><span class="s1">&#39;dropdown&#39;</span><span class="p">],</span> <span class="p">),</span> <span class="n">selected_index</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">computingResource</span><span class="p">[</span><span class="s1">&#39;accordion&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Computing Resource&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">computingResource</span><span class="p">[</span><span class="s1">&#39;dropdown&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onComputingResourceDropdownChange</span><span class="p">())</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">computingResource</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]:</span>
+            <span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">computingResource</span><span class="p">[</span><span class="s1">&#39;accordion&#39;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="UI.renderEmail"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.UI.UI.renderEmail">[docs]</a>    <span class="k">def</span> <span class="nf">renderEmail</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">email</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">email</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Output</span><span class="p">()</span>
+        <span class="c1"># create components</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">email</span><span class="p">[</span><span class="s1">&#39;checkbox&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Checkbox</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;receive email on job status? &#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">style</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">email</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="s1">&#39;example@illinois.edu&#39;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">style</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">email</span><span class="p">[</span><span class="s1">&#39;hbox&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">HBox</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">email</span><span class="p">[</span><span class="s1">&#39;checkbox&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">email</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">]])</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">email</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]:</span>
+            <span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">email</span><span class="p">[</span><span class="s1">&#39;hbox&#39;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="UI.renderSlurm"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.UI.UI.renderSlurm">[docs]</a>    <span class="k">def</span> <span class="nf">renderSlurm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">slurm</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">slurm</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Output</span><span class="p">()</span>
+        <span class="c1"># check if necessary to render</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="p">[</span><span class="s1">&#39;slurm_input_rules&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="p">{}:</span>
+            <span class="k">return</span>
+        <span class="c1"># create components</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slurm</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="s1">&#39;All configs are optional. Please refer to Slurm official documentation at 🔗 https://slurm.schedmd.com/sbatch.html&#39;</span><span class="p">)</span>
+        <span class="c1"># settings</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">slurm_configs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="p">[</span><span class="s1">&#39;slurm_input_rules&#39;</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">slurm</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">continue</span>
+
+            <span class="n">config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="p">[</span><span class="s1">&#39;slurm_input_rules&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">slurm_integer_configs</span><span class="p">:</span>
+                <span class="n">default_val</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;default_value&#39;</span><span class="p">]</span>
+                <span class="n">max_val</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;max&#39;</span><span class="p">]</span>
+                <span class="n">min_val</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;min&#39;</span><span class="p">]</span>
+                <span class="n">step_val</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;step&#39;</span><span class="p">]</span>
+                <span class="n">unit</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;unit&#39;</span><span class="p">]</span>
+                <span class="n">description</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="s1">&#39; (&#39;</span> <span class="o">+</span> <span class="n">unit</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span> <span class="k">if</span> <span class="n">unit</span> <span class="o">!=</span> <span class="s1">&#39;None&#39;</span> <span class="k">else</span> <span class="n">i</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">slurm</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">IntSlider</span><span class="p">(</span>
+                    <span class="n">value</span><span class="o">=</span><span class="n">default_val</span><span class="p">,</span>
+                    <span class="nb">min</span><span class="o">=</span><span class="n">min_val</span><span class="p">,</span>
+                    <span class="nb">max</span><span class="o">=</span><span class="n">max_val</span><span class="p">,</span>
+                    <span class="n">step</span><span class="o">=</span><span class="n">step_val</span><span class="p">,</span>
+                    <span class="n">disabled</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">continuous_update</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">orientation</span><span class="o">=</span><span class="s1">&#39;horizontal&#39;</span><span class="p">,</span>
+                    <span class="n">readout</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">readout_format</span><span class="o">=</span><span class="s1">&#39;d&#39;</span><span class="p">,</span>
+                    <span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">,</span>
+                    <span class="n">style</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">style</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">layout</span>
+                <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">slurm_string_option_configs</span><span class="p">:</span>
+                <span class="n">default_val</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;default_value&#39;</span><span class="p">]</span>
+                <span class="n">options</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;options&#39;</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">slurm</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Dropdown</span><span class="p">(</span>
+                    <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+                    <span class="n">value</span><span class="o">=</span><span class="n">default_val</span><span class="p">,</span>
+                    <span class="n">description</span><span class="o">=</span><span class="n">i</span><span class="p">,</span>
+                    <span class="n">style</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">style</span>
+                <span class="p">)</span>
+
+        <span class="n">w</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">slurm_configs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">slurm</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">w</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">slurm</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slurm</span><span class="p">[</span><span class="s1">&#39;vbox&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">VBox</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+
+        <span class="c1"># settings end</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slurm</span><span class="p">[</span><span class="s1">&#39;accordion&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Accordion</span><span class="p">(</span><span class="n">children</span><span class="o">=</span><span class="p">(</span><span class="n">widgets</span><span class="o">.</span><span class="n">VBox</span><span class="p">(</span><span class="n">children</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">slurm</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">slurm</span><span class="p">[</span><span class="s1">&#39;vbox&#39;</span><span class="p">])),</span> <span class="p">),</span> <span class="n">selected_index</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slurm</span><span class="p">[</span><span class="s1">&#39;accordion&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Slurm Computing Configurations&#39;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">slurm</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]:</span>
+            <span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">slurm</span><span class="p">[</span><span class="s1">&#39;accordion&#39;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="UI.renderUploadData"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.UI.UI.renderUploadData">[docs]</a>    <span class="k">def</span> <span class="nf">renderUploadData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">uploadData</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">uploadData</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Output</span><span class="p">()</span>
+        <span class="c1"># check if necessary to render</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="p">[</span><span class="s1">&#39;require_upload_data&#39;</span><span class="p">]:</span>
+            <span class="k">return</span>
+        <span class="c1"># render all</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uploadData</span><span class="p">[</span><span class="s1">&#39;selector&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">FileChooser</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">defaultDataFolder</span><span class="p">,</span> <span class="n">select_default</span><span class="o">=</span><span class="kc">True</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">defaultDataFolder</span> <span class="o">!=</span> <span class="s1">&#39;./&#39;</span> <span class="k">else</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uploadData</span><span class="p">[</span><span class="s1">&#39;selector&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">show_only_dirs</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uploadData</span><span class="p">[</span><span class="s1">&#39;selector&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Job requires upload data. Please select a folder to upload&#39;</span>
+        <span class="c1"># settings end</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uploadData</span><span class="p">[</span><span class="s1">&#39;accordion&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Accordion</span><span class="p">(</span><span class="n">children</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uploadData</span><span class="p">[</span><span class="s1">&#39;selector&#39;</span><span class="p">],</span> <span class="p">),</span> <span class="n">selected_index</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uploadData</span><span class="p">[</span><span class="s1">&#39;accordion&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Upload Data&#39;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">uploadData</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]:</span>
+            <span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uploadData</span><span class="p">[</span><span class="s1">&#39;accordion&#39;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="UI.renderParam"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.UI.UI.renderParam">[docs]</a>    <span class="k">def</span> <span class="nf">renderParam</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Output</span><span class="p">()</span>
+        <span class="c1"># check if necessary to render</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="p">[</span><span class="s1">&#39;param_rules&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="p">{}:</span>
+            <span class="k">return</span>
+        <span class="c1"># clear config</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="s1">&#39;output&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># render param</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="p">[</span><span class="s1">&#39;param_rules&#39;</span><span class="p">]:</span>
+            <span class="n">config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="p">[</span><span class="s1">&#39;param_rules&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;integer&#39;</span><span class="p">:</span>
+                <span class="n">default_val</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;default_value&#39;</span><span class="p">]</span>
+                <span class="n">max_val</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;max&#39;</span><span class="p">]</span>
+                <span class="n">min_val</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;min&#39;</span><span class="p">]</span>
+                <span class="n">step_val</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;step&#39;</span><span class="p">]</span>
+                <span class="n">description</span> <span class="o">=</span> <span class="n">i</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">IntSlider</span><span class="p">(</span>
+                    <span class="n">value</span><span class="o">=</span><span class="n">default_val</span><span class="p">,</span>
+                    <span class="nb">min</span><span class="o">=</span><span class="n">min_val</span><span class="p">,</span>
+                    <span class="nb">max</span><span class="o">=</span><span class="n">max_val</span><span class="p">,</span>
+                    <span class="n">step</span><span class="o">=</span><span class="n">step_val</span><span class="p">,</span>
+                    <span class="n">disabled</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">continuous_update</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">orientation</span><span class="o">=</span><span class="s1">&#39;horizontal&#39;</span><span class="p">,</span>
+                    <span class="n">readout</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">readout_format</span><span class="o">=</span><span class="s1">&#39;d&#39;</span><span class="p">,</span>
+                    <span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">,</span>
+                    <span class="n">style</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">style</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">layout</span>
+                <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;string_option&#39;</span><span class="p">:</span>
+                <span class="n">default_val</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;default_value&#39;</span><span class="p">]</span>
+                <span class="n">options</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;options&#39;</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Dropdown</span><span class="p">(</span>
+                    <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+                    <span class="n">value</span><span class="o">=</span><span class="n">default_val</span><span class="p">,</span>
+                    <span class="n">description</span><span class="o">=</span><span class="n">i</span><span class="p">,</span>
+                    <span class="n">style</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">style</span>
+                <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;string_input&#39;</span><span class="p">:</span>
+                <span class="n">default_val</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;default_value&#39;</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">default_val</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">style</span><span class="p">)</span>
+
+        <span class="c1"># render all</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="p">[</span><span class="s1">&#39;vbox&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">VBox</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="p">[</span><span class="s1">&#39;param_rules&#39;</span><span class="p">]])</span>
+        <span class="c1"># settings end</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="p">[</span><span class="s1">&#39;accordion&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Accordion</span><span class="p">(</span><span class="n">children</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="p">[</span><span class="s1">&#39;vbox&#39;</span><span class="p">],</span> <span class="p">),</span> <span class="n">selected_index</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="p">[</span><span class="s1">&#39;accordion&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Input Parameters&#39;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]:</span>
+            <span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="p">[</span><span class="s1">&#39;accordion&#39;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="UI.renderSubmit"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.UI.UI.renderSubmit">[docs]</a>    <span class="k">def</span> <span class="nf">renderSubmit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">submit</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">submit</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Output</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">submit</span><span class="p">[</span><span class="s1">&#39;alert_output&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">submit</span><span class="p">[</span><span class="s1">&#39;alert_output&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Output</span><span class="p">()</span>
+        <span class="c1"># create components</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">submitted</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">submit</span><span class="p">[</span><span class="s1">&#39;button&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Job Submitted ✅&quot;</span><span class="p">,</span> <span class="n">disabled</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">submit</span><span class="p">[</span><span class="s1">&#39;button&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Submit Job&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">submit</span><span class="p">[</span><span class="s1">&#39;button&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">on_click</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onSubmitButtonClick</span><span class="p">())</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">submit</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]:</span>
+            <span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">submit</span><span class="p">[</span><span class="s1">&#39;alert_output&#39;</span><span class="p">])</span>
+            <span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">submit</span><span class="p">[</span><span class="s1">&#39;button&#39;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="UI.renderDownload"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.UI.UI.renderDownload">[docs]</a>    <span class="k">def</span> <span class="nf">renderDownload</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">download</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">download</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Output</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">download</span><span class="p">[</span><span class="s1">&#39;alert_output&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">download</span><span class="p">[</span><span class="s1">&#39;alert_output&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Output</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">download</span><span class="p">[</span><span class="s1">&#39;result_output&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">download</span><span class="p">[</span><span class="s1">&#39;result_output&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Output</span><span class="p">()</span>
+        <span class="c1"># create components</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">jobFinished</span><span class="p">:</span>
+            <span class="n">result_folder_content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="o">.</span><span class="n">job</span><span class="o">.</span><span class="n">result_folder_content</span><span class="p">()</span>
+            <span class="c1"># push default value to front</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">result_folder_content</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">result_folder_content</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">result_folder_content</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">defaultRemoteResultFolder</span><span class="p">)))</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">result_folder_content</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">download</span><span class="p">[</span><span class="s1">&#39;dropdown&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Dropdown</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="n">result_folder_content</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">result_folder_content</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;select file/folder&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">download</span><span class="p">[</span><span class="s1">&#39;button&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Download&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">download</span><span class="p">[</span><span class="s1">&#39;button&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">on_click</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onDownloadButtonClick</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">download</span><span class="p">[</span><span class="s1">&#39;button&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Download&quot;</span><span class="p">,</span> <span class="n">disabled</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">download</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">jobFinished</span><span class="p">:</span>
+                <span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="s1">&#39;# ☁️ Download Job Output Files&#39;</span><span class="p">))</span>
+                <span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">download</span><span class="p">[</span><span class="s1">&#39;alert_output&#39;</span><span class="p">])</span>
+                <span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">download</span><span class="p">[</span><span class="s1">&#39;result_output&#39;</span><span class="p">])</span>
+                <span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">download</span><span class="p">[</span><span class="s1">&#39;dropdown&#39;</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="s1">&#39;# ⏳ Waiting for Job to Finish...&#39;</span><span class="p">))</span>
+            <span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">download</span><span class="p">[</span><span class="s1">&#39;button&#39;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="UI.renderResultStatus"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.UI.UI.renderResultStatus">[docs]</a>    <span class="k">def</span> <span class="nf">renderResultStatus</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">resultStatus</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">resultStatus</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Output</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">submitted</span><span class="p">:</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">resultStatus</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]:</span>
+                <span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="s1">&#39;# 😴 No Job to Work On&#39;</span><span class="p">))</span>
+                <span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="s1">&#39;you need to submit your job first&#39;</span><span class="p">))</span>
+            <span class="k">return</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">resultStatus</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]:</span>
+            <span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="s1">&#39;# ✌️ Your Job is Here!&#39;</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="o">.</span><span class="n">job</span><span class="o">.</span><span class="n">status</span><span class="p">()</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="UI.renderResultEvents"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.UI.UI.renderResultEvents">[docs]</a>    <span class="k">def</span> <span class="nf">renderResultEvents</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">resultEvents</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">resultEvents</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Output</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">submitted</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">resultEvents</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="o">.</span><span class="n">job</span><span class="o">.</span><span class="n">events</span><span class="p">()</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="UI.renderResultLogs"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.UI.UI.renderResultLogs">[docs]</a>    <span class="k">def</span> <span class="nf">renderResultLogs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">resultLogs</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">resultLogs</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Output</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">submitted</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">resultLogs</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="o">.</span><span class="n">job</span><span class="o">.</span><span class="n">logs</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tab</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;✅ Your Job Status&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tab</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;✅ Download Job Result&#39;</span><span class="p">)</span>
+            <span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="s1">&#39;***&#39;</span><span class="p">))</span>
+            <span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="s1">&#39;## ✅ your job completed&#39;</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">jobFinished</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rerender</span><span class="p">([</span><span class="s1">&#39;download&#39;</span><span class="p">])</span>
+        <span class="k">return</span></div>
+
+    <span class="c1"># events</span>
+<div class="viewcode-block" id="UI.onDownloadButtonClick"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.UI.UI.onDownloadButtonClick">[docs]</a>    <span class="k">def</span> <span class="nf">onDownloadButtonClick</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">on_click</span><span class="p">(</span><span class="n">change</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">downloading</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">download</span><span class="p">[</span><span class="s1">&#39;alert_output&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">clear_output</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">download</span><span class="p">[</span><span class="s1">&#39;alert_output&#39;</span><span class="p">]:</span>
+                    <span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="s1">&#39;⚠️ download process is running in background...&#39;</span><span class="p">))</span>
+                    <span class="k">return</span>
+
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">download</span><span class="p">[</span><span class="s1">&#39;result_output&#39;</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">download</span><span class="p">[</span><span class="s1">&#39;alert_output&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">clear_output</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">downloading</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="o">.</span><span class="n">job</span><span class="o">.</span><span class="n">download_result_folder</span><span class="p">(</span><span class="n">remotePath</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">download</span><span class="p">[</span><span class="s1">&#39;dropdown&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;please check your data at your root folder under &quot;&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">globus_filename</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="o">.</span><span class="n">recentDownloadPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jupyter_globus</span><span class="p">[</span><span class="s1">&#39;container_home_path&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">globus_filename</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">downloading</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="n">on_click</span></div>
+
+<div class="viewcode-block" id="UI.onSubmitButtonClick"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.UI.UI.onSubmitButtonClick">[docs]</a>    <span class="k">def</span> <span class="nf">onSubmitButtonClick</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">on_click</span><span class="p">(</span><span class="n">change</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">submitted</span><span class="p">:</span>
+                <span class="k">return</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">submit</span><span class="p">[</span><span class="s1">&#39;alert_output&#39;</span><span class="p">]:</span>
+                <span class="n">clear_output</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="o">.</span><span class="n">login</span><span class="p">()</span>
+            <span class="n">dataFolder</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">jupyter_globus</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="o">.</span><span class="n">get_user_jupyter_globus</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="p">[</span><span class="s1">&#39;require_upload_data&#39;</span><span class="p">]:</span>
+                <span class="n">dataFolder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">uploadData</span><span class="p">[</span><span class="s1">&#39;selector&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">selected</span>
+                <span class="k">if</span> <span class="n">dataFolder</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">submit</span><span class="p">[</span><span class="s1">&#39;alert_output&#39;</span><span class="p">]:</span>
+                        <span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="s1">&#39;⚠️ please select a folder before upload...&#39;</span><span class="p">))</span>
+                        <span class="k">return</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">dataFolder</span> <span class="o">=</span> <span class="n">dataFolder</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jupyter_globus</span><span class="p">[</span><span class="s1">&#39;container_home_path&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">),</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+                    <span class="n">dataFolder</span> <span class="o">=</span> <span class="s1">&#39;globus://&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">jupyter_globus</span><span class="p">[</span><span class="s1">&#39;endpoint&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jupyter_globus</span><span class="p">[</span><span class="s1">&#39;root_path&#39;</span><span class="p">],</span> <span class="n">dataFolder</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">))</span>
+
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="o">.</span><span class="n">job</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="o">.</span><span class="n">create_job</span><span class="p">(</span><span class="n">hpc</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;computing_resource&#39;</span><span class="p">],</span> <span class="n">printJob</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="c1"># slurm</span>
+            <span class="n">slurm</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;slurm&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">slurm</span><span class="p">[</span><span class="s1">&#39;mail_user&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">]]</span>
+                <span class="n">slurm</span><span class="p">[</span><span class="s1">&#39;mail_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;FAIL&#39;</span><span class="p">,</span> <span class="s1">&#39;END&#39;</span><span class="p">,</span> <span class="s1">&#39;BEGIN&#39;</span><span class="p">]</span>
+            <span class="c1"># param</span>
+            <span class="n">param</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;param&#39;</span><span class="p">]</span>
+            <span class="c1"># download</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">globus_filename</span> <span class="o">=</span> <span class="s1">&#39;globus_download_&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="o">.</span><span class="n">job</span><span class="o">.</span><span class="n">id</span>
+            <span class="n">resultFolder</span> <span class="o">=</span> <span class="s1">&#39;globus://&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">jupyter_globus</span><span class="p">[</span><span class="s1">&#39;endpoint&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jupyter_globus</span><span class="p">[</span><span class="s1">&#39;root_path&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">globus_filename</span><span class="p">)</span>
+
+            <span class="c1"># submit</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="o">.</span><span class="n">job</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">executableFolder</span><span class="o">=</span><span class="s1">&#39;git://&#39;</span> <span class="o">+</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;job_template&#39;</span><span class="p">],</span> <span class="n">dataFolder</span><span class="o">=</span><span class="n">dataFolder</span><span class="p">,</span> <span class="n">resultFolder</span><span class="o">=</span><span class="n">resultFolder</span><span class="p">,</span> <span class="n">printJob</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">param</span><span class="o">=</span><span class="n">param</span><span class="p">,</span> <span class="n">slurm</span><span class="o">=</span><span class="n">slurm</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="o">.</span><span class="n">job</span><span class="o">.</span><span class="n">submit</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tab</span><span class="o">.</span><span class="n">selected_index</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">submitted</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tab</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;⏳ Your Job Status&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rerender</span><span class="p">([</span><span class="s1">&#39;resultStatus&#39;</span><span class="p">,</span> <span class="s1">&#39;resultEvents&#39;</span><span class="p">,</span> <span class="s1">&#39;resultLogs&#39;</span><span class="p">,</span> <span class="s1">&#39;submit&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">on_click</span></div>
+
+<div class="viewcode-block" id="UI.onJobDropdownChange"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.UI.UI.onJobDropdownChange">[docs]</a>    <span class="k">def</span> <span class="nf">onJobDropdownChange</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">on_change</span><span class="p">(</span><span class="n">change</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">change</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;change&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">submitted</span><span class="p">:</span>
+                    <span class="k">return</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">jobName</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">jobTemplate</span><span class="p">[</span><span class="s1">&#39;dropdown&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">job</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">jobName</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">hpcName</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="p">[</span><span class="s1">&#39;default_hpc&#39;</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">hpc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hpcs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">hpcName</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rerender</span><span class="p">([</span><span class="s1">&#39;description&#39;</span><span class="p">,</span> <span class="s1">&#39;computingResource&#39;</span><span class="p">,</span> <span class="s1">&#39;slurm&#39;</span><span class="p">,</span> <span class="s1">&#39;param&#39;</span><span class="p">,</span> <span class="s1">&#39;uploadData&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">on_change</span></div>
+
+<div class="viewcode-block" id="UI.onComputingResourceDropdownChange"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.UI.UI.onComputingResourceDropdownChange">[docs]</a>    <span class="k">def</span> <span class="nf">onComputingResourceDropdownChange</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">on_change</span><span class="p">(</span><span class="n">change</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">change</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;change&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">submitted</span><span class="p">:</span>
+                    <span class="k">return</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">hpcName</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">computingResource</span><span class="p">[</span><span class="s1">&#39;dropdown&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">hpc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hpcs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">hpcName</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rerender</span><span class="p">([</span><span class="s1">&#39;description&#39;</span><span class="p">,</span> <span class="s1">&#39;slurm&#39;</span><span class="p">,</span> <span class="s1">&#39;param&#39;</span><span class="p">,</span> <span class="s1">&#39;uploadData&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">on_change</span></div>
+
+    <span class="c1"># helpers</span>
+<div class="viewcode-block" id="UI.init"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.UI.UI.init">[docs]</a>    <span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">silent</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Output</span><span class="p">()</span>
+        <span class="k">with</span> <span class="n">silent</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="o">.</span><span class="n">login</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">jobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="o">.</span><span class="n">list_git</span><span class="p">(</span><span class="n">raw</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hpcs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="o">.</span><span class="n">list_hpc</span><span class="p">(</span><span class="n">raw</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">submitted</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jobFinished</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">downloading</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="c1"># components</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jobTemplate</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;output&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;output&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">computingResource</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;output&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slurm</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;output&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;output&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">submit</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;output&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;alert_output&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">param</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;output&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uploadData</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;output&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resultStatus</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;output&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resultEvents</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;output&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resultLogs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;output&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">download</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;output&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;alert_output&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;result_output&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+        <span class="c1"># main</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tab</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># information</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jobName</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">defaultJobName</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">job</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">jobName</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hpcName</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="p">[</span><span class="s1">&#39;default_hpc&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hpc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hpcs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">hpcName</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="UI.rerender"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.UI.UI.rerender">[docs]</a>    <span class="k">def</span> <span class="nf">rerender</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="p">[]):</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">components</span><span class="p">:</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c</span><span class="p">)[</span><span class="s1">&#39;output&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">clear_output</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">components</span><span class="p">:</span>
+            <span class="n">cl</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+            <span class="n">cl</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">cl</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+            <span class="n">ct</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cl</span><span class="p">)</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;render&#39;</span> <span class="o">+</span> <span class="n">ct</span><span class="p">)()</span></div>
+
+    <span class="c1"># data</span>
+<div class="viewcode-block" id="UI.get_data"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.UI.UI.get_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;job_template&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">jobTemplate</span><span class="p">[</span><span class="s1">&#39;dropdown&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+            <span class="s1">&#39;computing_resource&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">computingResource</span><span class="p">[</span><span class="s1">&#39;dropdown&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+            <span class="s1">&#39;slurm&#39;</span><span class="p">:</span> <span class="p">{},</span>
+            <span class="s1">&#39;param&#39;</span><span class="p">:</span> <span class="p">{},</span>
+            <span class="s1">&#39;email&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">email</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">email</span><span class="p">[</span><span class="s1">&#39;checkbox&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">slurm_configs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">slurm</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="p">[</span><span class="s1">&#39;slurm_input_rules&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">slurm_integer_storage_unit_config</span><span class="p">:</span>
+                    <span class="n">out</span><span class="p">[</span><span class="s1">&#39;slurm&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">slurm</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;unit&#39;</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">slurm_integer_time_unit_config</span><span class="p">:</span>
+                    <span class="n">seconds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unitTimeToSecond</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;unit&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">slurm</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+                    <span class="n">out</span><span class="p">[</span><span class="s1">&#39;slurm&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">secondsToTime</span><span class="p">(</span><span class="n">seconds</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">out</span><span class="p">[</span><span class="s1">&#39;slurm&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">slurm</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="p">[</span><span class="s1">&#39;param_rules&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="p">:</span>
+                <span class="n">out</span><span class="p">[</span><span class="s1">&#39;param&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+
+        <span class="k">return</span> <span class="n">out</span></div>
+
+<div class="viewcode-block" id="UI.secondsToTime"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.UI.UI.secondsToTime">[docs]</a>    <span class="k">def</span> <span class="nf">secondsToTime</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seconds</span><span class="p">):</span>
+        <span class="n">days</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">seconds</span> <span class="o">/</span> <span class="p">(</span><span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">24</span><span class="p">))</span>
+        <span class="n">hours</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">seconds</span> <span class="o">/</span> <span class="p">(</span><span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">days</span> <span class="o">*</span> <span class="mi">24</span><span class="p">))</span>
+        <span class="n">minutes</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">seconds</span> <span class="o">/</span> <span class="mi">60</span> <span class="o">-</span> <span class="p">(</span><span class="n">days</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">24</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">hours</span> <span class="o">*</span> <span class="mi">60</span><span class="p">))</span>
+
+        <span class="n">d</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">days</span><span class="p">)</span> <span class="k">if</span> <span class="n">days</span> <span class="o">&lt;</span> <span class="mi">10</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">days</span><span class="p">)</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">hours</span><span class="p">)</span> <span class="k">if</span> <span class="n">hours</span> <span class="o">&lt;</span> <span class="mi">10</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">hours</span><span class="p">)</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">minutes</span><span class="p">)</span> <span class="k">if</span> <span class="n">minutes</span> <span class="o">&lt;</span> <span class="mi">10</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">minutes</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">days</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">hours</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">m</span> <span class="o">+</span> <span class="s1">&#39;:00&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">h</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="n">m</span> <span class="o">+</span> <span class="s1">&#39;:00&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">d</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="n">h</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="n">m</span> <span class="o">+</span> <span class="s1">&#39;:00&#39;</span></div>
+
+<div class="viewcode-block" id="UI.unitTimeToSecond"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.UI.UI.unitTimeToSecond">[docs]</a>    <span class="k">def</span> <span class="nf">unitTimeToSecond</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit</span><span class="p">,</span> <span class="n">time</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">unit</span> <span class="o">==</span> <span class="s1">&#39;Minutes&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">time</span> <span class="o">*</span> <span class="mi">60</span>
+        <span class="k">elif</span> <span class="n">unit</span> <span class="o">==</span> <span class="s1">&#39;Hours&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">time</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span>
+        <span class="k">elif</span> <span class="n">unit</span> <span class="o">==</span> <span class="s1">&#39;Days&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">time</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">24</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, CyberGIS Center.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
