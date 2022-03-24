@@ -19,9 +19,6 @@ class CyberGISCompute:
     """
     CyberGISCompute class 
     An inteface that handles all interactions with the HPC backend
-    Variables:
-        jupyterhubHost (str)        : (stores the path to jupyterhubHost)
-
     Attributes:
         client (Client object)      : Initialized using url(str), protocol(str), port(str) and suffix(str)
         jupyterhubApiToken (string) : jupyterhub's REST API token that can be used to authenticate the user 
@@ -32,6 +29,7 @@ class CyberGISCompute:
         ui (UI)                     : Serves as entry point to UI functionality
         job (Job)                   : Serves as entry point to access job interactions
         recentDownloadPath (str)    : Gets the most recent download path from globus
+        jupyterhubHost (str)        : static variable that stores the path to jupyterhubHost
     """
     # static variable
     jupyterhubHost = None
