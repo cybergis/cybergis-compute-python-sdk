@@ -28,8 +28,7 @@ class GlobusUtil:
         Args:
             endpoint (str)                      : endpoint that needs to be accessed
             path (str)                          : path to endpoint
-            hpc (str)                           : hpc resource where the endpoint is located
-                                                For e.g "keeling-community"
+            hpc (str)                           : hpc resource where the endpoint is located. For e.g "keeling-community"
         Returns:
             None
         """
@@ -46,8 +45,7 @@ class GlobusUtil:
         Args:
             endpoint (str)                      : endpoint that needs to be accessed
             path (str)                          : path to endpoint
-            hpc (str)                           : hpc resource where the endpoint is located
-                                                For e.g "keeling-community"
+            hpc (str)                           : hpc resource where the endpoint is located. For e.g "keeling-community"
         Returns:
             None
         """

@@ -38,8 +38,7 @@ class Client:
         """
         Returns data from a request made to the specified uri
         Args:
-            methods (str)           : type of request that needs to be made.
-                                    For e.g "POST"
+            methods (str)           : type of request that needs to be made. For e.g "POST"
             uri (str)               : uri of the server
             body (str)              : data that needs to be sent
         Returns:
