@@ -63,6 +63,7 @@ class JAT:
     def getAccessToken(self):
         """
         Returns the access token signaure of this job, and adds it to the cache if it is not already there
+        
         Returns:
             (str): Access token signature, in the form of 4 Base64-URL strings separated by dots
         """
