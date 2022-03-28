@@ -6,11 +6,16 @@
 Welcome to CyberGIS-Compute Python SDK's documentation!
 =======================================================
 
+.. attention::
+    This site is still under construction.
+
+
 .. toctree::
    :maxdepth: 2
    
    reference.rst
-   external.md
+   external.rst
+   contributing.rst
 
 
 

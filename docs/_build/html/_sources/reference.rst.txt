@@ -1,6 +1,9 @@
 User Reference
 ==============
 
+.. attention::
+    This site is still under construction. 
+
 User reference for the CyberGIS-Compute Python SDK
 
 cybergis_compute_client.Client module
@@ -15,7 +18,6 @@ cybergis_compute_client.CyberGISCompute module
 
 .. automodule:: cybergis_compute_client.CyberGISCompute
     :members:
-    :undoc-members:
 
 cybergis_compute_client.GlobusUtil module
 -----------------------------------------

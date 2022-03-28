@@ -38,6 +38,7 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../reference.html">User Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../external.html">Related Projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
 </ul>
 
         </div>
@@ -77,6 +78,17 @@
 
 
 <div class="viewcode-block" id="Job"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.Job.Job">[docs]</a><span class="k">class</span> <span class="nc">Job</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Job class</span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        JAT (obj): Job Access Token associated with this job.</span>
+<span class="sd">        client (obj): Client that this job requests information from</span>
+<span class="sd">        maintainer (obj): Maintainer pool that this job is in</span>
+<span class="sd">        isJupyter (bool): Whether or not this is running in Jupyter</span>
+<span class="sd">        jupyterhubApiToken (str): API token needed to send requests using the JupyterHub API</span>
+<span class="sd">        id (str): Id assigned to this job by the client</span>
+<span class="sd">        hpc (str): HPC that this job will be submitted to</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># static variables</span>
     <span class="n">basicEventTypes</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;JOB_QUEUED&#39;</span><span class="p">,</span> <span class="s1">&#39;JOB_REGISTERED&#39;</span><span class="p">,</span> <span class="s1">&#39;JOB_INIT&#39;</span><span class="p">,</span> <span class="s1">&#39;GLOBUS_TRANSFER_INIT_SUCCESS&#39;</span><span class="p">,</span> <span class="s1">&#39;JOB_ENDED&#39;</span><span class="p">,</span> <span class="s1">&#39;JOB_FAILED&#39;</span><span class="p">]</span>
 
@@ -124,6 +136,11 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_print_job</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Job.submit"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.Job.Job.submit">[docs]</a>    <span class="k">def</span> <span class="nf">submit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Submits this job to the client, and prints the output</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            (obj): This job</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;accessToken&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">JAT</span><span class="o">.</span><span class="n">getAccessToken</span><span class="p">()}</span>
         <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jupyterhubApiToken</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
             <span class="n">body</span><span class="p">[</span><span class="s1">&#39;jupyterhubApiToken&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">jupyterhubApiToken</span>
@@ -133,6 +150,13 @@
         <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="Job.upload_executable_folder"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.Job.Job.upload_executable_folder">[docs]</a>    <span class="k">def</span> <span class="nf">upload_executable_folder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folder_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Uploads executable folder to client, sets the path of the executable folder, and displays the status of the job.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            (str): Path of the executable folder</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            (dict): Results from the folder being uploaded to the client</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">folder_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">folder_path</span><span class="p">)</span>
 
         <span class="nb">zip</span> <span class="o">=</span> <span class="n">Zip</span><span class="p">()</span>
@@ -149,6 +173,18 @@
         <span class="k">return</span> <span class="n">response</span></div>
 
 <div class="viewcode-block" id="Job.set"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.Job.Job.set">[docs]</a>    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">executableFolder</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dataFolder</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">resultFolder</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">param</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">slurm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">printJob</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        PUT requests information about this job to the client so it can be submitted to the hpc. Displays information about this job unless</span>
+<span class="sd">        specified otherwise.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            executableFolder (str): Path of the executable folder</span>
+<span class="sd">            dataFolder (str): Path of the data folder</span>
+<span class="sd">            resultFolder (str): Path of the result folder</span>
+<span class="sd">            param (dict): Rules for input data</span>
+<span class="sd">            env (dict): Enviorment variables required by the appliation</span>
+<span class="sd">            slurm (dict): Slurm input rules</span>
+<span class="sd">            printJob: If the status of the job should be printed</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;jupyterhubApiToken&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">jupyterhubApiToken</span><span class="p">}</span>
 
         <span class="k">if</span> <span class="n">executableFolder</span><span class="p">:</span>
@@ -173,6 +209,16 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_print_job</span><span class="p">(</span><span class="n">job</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Job.events"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.Job.Job.events">[docs]</a>    <span class="k">def</span> <span class="nf">events</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">liveOutput</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">basic</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">refreshRateInSeconds</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        While the job is running, display the events generated by the client</span>
+<span class="sd">        Args:</span>
+<span class="sd">            raw (bool): If true, return a list of the events generated by status</span>
+<span class="sd">            liveOutput (bool):</span>
+<span class="sd">            basic (bool): If true, exclude non-basicEventType events</span>
+<span class="sd">            RefreshRateInSeconds (int): Number of seconds to wait before refreshing status</span>
+<span class="sd">        Todo:</span>
+<span class="sd">            Modify function to include liveOutput or remove it from the arguments</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">raw</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">(</span><span class="n">raw</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="s1">&#39;events&#39;</span><span class="p">]</span>
 
@@ -208,6 +254,17 @@
                 <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">refreshRateInSeconds</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Job.logs"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.Job.Job.logs">[docs]</a>    <span class="k">def</span> <span class="nf">logs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">liveOutput</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">refreshRateInSeconds</span><span class="o">=</span><span class="mi">15</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        While the job is running, display the logs generated by the client.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            raw (bool): If true, return a list of the events generated by status</span>
+<span class="sd">            liveOutput (bool):</span>
+<span class="sd">            RefreshRateInSeconds (int): Number of seconds to wait before refreshing status</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            (list): List of logs generated by the client. Only returned if raw is true.</span>
+<span class="sd">        Todo:</span>
+<span class="sd">            Modify function to include liveOutput or remove it from the arguments</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">raw</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">(</span><span class="n">raw</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="s1">&#39;logs&#39;</span><span class="p">]</span>
 
@@ -241,6 +298,15 @@
                 <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">refreshRateInSeconds</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Job.status"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.Job.Job.status">[docs]</a>    <span class="k">def</span> <span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Displays the status of this job, and returns it if specified.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            raw (bool): If information about this job should be returned</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            (dict): Infomation about this job returned by the client. This includes the job&#39;s &#39;id&#39;, &#39;hpc&#39;, &#39;executableFolder&#39;, &#39;dataFolder&#39;, &#39;resultFolder&#39;, &#39;param&#39;, &#39;slurm&#39;, &#39;userId&#39;, &#39;maintainer&#39;, &#39;createdAt&#39;, and &#39;events&#39;</span>
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: If the &#39;id&#39; attribute is None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;missing job ID, submit/register job first&#39;</span><span class="p">)</span>
 
@@ -253,6 +319,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_print_job</span><span class="p">(</span><span class="n">job</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Job.result_folder_content"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.Job.Job.result_folder_content">[docs]</a>    <span class="k">def</span> <span class="nf">result_folder_content</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the results from the job</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            (dict): Results from running the job</span>
+<span class="sd">        Throws:</span>
+<span class="sd">            Exception: If the id is None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;missing job ID, submit/register job first&#39;</span><span class="p">)</span>
         <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;/job/&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="s1">&#39;/result-folder-content&#39;</span><span class="p">,</span> <span class="p">{</span>
@@ -261,6 +334,19 @@
         <span class="k">return</span> <span class="n">out</span></div>
 
 <div class="viewcode-block" id="Job.download_result_folder"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.Job.Job.download_result_folder">[docs]</a>    <span class="k">def</span> <span class="nf">download_result_folder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">localPath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">remotePath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Downloads the folder with results from the job using Globus</span>
+<span class="sd">        Args:</span>
+<span class="sd">            localPath (string): Path to the local result folder</span>
+<span class="sd">            remotePath (string): Path to the remote result folder</span>
+<span class="sd">            raw (bool): If the function should return the output from the client</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            (dict): Output from the client when downloading the results using globus. Only returned when raw is true.</span>
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: If the job ID is None</span>
+<span class="sd">            Exception: If the key &#39;resultFolder&#39; is not returned with status</span>
+<span class="sd">            Exception: If the result folder is formatted improperly</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;missing job ID, submit/register job first&#39;</span><span class="p">)</span>
 
@@ -304,6 +390,13 @@
             <span class="k">return</span> <span class="n">localPath</span></div>
 
 <div class="viewcode-block" id="Job.query_globus_task_status"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.Job.Job.query_globus_task_status">[docs]</a>    <span class="k">def</span> <span class="nf">query_globus_task_status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the status of the result download</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            (dict): Status of the result download</span>
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: If the job ID is None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;missing job ID, submit/register job first&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;/file/&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="s1">&#39;/globus_task_status&#39;</span><span class="p">,</span> <span class="p">{</span>
@@ -314,10 +407,20 @@
 
     <span class="c1"># HACK: back compatability</span>
 <div class="viewcode-block" id="Job.downloadResultFolder"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.Job.Job.downloadResultFolder">[docs]</a>    <span class="k">def</span> <span class="nf">downloadResultFolder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">dir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Downloads the result folder and returns information about it</span>
+<span class="sd">        Args:</span>
+<span class="sd">            (dir): Location to download the files to</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            (dict): Output from the client when downloading the results using globus.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">download_result_folder</span><span class="p">(</span><span class="nb">dir</span><span class="p">)</span></div>
 
     <span class="c1"># Helpers</span>
     <span class="k">def</span> <span class="nf">_clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clears output</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isJupyter</span><span class="p">:</span>
             <span class="n">clear_output</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="c1"># for windows</span>
@@ -328,6 +431,11 @@
             <span class="n">_</span> <span class="o">=</span> <span class="n">system</span><span class="p">(</span><span class="s1">&#39;clear&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_print_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Displays information about this job</span>
+<span class="sd">        Args:</span>
+<span class="sd">            job (dict): Information about this job returned by the client</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">job</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="n">headers</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;slurmId&#39;</span><span class="p">,</span> <span class="s1">&#39;hpc&#39;</span><span class="p">,</span> <span class="s1">&#39;executableFolder&#39;</span><span class="p">,</span> <span class="s1">&#39;dataFolder&#39;</span><span class="p">,</span> <span class="s1">&#39;resultFolder&#39;</span><span class="p">,</span> <span class="s1">&#39;param&#39;</span><span class="p">,</span> <span class="s1">&#39;slurm&#39;</span><span class="p">,</span> <span class="s1">&#39;userId&#39;</span><span class="p">,</span> <span class="s1">&#39;maintainer&#39;</span><span class="p">,</span> <span class="s1">&#39;createdAt&#39;</span><span class="p">]</span>
