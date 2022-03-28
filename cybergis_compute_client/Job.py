@@ -70,7 +70,7 @@ class Job:
         """
         Submits this job to the client, and prints the output
         Returns:
-            (obj): this job
+            (obj): This job
         """
         body = { 'accessToken': self.JAT.getAccessToken() }
         if (self.jupyterhubApiToken != None):
@@ -82,9 +82,9 @@ class Job:
 
     def upload_executable_folder(self, folder_path):
         """
-        Uploads executable folder to client, sets the path of the executable folder, and displays the status of the job
+        Uploads executable folder to client, sets the path of the executable folder, and displays the status of the job.
         Args:
-            (str): path of the executable folder
+            (str): Path of the executable folder
         Returns:
             (dict): Results from the folder being uploaded to the client
         """
@@ -232,9 +232,9 @@ class Job:
         Args:
             raw (bool): If information about this job should be returned
         Returns:
-            (dict): infomation about this job returned by the client. This includes the job's 'id', 'hpc', 'executableFolder', 'dataFolder', 'resultFolder', 'param', 'slurm', 'userId', 'maintainer', 'createdAt', and 'events'
+            (dict): Infomation about this job returned by the client. This includes the job's 'id', 'hpc', 'executableFolder', 'dataFolder', 'resultFolder', 'param', 'slurm', 'userId', 'maintainer', 'createdAt', and 'events'
         Raises:
-            Exception: if the 'id' attribute is None
+            Exception: If the 'id' attribute is None
         """
         if self.id is None:
             raise Exception('missing job ID, submit/register job first')
@@ -265,16 +265,16 @@ class Job:
     def download_result_folder(self, localPath=None, remotePath=None, raw=False):
         """
         Downloads the folder with results from the job using Globus
-        args:
+        Args:
             localPath (string): Path to the local result folder
             remotePath (string): Path to the remote result folder
             raw (bool): If the function should return the output from the client
-        returns:
+        Returns:
             (dict): Output from the client when downloading the results using globus. Only returned when raw is true.
-        raises:
-            Exception: if the job ID is None
-            Exception: if the key 'resultFolder' is not returned with status
-            Exception: if the result folder is formatted improperly
+        Raises:
+            Exception: If the job ID is None
+            Exception: If the key 'resultFolder' is not returned with status
+            Exception: If the result folder is formatted improperly
         """
         if self.id is None: raise Exception('missing job ID, submit/register job first')
 
@@ -316,7 +316,7 @@ class Job:
         """
         Get the status of the result download
         Returns:
-            (dict): status of the result download
+            (dict): Status of the result download
         Raises:
             Exception: If the job ID is None
         """
@@ -332,7 +332,7 @@ class Job:
         """
         Downloads the result folder and returns information about it
         Args:
-            (dir): location to download the files to
+            (dir): Location to download the files to
         Returns:
             (dict): Output from the client when downloading the results using globus.
         """
@@ -354,7 +354,7 @@ class Job:
     def _print_job(self, job):
         """
         Displays information about this job
-        args:
+        Args:
             job (dict): Information about this job returned by the client
         """
         if job == None: return
