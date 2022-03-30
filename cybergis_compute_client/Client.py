@@ -10,6 +10,7 @@ import requests
 import json
 from os import path
 
+
 class Client:
     """
     Client class
@@ -87,7 +88,8 @@ class Client:
             if 'error' in data:
                 msg = ''
                 if 'messages' in data:
-                    msg = str(data['messages'])
+                    # TODO: this msg variable isn't used
+                    msg = str(data['messages'])  # noqa
                 print('❌ server ' + self.url + ' responded with error "' + data['error'] + '"')
 
         if 'tar' in contentType:

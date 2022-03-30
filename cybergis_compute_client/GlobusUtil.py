@@ -5,6 +5,8 @@ object that serves as an entry point to the Globus Data Transfer Tool
 Example:
         cybergis = GlobusUtil(compute)
 """
+
+
 class GlobusUtil:
     """
     GlobusUtil class
@@ -25,6 +27,7 @@ class GlobusUtil:
     def download(self, endpoint, path, hpc):
         """
         Sends a download request to Globus API
+
         Args:
             endpoint (str)                      : endpoint that needs to be accessed
             path (str)                          : path to endpoint
