@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contributing &mdash; CyberGIS-Compute Python SDK v2 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Related Projects" href="external.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> CyberGIS-Compute Python SDK
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="reference.html">User Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="external.html">Related Projects</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#code-quaity">Code Quaity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#code-tests">Code Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools-for-testing-github-actions-locally">Tools for Testing Github Actions Locally</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">act</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#contributing-to-the-docs">Contributing to the Docs</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CyberGIS-Compute Python SDK</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Contributing</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/contributing.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<section id="contributing">
+<h1><a class="toc-backref" href="#id2">Contributing</a><a class="headerlink" href="#contributing" title="Permalink to this headline"></a></h1>
+<p>We welcome contributions, but before you send a pull request, please check that your code meets our standards. Specifically:</p>
+<div class="contents topic" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#contributing" id="id2">Contributing</a></p>
+<ul>
+<li><p><a class="reference internal" href="#code-quaity" id="id3">Code Quaity</a></p></li>
+<li><p><a class="reference internal" href="#code-tests" id="id4">Code Tests</a></p></li>
+<li><p><a class="reference internal" href="#tools-for-testing-github-actions-locally" id="id5">Tools for Testing Github Actions Locally</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id1" id="id6">act</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#contributing-to-the-docs" id="id7">Contributing to the Docs</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="code-quaity">
+<h2><a class="toc-backref" href="#id3">Code Quaity</a><a class="headerlink" href="#code-quaity" title="Permalink to this headline"></a></h2>
+<p>We recommend using flake8 and you can check the Github workflow (<cite>.github/workflows/PythonQualityCheck.yml</cite>) to see any errors/warning you can safely ignore. Some resources for linting:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://flake8.pycqa.org/en/latest/">flake8</a>.</p></li>
+<li><p><a class="reference external" href="https://code.visualstudio.com/docs/python/linting">Linting Python in Visual Studio Code</a>.</p></li>
+</ul>
+</section>
+<section id="code-tests">
+<h2><a class="toc-backref" href="#id4">Code Tests</a><a class="headerlink" href="#code-tests" title="Permalink to this headline"></a></h2>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p><strong>We are still working on testing, you can safely ignore Code Tests passing for now.</strong></p>
+</div>
+</section>
+<section id="tools-for-testing-github-actions-locally">
+<h2><a class="toc-backref" href="#id5">Tools for Testing Github Actions Locally</a><a class="headerlink" href="#tools-for-testing-github-actions-locally" title="Permalink to this headline"></a></h2>
+<p>We prefer that contributions pass our Github actions, so here are some tips on checking they pass locally.</p>
+<section id="id1">
+<h3><a class="reference external" href="https://github.com/nektos/act">act</a><a class="headerlink" href="#id1" title="Permalink to this headline"></a></h3>
+<p>There are a variety of ways to install act, and once installed it offers a flexible tool for testing that your code passes Github actions. All commands should be run from the root of the repository.</p>
+<ul>
+<li><p>List Github actions:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">act</span> <span class="o">-</span><span class="n">l</span>
+<span class="n">Stage</span>  <span class="n">Job</span> <span class="n">ID</span>       <span class="n">Job</span> <span class="n">name</span>             <span class="n">Workflow</span> <span class="n">name</span>        <span class="n">Workflow</span> <span class="n">file</span>            <span class="n">Events</span>
+<span class="mi">0</span>      <span class="n">build</span>        <span class="n">build</span>                <span class="n">Python</span> <span class="n">Code</span> <span class="n">Test</span>     <span class="n">PythonCodeTestCases</span><span class="o">.</span><span class="n">yml</span>  <span class="n">push</span>
+<span class="mi">0</span>      <span class="n">flake8</span><span class="o">-</span><span class="n">lint</span>  <span class="n">Python</span> <span class="n">Code</span> <span class="n">Quality</span>  <span class="n">Python</span> <span class="n">Code</span> <span class="n">Quality</span>  <span class="n">PythonQualityCheck</span><span class="o">.</span><span class="n">yml</span>   <span class="n">push</span>
+</pre></div>
+</div>
+</li>
+<li><p>Run a specific action locally:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">act</span> <span class="o">-</span><span class="n">j</span> <span class="o">&lt;</span><span class="n">Jpb</span> <span class="n">string</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</li>
+<li><p>Run all actions:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">act</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+</section>
+<section id="contributing-to-the-docs">
+<h2><a class="toc-backref" href="#id7">Contributing to the Docs</a><a class="headerlink" href="#contributing-to-the-docs" title="Permalink to this headline"></a></h2>
+<p>We welcome contributions to the documentation! Please ensure that any contributions are appropriate for this repository and not the many related projects: <a class="reference internal" href="external.html"><span class="doc">Related Projects</span></a></p>
+<p>Our documentation is build with <a class="reference external" href="https://www.sphinx-doc.org/en/master/index.html">Sphinx</a> and written in <a class="reference external" href="https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html">reStructuredText</a> (<a class="reference external" href="https://docutils.sourceforge.io/docs/user/rst/quickref.html">Quick reference for RST</a>).</p>
+<p>After making changes, you can see what the site will look like by running <cite>make html</cite> from the <cite>docs/</cite> folder.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="external.html" class="btn btn-neutral float-left" title="Related Projects" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, CyberGIS Center.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

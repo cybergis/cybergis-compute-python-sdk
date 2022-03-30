@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cybergis_compute_client.CyberGISCompute &mdash; CyberGIS-Compute Python SDK v2 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> CyberGIS-Compute Python SDK
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../reference.html">User Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../external.html">Related Projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">CyberGIS-Compute Python SDK</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      <li>cybergis_compute_client.CyberGISCompute</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cybergis_compute_client.CyberGISCompute</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module exposes CyberGISCompute class which creates a CyberGISCompute</span>
+<span class="sd">object that serves as an entry point to the CyberGISX environment from a Python/Jupyter notebook.</span>
+<span class="sd">All interactions with the High Performance Computing (HPC) backend are performed using this object.</span>
+
+<span class="sd">Example:</span>
+<span class="sd">        cybergis = CyberGISCompute(url=&#39;localhost&#39;, port=&#39;3030&#39;, protocol=&#39;HTTP&#39;, isJupyter=False)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">.Client</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.Job</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.UI</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">base64</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">Markdown</span><span class="p">,</span> <span class="n">Javascript</span>
+
+
+<div class="viewcode-block" id="CyberGISCompute"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute">[docs]</a><span class="k">class</span> <span class="nc">CyberGISCompute</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    CyberGISCompute class</span>
+<span class="sd">    An inteface that handles all interactions with the HPC backend</span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        client (Client object)      : Initialized using url(str), protocol(str), port(str) and suffix(str)</span>
+<span class="sd">        jupyterhubApiToken (string) : jupyterhub&#39;s REST API token that can be used to authenticate the user</span>
+<span class="sd">        (https://jhubdocs.readthedocs.io/en/latest/jupyterhub/docs/source/rest.html)</span>
+<span class="sd">        username (string)           : username</span>
+<span class="sd">        isJupyter (boolean)         : set to True if you are working in a jupyter environment.</span>
+<span class="sd">        If you are working in a simple Python environment then set to False</span>
+<span class="sd">        ui (UI)                     : Serves as entry point to UI functionality</span>
+<span class="sd">        job (Job)                   : Serves as entry point to access job interactions</span>
+<span class="sd">        recentDownloadPath (str)    : Gets the most recent download path from globus</span>
+<span class="sd">        jupyterhubHost (str)        : static variable that stores the path to jupyterhubHost</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># static variable</span>
+    <span class="n">jupyterhubHost</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">job</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="s2">&quot;cgjobsup.cigi.illinois.edu&quot;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">443</span><span class="p">,</span> <span class="n">protocol</span><span class="o">=</span><span class="s1">&#39;HTTPS&#39;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">isJupyter</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes instance CyberGISCompute using inputs from the client</span>
+<span class="sd">        Args:</span>
+<span class="sd">            url (str)               : url that needs to be accessed</span>
+<span class="sd">            port (str)              : port of the Jupyter or Python interface</span>
+<span class="sd">            protocol (str)          : Typically HTTP or HTTPS</span>
+<span class="sd">            suffix (str)            : specify version. For e.g v2</span>
+<span class="sd">            isJupyter(booleans)     : set to True if you are using Jupyter environment</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            (obj)                   : this CyberGISCompute</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">protocol</span><span class="o">=</span><span class="n">protocol</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jupyterhubApiToken</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">isJupyter</span> <span class="o">=</span> <span class="n">isJupyter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span> <span class="o">=</span> <span class="n">UI</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">isJupyter</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">enable_jupyter</span><span class="p">()</span>
+        <span class="c1"># job</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">job</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recentDownloadPath</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="CyberGISCompute.login"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.login">[docs]</a>    <span class="k">def</span> <span class="nf">login</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manualLogin</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Authenticates the client&#39;s jupyterhubApiToken and gives them access</span>
+<span class="sd">        to CyberGISCompute features</span>
+<span class="sd">        Args:</span>
+<span class="sd">            manualLogin (boolean) : set to True if env variable and file login modes are not available</span>
+<span class="sd">        Returns :</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">jupyterhubApiToken</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;🎯 Logged in as &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="c1"># login via env variable</span>
+        <span class="n">envToken</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;JUPYTERHUB_API_TOKEN&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">envToken</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;💻 Found system token&#39;</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">token</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">jupyterhubHost</span> <span class="o">+</span> <span class="s1">&#39;@&#39;</span> <span class="o">+</span> <span class="n">envToken</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;/user&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;jupyterhubApiToken&quot;</span><span class="p">:</span> <span class="n">token</span><span class="p">})</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">jupyterhubApiToken</span> <span class="o">=</span> <span class="n">token</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">]</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">login</span><span class="p">()</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;❌ Failed to login via system token&#39;</span><span class="p">)</span>
+
+        <span class="c1"># login via file</span>
+        <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s1">&#39;./cybergis_compute_user.json&#39;</span><span class="p">):</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;cybergis_compute_user.json&#39;</span><span class="p">))</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">user</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                <span class="n">token</span> <span class="o">=</span> <span class="n">user</span><span class="p">[</span><span class="s1">&#39;token&#39;</span><span class="p">]</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;📃 Found &quot;cybergis_compute_user.json&quot;&#39;</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;/user&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;jupyterhubApiToken&quot;</span><span class="p">:</span> <span class="n">token</span><span class="p">})</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">jupyterhubApiToken</span> <span class="o">=</span> <span class="n">token</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">]</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">login</span><span class="p">()</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;❌ Failed to login via token JSON file&#39;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;NOTE: if you want to login as another user, please remove this file&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">manualLogin</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isJupyter</span><span class="p">:</span>
+                <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jupyterhubHost</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+                    <span class="kn">import</span> <span class="nn">getpass</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;📢 Please go to Control Panel -&gt; Token, request a new API token&#39;</span><span class="p">)</span>
+                    <span class="n">token</span> <span class="o">=</span> <span class="n">getpass</span><span class="o">.</span><span class="n">getpass</span><span class="p">(</span><span class="s1">&#39;enter your API token here&#39;</span><span class="p">)</span>
+                    <span class="n">token</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">jupyterhubHost</span> <span class="o">+</span> <span class="s1">&#39;@&#39;</span> <span class="o">+</span> <span class="n">token</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;/user&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;jupyterhubApiToken&quot;</span><span class="p">:</span> <span class="n">token</span><span class="p">})</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">jupyterhubApiToken</span> <span class="o">=</span> <span class="n">token</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">]</span>
+                        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;./cybergis_compute_user.json&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
+                            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">({</span><span class="s2">&quot;token&quot;</span><span class="p">:</span> <span class="n">token</span><span class="p">},</span> <span class="n">json_file</span><span class="p">)</span>
+                        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">login</span><span class="p">()</span>
+                    <span class="k">except</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;❌ Failed to login via user input&#39;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;❌ You might not be working on a web browser or enabled JavaScript&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;❌ Enable Jupyter using .enable_jupyter() before you login&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;❌ Not logged in. To enable more features, use .login()&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CyberGISCompute.create_job"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.create_job">[docs]</a>    <span class="k">def</span> <span class="nf">create_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maintainer</span><span class="o">=</span><span class="s1">&#39;community_contribution&#39;</span><span class="p">,</span> <span class="n">hpc</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">hpcUsername</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">hpcPassword</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">printJob</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a job object</span>
+<span class="sd">        Initializes instance CyberGISCompute using inputs from the client</span>
+<span class="sd">        Args:</span>
+<span class="sd">            maintainer (str)        : Pre-packaged programs which can be configured and controlled remotely</span>
+<span class="sd">            and behave as a bridge between user and HPC backends</span>
+<span class="sd">            hpc(str)                : HPC backend that is being accessed. For e.g &#39;keeling_community&#39;</span>
+<span class="sd">            hpcUsername (str)       : username for HPC backend</span>
+<span class="sd">            hpcPassword (str)       : password for HPC backend</span>
+<span class="sd">            printJob (str)          : prints the Job infortmation if set to True</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            (Job) : The new job instance that was initialized</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">login</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">Job</span><span class="p">(</span><span class="n">maintainer</span><span class="o">=</span><span class="n">maintainer</span><span class="p">,</span> <span class="n">hpc</span><span class="o">=</span><span class="n">hpc</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">hpcUsername</span><span class="o">=</span><span class="n">hpcUsername</span><span class="p">,</span> <span class="n">hpcPassword</span><span class="o">=</span><span class="n">hpcPassword</span><span class="p">,</span> <span class="n">client</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="n">isJupyter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">isJupyter</span><span class="p">,</span> <span class="n">jupyterhubApiToken</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">jupyterhubApiToken</span><span class="p">,</span> <span class="n">printJob</span><span class="o">=</span><span class="n">printJob</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CyberGISCompute.get_job_by_id"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.get_job_by_id">[docs]</a>    <span class="k">def</span> <span class="nf">get_job_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns Job object with the specified id</span>
+<span class="sd">        Args:</span>
+<span class="sd">            id(int)                 : Job id</span>
+<span class="sd">        Returns</span>
+<span class="sd">            (Job)                   : Job object with the specified id otherwise None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">login</span><span class="p">()</span>
+        <span class="n">jobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;/user/job&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;jupyterhubApiToken&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">jupyterhubApiToken</span><span class="p">})</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">jobs</span><span class="p">[</span><span class="s1">&#39;job&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">job</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="nb">id</span><span class="p">):</span>
+                <span class="n">token</span> <span class="o">=</span> <span class="n">job</span><span class="p">[</span><span class="s1">&#39;secretToken&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">token</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;❌ job with id &#39;</span> <span class="o">+</span> <span class="nb">id</span> <span class="o">+</span> <span class="s1">&#39; was not found&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Job</span><span class="p">(</span><span class="n">secretToken</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">client</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span> <span class="n">isJupyter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">isJupyter</span><span class="p">,</span> <span class="n">jupyterhubApiToken</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">jupyterhubApiToken</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CyberGISCompute.get_slurm_usage"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.get_slurm_usage">[docs]</a>    <span class="k">def</span> <span class="nf">get_slurm_usage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        prints slurm usage</span>
+<span class="sd">        Args:</span>
+<span class="sd">            raw(boolean)            : set to True if you want the raw output</span>
+<span class="sd">        Returns</span>
+<span class="sd">            (JSON)                  : Raw output if raw=True otherwise its printed or displayed directly into the interface</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">login</span><span class="p">()</span>
+        <span class="n">usage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;/user/slurm-usage?format=</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="ow">not</span> <span class="n">raw</span><span class="p">),</span> <span class="p">{</span><span class="s2">&quot;jupyterhubApiToken&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">jupyterhubApiToken</span><span class="p">})</span>
+        <span class="k">if</span> <span class="n">raw</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">usage</span>
+        <span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="s2">&quot;Nodes: </span><span class="si">{}</span><span class="s2">&lt;br&gt;Allocated CPUs: </span><span class="si">{}</span><span class="s2">&lt;br&gt;Total CPU Time: </span><span class="si">{}</span><span class="s2">&lt;br&gt;Memory Utilized: </span><span class="si">{}</span><span class="s2">&lt;br&gt;Total Allocated Memory: </span><span class="si">{}</span><span class="s2">&lt;br&gt;Total Walltime: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">usage</span><span class="p">[</span><span class="s1">&#39;nodes&#39;</span><span class="p">],</span> <span class="n">usage</span><span class="p">[</span><span class="s1">&#39;cpus&#39;</span><span class="p">],</span> <span class="n">usage</span><span class="p">[</span><span class="s1">&#39;cpuTime&#39;</span><span class="p">],</span> <span class="n">usage</span><span class="p">[</span><span class="s1">&#39;memory&#39;</span><span class="p">],</span> <span class="n">usage</span><span class="p">[</span><span class="s1">&#39;memoryUsage&#39;</span><span class="p">],</span> <span class="n">usage</span><span class="p">[</span><span class="s1">&#39;walltime&#39;</span><span class="p">])))</span></div>
+
+<div class="viewcode-block" id="CyberGISCompute.list_job"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.list_job">[docs]</a>    <span class="k">def</span> <span class="nf">list_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        prints a list of jobs that were submitted</span>
+<span class="sd">        Args:</span>
+<span class="sd">            raw (boolean)           : set to True if you want the raw output</span>
+<span class="sd">        Returns</span>
+<span class="sd">            (JSON)                  : Raw output if raw=True otherwise its printed or displayed into the interface</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">login</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">jupyterhubApiToken</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;❌ please login&#39;</span><span class="p">)</span>
+
+        <span class="n">jobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;/user/job&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;jupyterhubApiToken&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">jupyterhubApiToken</span><span class="p">})</span>
+        <span class="k">if</span> <span class="n">raw</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">jobs</span>
+
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;hpc&#39;</span><span class="p">,</span> <span class="s1">&#39;executableFolder&#39;</span><span class="p">,</span> <span class="s1">&#39;dataFolder&#39;</span><span class="p">,</span> <span class="s1">&#39;resultFolder&#39;</span><span class="p">,</span> <span class="s1">&#39;param&#39;</span><span class="p">,</span> <span class="s1">&#39;slurm&#39;</span><span class="p">,</span> <span class="s1">&#39;userId&#39;</span><span class="p">,</span> <span class="s1">&#39;maintainer&#39;</span><span class="p">,</span> <span class="s1">&#39;createdAt&#39;</span><span class="p">]</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">jobs</span><span class="p">[</span><span class="s1">&#39;job&#39;</span><span class="p">]:</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">([</span>
+                <span class="n">job</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+                <span class="n">job</span><span class="p">[</span><span class="s1">&#39;hpc&#39;</span><span class="p">],</span>
+                <span class="n">job</span><span class="p">[</span><span class="s1">&#39;executableFolder&#39;</span><span class="p">],</span>
+                <span class="n">job</span><span class="p">[</span><span class="s1">&#39;dataFolder&#39;</span><span class="p">],</span>
+                <span class="n">job</span><span class="p">[</span><span class="s1">&#39;resultFolder&#39;</span><span class="p">],</span>
+                <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">job</span><span class="p">[</span><span class="s1">&#39;param&#39;</span><span class="p">]),</span>
+                <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">job</span><span class="p">[</span><span class="s1">&#39;slurm&#39;</span><span class="p">]),</span>
+                <span class="n">job</span><span class="p">[</span><span class="s1">&#39;userId&#39;</span><span class="p">],</span>
+                <span class="n">job</span><span class="p">[</span><span class="s1">&#39;maintainer&#39;</span><span class="p">],</span>
+                <span class="n">job</span><span class="p">[</span><span class="s1">&#39;createdAt&#39;</span><span class="p">],</span>
+            <span class="p">])</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isJupyter</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;empty&#39;</span><span class="p">)</span>
+                <span class="k">return</span>
+            <span class="n">display</span><span class="p">(</span><span class="n">HTML</span><span class="p">(</span><span class="n">tabulate</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">numalign</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">stralign</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">colalign</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="s1">&#39;left&#39;</span><span class="p">),</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s1">&#39;html&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;td&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;td style=&quot;text-align:left&quot;&gt;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;th&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;th style=&quot;text-align:left&quot;&gt;&#39;</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;presto&quot;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="CyberGISCompute.list_hpc"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.list_hpc">[docs]</a>    <span class="k">def</span> <span class="nf">list_hpc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        prints a list of hpc resources that the server supports</span>
+<span class="sd">        Args:</span>
+<span class="sd">            raw (boolean)           : set to True if you want the raw output</span>
+<span class="sd">        Returns</span>
+<span class="sd">            (JSON)                  : Raw output if raw=True otherwise its printed</span>
+<span class="sd">            or displayed directly into the interface</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">hpc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;/hpc&#39;</span><span class="p">)[</span><span class="s1">&#39;hpc&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">raw</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">hpc</span>
+
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;hpc&#39;</span><span class="p">,</span> <span class="s1">&#39;ip&#39;</span><span class="p">,</span> <span class="s1">&#39;port&#39;</span><span class="p">,</span> <span class="s1">&#39;is_community_account&#39;</span><span class="p">]</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">hpc</span><span class="p">:</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">([</span>
+                <span class="n">i</span><span class="p">,</span>
+                <span class="n">hpc</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;ip&#39;</span><span class="p">],</span>
+                <span class="n">hpc</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;port&#39;</span><span class="p">],</span>
+                <span class="n">hpc</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;is_community_account&#39;</span><span class="p">]</span>
+            <span class="p">])</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isJupyter</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;empty&#39;</span><span class="p">)</span>
+                <span class="k">return</span>
+            <span class="n">display</span><span class="p">(</span><span class="n">HTML</span><span class="p">(</span><span class="n">tabulate</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">numalign</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">stralign</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">colalign</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="s1">&#39;left&#39;</span><span class="p">),</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s1">&#39;html&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;td&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;td style=&quot;text-align:left&quot;&gt;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;th&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;th style=&quot;text-align:left&quot;&gt;&#39;</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;presto&quot;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="CyberGISCompute.list_container"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.list_container">[docs]</a>    <span class="k">def</span> <span class="nf">list_container</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        prints a list of containers that the server supports</span>
+<span class="sd">        Args:</span>
+<span class="sd">            raw (boolean)           : set to True if you want the raw output</span>
+<span class="sd">        Returns</span>
+<span class="sd">            (JSON)                  : Raw output if raw=True otherwise its printed</span>
+<span class="sd">            or displayed directly into the interface</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">container</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;/container&#39;</span><span class="p">)[</span><span class="s1">&#39;container&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">raw</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">container</span>
+
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;container name&#39;</span><span class="p">,</span> <span class="s1">&#39;dockerfile&#39;</span><span class="p">,</span> <span class="s1">&#39;dockerhub&#39;</span><span class="p">]</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">container</span><span class="p">:</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">([</span>
+                <span class="n">i</span><span class="p">,</span>
+                <span class="n">container</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;dockerfile&#39;</span><span class="p">],</span>
+                <span class="n">container</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;dockerhub&#39;</span><span class="p">]</span>
+            <span class="p">])</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isJupyter</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;empty&#39;</span><span class="p">)</span>
+                <span class="k">return</span>
+            <span class="n">display</span><span class="p">(</span><span class="n">HTML</span><span class="p">(</span><span class="n">tabulate</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">numalign</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">stralign</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">colalign</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="s1">&#39;left&#39;</span><span class="p">),</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s1">&#39;html&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;td&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;td style=&quot;text-align:left&quot;&gt;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;th&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;th style=&quot;text-align:left&quot;&gt;&#39;</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;presto&quot;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="CyberGISCompute.list_git"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.list_git">[docs]</a>    <span class="k">def</span> <span class="nf">list_git</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        prints a list of Git projects that the server supports</span>
+<span class="sd">        Args:</span>
+<span class="sd">            raw (boolean)           : set to True if you want the raw output</span>
+<span class="sd">        Returns</span>
+<span class="sd">            (JSON)                  : Raw output if raw=True otherwise its printed</span>
+<span class="sd">            or displayed directly into the interface</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">git</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;/git&#39;</span><span class="p">)[</span><span class="s1">&#39;git&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">raw</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">git</span>
+
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;link&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;container&#39;</span><span class="p">,</span> <span class="s1">&#39;repository&#39;</span><span class="p">,</span> <span class="s1">&#39;commit&#39;</span><span class="p">]</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">git</span><span class="p">:</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">([</span>
+                <span class="s1">&#39;git://&#39;</span> <span class="o">+</span> <span class="n">i</span><span class="p">,</span>
+                <span class="n">git</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">],</span>
+                <span class="n">git</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;container&#39;</span><span class="p">],</span>
+                <span class="n">git</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;repository&#39;</span><span class="p">],</span>
+                <span class="n">git</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;commit&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;commit&#39;</span> <span class="ow">in</span> <span class="n">git</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">else</span> <span class="s1">&#39;NONE&#39;</span><span class="p">,</span>
+            <span class="p">])</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isJupyter</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;empty&#39;</span><span class="p">)</span>
+                <span class="k">return</span>
+            <span class="n">display</span><span class="p">(</span><span class="n">HTML</span><span class="p">(</span><span class="n">tabulate</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">numalign</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">stralign</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">colalign</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="s1">&#39;left&#39;</span><span class="p">),</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s1">&#39;html&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;td&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;td style=&quot;text-align:left&quot;&gt;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;th&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;th style=&quot;text-align:left&quot;&gt;&#39;</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;presto&quot;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="CyberGISCompute.list_maintainer"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.list_maintainer">[docs]</a>    <span class="k">def</span> <span class="nf">list_maintainer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        prints a list of maintainers that the server supports</span>
+<span class="sd">        Args:</span>
+<span class="sd">            raw (boolean)            : set to True if you want the raw output</span>
+<span class="sd">        Returns</span>
+<span class="sd">            (JSON)                  : Raw output if raw=True otherwise its printed</span>
+<span class="sd">            or displayed directly into the interface</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">maintainers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;/maintainer&#39;</span><span class="p">)[</span><span class="s1">&#39;maintainer&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">raw</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">maintainers</span>
+
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;maintainer&#39;</span><span class="p">,</span> <span class="s1">&#39;hpc&#39;</span><span class="p">,</span> <span class="s1">&#39;default_hpc&#39;</span><span class="p">,</span> <span class="s1">&#39;job_pool_capacity&#39;</span><span class="p">,</span> <span class="s1">&#39;executable_folder-&gt;from_user&#39;</span><span class="p">,</span> <span class="s1">&#39;executable_folder-&gt;must_have&#39;</span><span class="p">]</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">maintainers</span><span class="p">:</span>
+            <span class="n">maintainer</span> <span class="o">=</span> <span class="n">maintainers</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+            <span class="n">from_user</span> <span class="o">=</span> <span class="s1">&#39;not specified&#39;</span>
+            <span class="k">if</span> <span class="s1">&#39;executable_folder&#39;</span> <span class="ow">in</span> <span class="n">maintainer</span><span class="p">:</span>
+                <span class="n">from_user</span> <span class="o">=</span> <span class="n">maintainer</span><span class="p">[</span><span class="s1">&#39;executable_folder&#39;</span><span class="p">][</span><span class="s1">&#39;from_user&#39;</span><span class="p">]</span>
+
+            <span class="n">must_have</span> <span class="o">=</span> <span class="s1">&#39;not specified&#39;</span>
+            <span class="k">if</span> <span class="s1">&#39;executable_folder&#39;</span> <span class="ow">in</span> <span class="n">maintainer</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s1">&#39;file_config&#39;</span> <span class="ow">in</span> <span class="n">maintainer</span><span class="p">[</span><span class="s1">&#39;executable_folder&#39;</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="s1">&#39;must_have&#39;</span> <span class="ow">in</span> <span class="n">maintainer</span><span class="p">[</span><span class="s1">&#39;executable_folder&#39;</span><span class="p">][</span><span class="s1">&#39;file_config&#39;</span><span class="p">]:</span>
+                        <span class="n">must_have</span> <span class="o">=</span> <span class="n">maintainer</span><span class="p">[</span><span class="s1">&#39;executable_folder&#39;</span><span class="p">][</span><span class="s1">&#39;file_config&#39;</span><span class="p">][</span><span class="s1">&#39;must_have&#39;</span><span class="p">]</span>
+
+            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">([</span>
+                <span class="n">i</span><span class="p">,</span>
+                <span class="n">maintainer</span><span class="p">[</span><span class="s1">&#39;hpc&#39;</span><span class="p">],</span>
+                <span class="n">maintainer</span><span class="p">[</span><span class="s1">&#39;default_hpc&#39;</span><span class="p">],</span>
+                <span class="n">maintainer</span><span class="p">[</span><span class="s1">&#39;job_pool_capacity&#39;</span><span class="p">],</span>
+                <span class="n">from_user</span><span class="p">,</span>
+                <span class="n">must_have</span>
+            <span class="p">])</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isJupyter</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;empty&#39;</span><span class="p">)</span>
+                <span class="k">return</span>
+            <span class="n">display</span><span class="p">(</span><span class="n">HTML</span><span class="p">(</span><span class="n">tabulate</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">numalign</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">stralign</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">colalign</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="s1">&#39;left&#39;</span><span class="p">),</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s1">&#39;html&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;td&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;td style=&quot;text-align:left&quot;&gt;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;th&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;th style=&quot;text-align:left&quot;&gt;&#39;</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;presto&quot;</span><span class="p">))</span></div>
+
+    <span class="c1"># Integrated functions</span>
+<div class="viewcode-block" id="CyberGISCompute.list_info"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.list_info">[docs]</a>    <span class="k">def</span> <span class="nf">list_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">list_maintainer</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">list_container</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        calls list_git, list_hpc, list_job with options to call list_maintainer and list_container</span>
+<span class="sd">        Args:</span>
+<span class="sd">            list_maintainer (boolean)    : set to True if you want to call list_maintainer</span>
+<span class="sd">            list_container (boolean)     : set to True of you want to call list</span>
+<span class="sd">        Returns</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;📦 Git repositories:&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">list_git</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;🖥 HPC endpoints:&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">list_hpc</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_login</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;📮 Submitted jobs:&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">list_job</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">list_container</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;🗳 Containers:&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">list_container</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">list_maintainer</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;🤖 Maintainers:&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">list_maintainer</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="CyberGISCompute.create_job_by_ui"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.create_job_by_ui">[docs]</a>    <span class="k">def</span> <span class="nf">create_job_by_ui</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">defaultJob</span><span class="o">=</span><span class="s2">&quot;hello_world&quot;</span><span class="p">,</span> <span class="n">defaultDataFolder</span><span class="o">=</span><span class="s2">&quot;./&quot;</span><span class="p">,</span> <span class="n">defaultRemoteResultFolder</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Displays the job submission UI</span>
+<span class="sd">        Args:</span>
+<span class="sd">            defaultJob (str)                      : Stores the default job that shows up on the UI</span>
+<span class="sd">            defaultDataFolder (str)               : Stores the default input folder that shows up on the UI</span>
+<span class="sd">            defaultRemoteResultFolder (str)       : Stores the default output folder that shows up on the UI</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">defaultJobName</span> <span class="o">=</span> <span class="n">defaultJob</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">defaultDataFolder</span> <span class="o">=</span> <span class="n">defaultDataFolder</span>
+        <span class="k">if</span> <span class="n">defaultRemoteResultFolder</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">defaultRemoteResultFolder</span> <span class="o">=</span> <span class="n">defaultRemoteResultFolder</span> <span class="k">if</span> <span class="n">defaultRemoteResultFolder</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;/&#39;</span> <span class="k">else</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">defaultRemoteResultFolder</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">render</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="CyberGISCompute.get_latest_created_job"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.get_latest_created_job">[docs]</a>    <span class="k">def</span> <span class="nf">get_latest_created_job</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the current job instance</span>
+<span class="sd">        Args:</span>
+<span class="sd">           None</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            (JOB)                                 : Latest Job object instance</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">job</span></div>
+
+    <span class="c1"># helper functions</span>
+<div class="viewcode-block" id="CyberGISCompute.enable_jupyter"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.enable_jupyter">[docs]</a>    <span class="k">def</span> <span class="nf">enable_jupyter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        sets up jupyter environment in jupyterhubHost</span>
+<span class="sd">        Args:</span>
+<span class="sd">           None</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">isJupyter</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="c1"># get jupyter variable</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;JUPYTER_INSTANCE_URL&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">url</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">CyberGISCompute</span><span class="o">.</span><span class="n">jupyterhubHost</span> <span class="o">=</span> <span class="n">url</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;https://&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;http://&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">display</span><span class="p">(</span><span class="n">Javascript</span><span class="p">(</span><span class="s1">&#39;IPython.notebook.kernel.execute(`CyberGISCompute.jupyterhubHost = &quot;$</span><span class="si">{window.location.host}</span><span class="s1">&quot;`);&#39;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="CyberGISCompute.get_user_jupyter_globus"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.get_user_jupyter_globus">[docs]</a>    <span class="k">def</span> <span class="nf">get_user_jupyter_globus</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the current job instance</span>
+<span class="sd">        Args:</span>
+<span class="sd">           None</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            (JOB)                                 : Latest Job object instance</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;/user/jupyter-globus&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;jupyterhubApiToken&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">jupyterhubApiToken</span><span class="p">})</span></div>
+
+<div class="viewcode-block" id="CyberGISCompute.is_login"><a class="viewcode-back" href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.is_login">[docs]</a>    <span class="k">def</span> <span class="nf">is_login</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks whether jupyterhubApi token exists or not</span>
+<span class="sd">        Args:</span>
+<span class="sd">           None</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            (boolean)                             : jupyterhubAPI existence check</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">jupyterhubApiToken</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, CyberGIS Center.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
