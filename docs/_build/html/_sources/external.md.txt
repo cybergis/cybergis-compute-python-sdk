@@ -1,5 +1,8 @@
 # Related Projects
 
+.. _related-projects:
+
+
 ## CyberGIS-Compute
 
 * [cybergis-compute-core](https://github.com/cybergis/cybergis-compute-core)

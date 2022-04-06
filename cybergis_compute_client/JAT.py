@@ -26,7 +26,7 @@ class JAT:
             accessTokenCache (dict): All cached access tokens with the dates submitted as keys
             id (str): Unique identifier for the job (assigned by the client)
             secretToken (str): Token to generate JAT signature (provided by the client)
-            algorithm (str): Algorithm used to hash the signature 
+            algorithm (str): Algorithm used to hash the signature
         Returns:
             (obj): this JAT
         """
@@ -63,6 +63,7 @@ class JAT:
     def getAccessToken(self):
         """
         Returns the access token signaure of this job, and adds it to the cache if it is not already there
+
         Returns:
             (str): Access token signature, in the form of 4 Base64-URL strings separated by dots
         """
