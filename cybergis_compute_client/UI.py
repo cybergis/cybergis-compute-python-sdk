@@ -495,7 +495,8 @@ class UI:
 
         for i in self.job['param_rules']:
             if i in self.param:
-                out['param'][i] = self.param[i].value
+                if self.param[i].value:
+                    out['param'][i] = self.param[i].value
 
         return out
 
