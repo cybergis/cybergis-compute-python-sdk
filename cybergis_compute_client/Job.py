@@ -177,10 +177,11 @@ class Job:
             print('📮 Job ID: ' + self.id)
             if 'slurmId' in status:
                 print('🤖 Slurm ID: ' + str(status['slurmId']))
-            if self.isJupyter:
-                display(HTML(tabulate(events, headers, tablefmt='html')))
-            else:
-                print(tabulate(events, headers, tablefmt='presto'))
+            if len(events) > 0:
+                if self.isJupyter:
+                    display(HTML(tabulate(events, headers, tablefmt='html')))
+                else:
+                    print(tabulate(events, headers, tablefmt='presto'))
 
             if not isEnd:
                 time.sleep(refreshRateInSeconds)
@@ -221,10 +222,11 @@ class Job:
             print('📮 Job ID: ' + self.id)
             if 'slurmId' in status:
                 print('🤖 Slurm ID: ' + str(status['slurmId']))
-            if self.isJupyter:
-                display(HTML(tabulate(logs, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', "<td style='text-align:left'>")))
-            else:
-                print(tabulate(logs, headers, tablefmt='presto'))
+            if len(logs) > 0:
+                if self.isJupyter:
+                    display(HTML(tabulate(logs, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', "<td style='text-align:left'>")))
+                else:
+                    print(tabulate(logs, headers, tablefmt='presto'))
 
             if not isEnd:
                 time.sleep(refreshRateInSeconds)
