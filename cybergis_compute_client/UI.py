@@ -387,6 +387,7 @@ class UI:
                     dataFolder = 'globus://' + self.jupyter_globus['endpoint'] + ':' + os.path.join(self.jupyter_globus['root_path'], dataFolder.strip('/'))
 
             data = self.get_data()
+            print(data)
             self.compute.job = self.compute.create_job(hpc=data['computing_resource'], printJob=False)
             # slurm
             slurm = data['slurm']
