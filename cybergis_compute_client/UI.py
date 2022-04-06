@@ -387,7 +387,6 @@ class UI:
                     dataFolder = 'globus://' + self.jupyter_globus['endpoint'] + ':' + os.path.join(self.jupyter_globus['root_path'], dataFolder.strip('/'))
 
             data = self.get_data()
-            print(data)
             self.compute.job = self.compute.create_job(hpc=data['computing_resource'], printJob=False)
             # slurm
             slurm = data['slurm']
@@ -478,7 +477,11 @@ class UI:
         out = {
             'job_template': self.jobTemplate['dropdown'].value,
             'computing_resource': self.computingResource['dropdown'].value,
-            'slurm': {},
+            'slurm': {
+                'time': '01:00:00',
+                'num_of_task': 1,
+                'cpu_per_task': 1
+            },
             'param': {},
             'email': self.email['text'].value if self.email['checkbox'].value else None,
         }
