@@ -475,7 +475,7 @@ class UI:
         }
 
         for i in self.slurm_configs:
-            if self.slurm[i] != None:
+            if self.slurm[i] != None and i in self.job['slurm_input_rules']:
                 config = self.job['slurm_input_rules'][i]
                 if i in self.slurm_integer_storage_unit_config:
                     out['slurm'][i] = str(self.slurm[i].value) + str(config['unit'])
