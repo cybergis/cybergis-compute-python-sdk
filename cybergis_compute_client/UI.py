@@ -484,6 +484,7 @@ class UI:
 
         for i in self.slurm_configs:
             if self.slurm[i] != None and i in self.job['slurm_input_rules']:
+                if not self.slurm[i].value: continue # skip null value
                 config = self.job['slurm_input_rules'][i]
                 if i in self.slurm_integer_storage_unit_config:
                     out['slurm'][i] = str(self.slurm[i].value) + str(config['unit'])
@@ -495,8 +496,7 @@ class UI:
 
         for i in self.job['param_rules']:
             if i in self.param:
-                if self.param[i].value:
-                    out['param'][i] = self.param[i].value
+                out['param'][i] = self.param[i].value
 
         return out
 
