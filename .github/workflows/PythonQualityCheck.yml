@@ -1,6 +1,6 @@
 name: Python Code Quality
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   flake8-lint:
