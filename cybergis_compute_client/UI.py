@@ -6,6 +6,26 @@ from IPython.display import Markdown, display, clear_output
 
 
 class UI:
+    """
+    UI class
+    Attributes:
+        compute: Instance of CyberGISCompute
+        style (dict): Style of each widget (specifically width)
+        layout (obj): Widget layout
+        jobs (list): Jobs being managed currently
+        hpcs (list): HPCs the jobs are being submitted to
+        defaultJobName (string): Name that jobs are given by default
+        defaultRemoteResultFolder (string): Default remote location that results are saved to.
+        defaultDataFolder (string): Default folder that data will be saved to
+        slurm_configs (list): Default configurations for slurm
+        slurm_integer_configs (list): Slurm configurations that can be stored as integers
+        slurm_integer_storage_unit_config (list): Slurm configurations related to storage
+        slurm_integer_time_unit_config (list): Slurm configurations related to time units
+        slurm_integer_none_unit_config (list): Slurm configurations related to units other than time
+        slurm_string_option_configs (list): Slurm configurations for string operations
+        globus_filename (string): Output filename submitted to Globus (set when entered by the user)
+        jupyter_globus (dict): Information about where the output data will be stored (container_home_path, endpoint, root_path)
+    """
     def __init__(self, compute, defaultJobName="hello_world", defaultDataFolder="./", defaultRemoteResultFolder=None):
         self.compute = compute
         self.style = {'description_width': 'auto'}
@@ -27,8 +47,11 @@ class UI:
         self.jupyter_globus = None
 
     def render(self):
+        """
+        Render main UI by initializing, rendering, and displaying each component
+        """
         self.init()
-        self.renderCompoenets()
+        self.renderComponents()
         divider = Markdown('***')
         # render main UI
         # 1. job template
@@ -73,7 +96,10 @@ class UI:
         self.tab.set_title(2, 'Download Job Result')
         display(self.tab)
 
-    def renderCompoenets(self):
+    def renderComponents(self):
+        """
+        Render each section of the UI
+        """
         self.renderJobTemplate()
         self.renderDescription()
         self.renderComputingResource()
@@ -89,7 +115,11 @@ class UI:
 
     # components
     def renderJobTemplate(self):
-        if self.jobTemplate['output'] is None:
+        """
+        Display a dropdown of jobs to run. Update jobTemplate when the dropdown changes.
+        """
+        if self.jobTemplate['output'] == None:
+
             self.jobTemplate['output'] = widgets.Output()
         # create components
         self.jobTemplate['dropdown'] = widgets.Dropdown(options=[i for i in self.jobs], value=self.jobName, description='📦 Job Templates:', style=self.style, layout=self.layout)
@@ -98,8 +128,12 @@ class UI:
             display(self.jobTemplate['dropdown'])
 
     def renderDescription(self):
-        if self.description['output'] is None:
-            self.description['output'] = widgets.Output()
+        """
+        Display information about the job (job name, job description, HPC name, HPC description, estimated runtime)
+        """
+        if self.description['output'] == None:
+                self.description['output'] = widgets.Output()
+
         self.description['job_description'] = Markdown('**' + self.jobName + ' Job Description:** ' + self.job['description'])
         self.description['computing_resource_description'] = Markdown('**' + self.hpcName + ' HPC Description**: ' + self.hpc['description'])
         self.description['estimated_runtime'] = Markdown('**Estimated Runtime:** ' + self.job['estimated_runtime'])
@@ -107,7 +141,10 @@ class UI:
             display(self.description['job_description'], self.description['computing_resource_description'], self.description['estimated_runtime'])
 
     def renderComputingResource(self):
-        if self.computingResource['output'] is None:
+        """
+        Display computing resources in a dropdown for the user to select
+        """
+        if self.computingResource['output'] == None:
             self.computingResource['output'] = widgets.Output()
         # create components
         self.computingResource['dropdown'] = widgets.Dropdown(options=[i for i in self.job['supported_hpc']], value=self.hpcName, description='🖥 Computing Recourse:', style=self.style, layout=self.layout)
@@ -118,7 +155,11 @@ class UI:
             display(self.computingResource['accordion'])
 
     def renderEmail(self):
-        if self.email['output'] is None:
+        """
+        Displays a checkbox that lets the user recieve an email on job status and input their email.
+        """
+        if self.email['output'] == None:
+
             self.email['output'] = widgets.Output()
         # create components
         self.email['checkbox'] = widgets.Checkbox(description='receive email on job status? ', value=False, style=self.style)
@@ -128,7 +169,10 @@ class UI:
             display(self.email['hbox'])
 
     def renderSlurm(self):
-        if self.slurm['output'] is None:
+        """
+        Configures Slurm input rules (default value, min, m), allows the user to input custom input rules if they want.
+        """
+        if self.slurm['output'] == None:
             self.slurm['output'] = widgets.Output()
         # check if necessary to render
         if self.job['slurm_input_rules'] == {}:
@@ -187,7 +231,10 @@ class UI:
             display(self.slurm['accordion'])
 
     def renderUploadData(self):
-        if self.uploadData['output'] is None:
+        """
+        Lets the user select the upload data location from a file chooser.
+        """
+        if self.uploadData['output'] == None:
             self.uploadData['output'] = widgets.Output()
         # check if necessary to render
         if not self.job['require_upload_data']:
@@ -203,7 +250,10 @@ class UI:
             display(self.uploadData['accordion'])
 
     def renderParam(self):
-        if self.param['output'] is None:
+        """
+        Displays input areas for the job parameters
+        """
+        if self.param['output'] == None:
             self.param['output'] = widgets.Output()
         # check if necessary to render
         if self.job['param_rules'] == {}:
@@ -260,7 +310,10 @@ class UI:
             display(self.param['accordion'])
 
     def renderSubmit(self):
-        if self.submit['output'] is None:
+        """
+        Render submit button. If the job has been submitted, display that, otherwise display the submit button.
+        """
+        if self.submit['output'] == None:
             self.submit['output'] = widgets.Output()
         if self.submit['alert_output'] is None:
             self.submit['alert_output'] = widgets.Output()
@@ -276,7 +329,10 @@ class UI:
             display(self.submit['button'])
 
     def renderDownload(self):
-        if self.download['output'] is None:
+        """
+        Creates the components of the download section
+        """
+        if self.download['output'] == None:
             self.download['output'] = widgets.Output()
         if self.download['alert_output'] is None:
             self.download['alert_output'] = widgets.Output()
@@ -307,7 +363,10 @@ class UI:
             display(self.download['button'])
 
     def renderResultStatus(self):
-        if self.resultStatus['output'] is None:
+        """
+        Display the status of the job.
+        """
+        if self.resultStatus['output'] == None:
             self.resultStatus['output'] = widgets.Output()
 
         if not self.submitted:
@@ -322,7 +381,10 @@ class UI:
         return
 
     def renderResultEvents(self):
-        if self.resultEvents['output'] is None:
+        """
+        Display any events that occured while the job was being processed.
+        """
+        if self.resultEvents['output'] == None:
             self.resultEvents['output'] = widgets.Output()
 
         if not self.submitted:
@@ -333,7 +395,10 @@ class UI:
         return
 
     def renderResultLogs(self):
-        if self.resultLogs['output'] is None:
+        """
+        Display when the job is finished and rerender the download section when it is.
+        """
+        if self.resultLogs['output'] == None:
             self.resultLogs['output'] = widgets.Output()
 
         if not self.submitted:
@@ -351,6 +416,9 @@ class UI:
     # events
     def onDownloadButtonClick(self):
         def on_click(change):
+            """
+            Download the output data to the specified path and display the location.
+            """
             if self.downloading:
                 self.download['alert_output'].clear_output(wait=True)
                 with self.download['alert_output']:
@@ -368,6 +436,9 @@ class UI:
 
     def onSubmitButtonClick(self):
         def on_click(change):
+            """
+            Submit the job, then rerender the result status, result events, result logs, and submit button.
+            """
             if self.submitted:
                 return
             with self.submit['alert_output']:
@@ -410,6 +481,9 @@ class UI:
 
     def onJobDropdownChange(self):
         def on_change(change):
+            """
+            If the information in the dropdown is changed, modify the information in jobName, job, hpcName, and hpc to match. Then, rerender the description, computing resources, sulurn, param and upload data.
+            """
             if change['type'] == 'change':
                 if self.submitted:
                     return
@@ -422,6 +496,9 @@ class UI:
 
     def onComputingResourceDropdownChange(self):
         def on_change(change):
+            """
+            If the information in the computing resources dropdown is changed, update the hpcName and hpc, then rerender the description, computing resources, sulurn, param and upload data.
+            """
             if change['type'] == 'change':
                 if self.submitted:
                     return
@@ -432,6 +509,9 @@ class UI:
 
     # helpers
     def init(self):
+        """
+        Initialization helper function that sets default arguments. Runs when the UI is rendered.
+        """
         silent = widgets.Output()
         with silent:
             self.compute.login()
@@ -463,7 +543,13 @@ class UI:
         self.hpcName = self.job['default_hpc']
         self.hpc = self.hpcs[self.hpcName]
 
+
     def rerender(self, components=[]):
+        """
+        Clears and renders the specified components
+        Args:
+            components (list): components to be rerendered
+        """
         for c in components:
             getattr(self, c)['output'].clear_output()
         for c in components:
@@ -474,6 +560,10 @@ class UI:
 
     # data
     def get_data(self):
+        """
+        Get data about the job submitted (template, computing resource used, slurm rules, param rules, user email)
+        Returns: (dict) Information about the job submitted (template, computing resource used, slurm rules, param rules, user email)
+        """
         out = {
             'job_template': self.jobTemplate['dropdown'].value,
             'computing_resource': self.computingResource['dropdown'].value,
@@ -505,6 +595,9 @@ class UI:
         return out
 
     def secondsToTime(self, seconds):
+        """
+        Helper function that turns seconds into minutes, days, hours format
+        """
         days = math.floor(seconds / (60 * 60 * 24))
         hours = math.floor(seconds / (60 * 60) - (days * 24))
         minutes = math.floor(seconds / 60 - (days * 60 * 24) - (hours * 60))
@@ -522,6 +615,12 @@ class UI:
             return d + '-' + h + ':' + m + ':00'
 
     def unitTimeToSecond(self, unit, time):
+        """
+        Helper function that turns time in a specific unit into seconds
+        Args:
+            unit (string): The unit of the time being passed (Minutes, Hours, or Days)
+            time (int): The time in that specific unit
+        """
         if unit == 'Minutes':
             return time * 60
         elif unit == 'Hours':
