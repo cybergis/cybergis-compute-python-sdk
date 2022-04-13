@@ -1033,15 +1033,188 @@ specified otherwise.
 <dl class="py class">
 <dt class="sig sig-object py" id="cybergis_compute_client.UI.UI">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cybergis_compute_client.UI.</span></span><span class="sig-name descname"><span class="pre">UI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">compute</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">defaultJobName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'hello_world'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">defaultDataFolder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">defaultRemoteResultFolder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cybergis_compute_client/UI.html#UI"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cybergis_compute_client.UI.UI" title="Permalink to this definition"></a></dt>
-<dd><dl class="py method">
+<dd><p>UI class
+.. attribute:: compute</p>
+<blockquote>
+<div><p>Instance of CyberGISCompute</p>
+</div></blockquote>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cybergis_compute_client.UI.UI.style">
+<span class="sig-name descname"><span class="pre">style</span></span><a class="headerlink" href="#cybergis_compute_client.UI.UI.style" title="Permalink to this definition"></a></dt>
+<dd><p>Style of each widget (specifically width)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cybergis_compute_client.UI.UI.layout">
+<span class="sig-name descname"><span class="pre">layout</span></span><a class="headerlink" href="#cybergis_compute_client.UI.UI.layout" title="Permalink to this definition"></a></dt>
+<dd><p>Widget layout</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>obj</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cybergis_compute_client.UI.UI.jobs">
+<span class="sig-name descname"><span class="pre">jobs</span></span><a class="headerlink" href="#cybergis_compute_client.UI.UI.jobs" title="Permalink to this definition"></a></dt>
+<dd><p>Jobs being managed currently</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cybergis_compute_client.UI.UI.hpcs">
+<span class="sig-name descname"><span class="pre">hpcs</span></span><a class="headerlink" href="#cybergis_compute_client.UI.UI.hpcs" title="Permalink to this definition"></a></dt>
+<dd><p>HPCs the jobs are being submitted to</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cybergis_compute_client.UI.UI.defaultJobName">
+<span class="sig-name descname"><span class="pre">defaultJobName</span></span><a class="headerlink" href="#cybergis_compute_client.UI.UI.defaultJobName" title="Permalink to this definition"></a></dt>
+<dd><p>Name that jobs are given by default</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cybergis_compute_client.UI.UI.defaultRemoteResultFolder">
+<span class="sig-name descname"><span class="pre">defaultRemoteResultFolder</span></span><a class="headerlink" href="#cybergis_compute_client.UI.UI.defaultRemoteResultFolder" title="Permalink to this definition"></a></dt>
+<dd><p>Default remote location that results are saved to.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cybergis_compute_client.UI.UI.defaultDataFolder">
+<span class="sig-name descname"><span class="pre">defaultDataFolder</span></span><a class="headerlink" href="#cybergis_compute_client.UI.UI.defaultDataFolder" title="Permalink to this definition"></a></dt>
+<dd><p>Default folder that data will be saved to</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cybergis_compute_client.UI.UI.slurm_configs">
+<span class="sig-name descname"><span class="pre">slurm_configs</span></span><a class="headerlink" href="#cybergis_compute_client.UI.UI.slurm_configs" title="Permalink to this definition"></a></dt>
+<dd><p>Default configurations for slurm</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cybergis_compute_client.UI.UI.slurm_integer_configs">
+<span class="sig-name descname"><span class="pre">slurm_integer_configs</span></span><a class="headerlink" href="#cybergis_compute_client.UI.UI.slurm_integer_configs" title="Permalink to this definition"></a></dt>
+<dd><p>Slurm configurations that can be stored as integers</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cybergis_compute_client.UI.UI.slurm_integer_storage_unit_config">
+<span class="sig-name descname"><span class="pre">slurm_integer_storage_unit_config</span></span><a class="headerlink" href="#cybergis_compute_client.UI.UI.slurm_integer_storage_unit_config" title="Permalink to this definition"></a></dt>
+<dd><p>Slurm configurations related to storage</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cybergis_compute_client.UI.UI.slurm_integer_time_unit_config">
+<span class="sig-name descname"><span class="pre">slurm_integer_time_unit_config</span></span><a class="headerlink" href="#cybergis_compute_client.UI.UI.slurm_integer_time_unit_config" title="Permalink to this definition"></a></dt>
+<dd><p>Slurm configurations related to time units</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cybergis_compute_client.UI.UI.slurm_integer_none_unit_config">
+<span class="sig-name descname"><span class="pre">slurm_integer_none_unit_config</span></span><a class="headerlink" href="#cybergis_compute_client.UI.UI.slurm_integer_none_unit_config" title="Permalink to this definition"></a></dt>
+<dd><p>Slurm configurations related to units other than time</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cybergis_compute_client.UI.UI.slurm_string_option_configs">
+<span class="sig-name descname"><span class="pre">slurm_string_option_configs</span></span><a class="headerlink" href="#cybergis_compute_client.UI.UI.slurm_string_option_configs" title="Permalink to this definition"></a></dt>
+<dd><p>Slurm configurations for string operations</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cybergis_compute_client.UI.UI.globus_filename">
+<span class="sig-name descname"><span class="pre">globus_filename</span></span><a class="headerlink" href="#cybergis_compute_client.UI.UI.globus_filename" title="Permalink to this definition"></a></dt>
+<dd><p>Output filename submitted to Globus (set when entered by the user)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cybergis_compute_client.UI.UI.jupyter_globus">
+<span class="sig-name descname"><span class="pre">jupyter_globus</span></span><a class="headerlink" href="#cybergis_compute_client.UI.UI.jupyter_globus" title="Permalink to this definition"></a></dt>
+<dd><p>Information about where the output data will be stored (container_home_path, endpoint, root_path)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="cybergis_compute_client.UI.UI.get_data">
 <span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cybergis_compute_client/UI.html#UI.get_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cybergis_compute_client.UI.UI.get_data" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Get data about the job submitted (template, computing resource used, slurm rules, param rules, user email)
+Returns: (dict) Information about the job submitted (template, computing resource used, slurm rules, param rules, user email)</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cybergis_compute_client.UI.UI.init">
 <span class="sig-name descname"><span class="pre">init</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cybergis_compute_client/UI.html#UI.init"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cybergis_compute_client.UI.UI.init" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Initialization helper function that sets default arguments. Runs when the UI is rendered.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cybergis_compute_client.UI.UI.onComputingResourceDropdownChange">
@@ -1066,87 +1239,110 @@ specified otherwise.
 <dl class="py method">
 <dt class="sig sig-object py" id="cybergis_compute_client.UI.UI.render">
 <span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cybergis_compute_client/UI.html#UI.render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cybergis_compute_client.UI.UI.render" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Render main UI by initializing, rendering, and displaying each component</p>
+</dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="cybergis_compute_client.UI.UI.renderCompoenets">
-<span class="sig-name descname"><span class="pre">renderCompoenets</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cybergis_compute_client/UI.html#UI.renderCompoenets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cybergis_compute_client.UI.UI.renderCompoenets" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dt class="sig sig-object py" id="cybergis_compute_client.UI.UI.renderComponents">
+<span class="sig-name descname"><span class="pre">renderComponents</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cybergis_compute_client/UI.html#UI.renderComponents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cybergis_compute_client.UI.UI.renderComponents" title="Permalink to this definition"></a></dt>
+<dd><p>Render each section of the UI</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cybergis_compute_client.UI.UI.renderComputingResource">
 <span class="sig-name descname"><span class="pre">renderComputingResource</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cybergis_compute_client/UI.html#UI.renderComputingResource"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cybergis_compute_client.UI.UI.renderComputingResource" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Display computing resources in a dropdown for the user to select</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cybergis_compute_client.UI.UI.renderDescription">
 <span class="sig-name descname"><span class="pre">renderDescription</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cybergis_compute_client/UI.html#UI.renderDescription"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cybergis_compute_client.UI.UI.renderDescription" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Display information about the job (job name, job description, HPC name, HPC description, estimated runtime)</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cybergis_compute_client.UI.UI.renderDownload">
 <span class="sig-name descname"><span class="pre">renderDownload</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cybergis_compute_client/UI.html#UI.renderDownload"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cybergis_compute_client.UI.UI.renderDownload" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Creates the components of the download section</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cybergis_compute_client.UI.UI.renderEmail">
 <span class="sig-name descname"><span class="pre">renderEmail</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cybergis_compute_client/UI.html#UI.renderEmail"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cybergis_compute_client.UI.UI.renderEmail" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Displays a checkbox that lets the user recieve an email on job status and input their email.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cybergis_compute_client.UI.UI.renderJobTemplate">
 <span class="sig-name descname"><span class="pre">renderJobTemplate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cybergis_compute_client/UI.html#UI.renderJobTemplate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cybergis_compute_client.UI.UI.renderJobTemplate" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Display a dropdown of jobs to run. Update jobTemplate when the dropdown changes.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cybergis_compute_client.UI.UI.renderParam">
 <span class="sig-name descname"><span class="pre">renderParam</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cybergis_compute_client/UI.html#UI.renderParam"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cybergis_compute_client.UI.UI.renderParam" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Displays input areas for the job parameters</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cybergis_compute_client.UI.UI.renderResultEvents">
 <span class="sig-name descname"><span class="pre">renderResultEvents</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cybergis_compute_client/UI.html#UI.renderResultEvents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cybergis_compute_client.UI.UI.renderResultEvents" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Display any events that occured while the job was being processed.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cybergis_compute_client.UI.UI.renderResultLogs">
 <span class="sig-name descname"><span class="pre">renderResultLogs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cybergis_compute_client/UI.html#UI.renderResultLogs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cybergis_compute_client.UI.UI.renderResultLogs" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Display when the job is finished and rerender the download section when it is.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cybergis_compute_client.UI.UI.renderResultStatus">
 <span class="sig-name descname"><span class="pre">renderResultStatus</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cybergis_compute_client/UI.html#UI.renderResultStatus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cybergis_compute_client.UI.UI.renderResultStatus" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Display the status of the job.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cybergis_compute_client.UI.UI.renderSlurm">
 <span class="sig-name descname"><span class="pre">renderSlurm</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cybergis_compute_client/UI.html#UI.renderSlurm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cybergis_compute_client.UI.UI.renderSlurm" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Configures Slurm input rules (default value, min, m), allows the user to input custom input rules if they want.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cybergis_compute_client.UI.UI.renderSubmit">
 <span class="sig-name descname"><span class="pre">renderSubmit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cybergis_compute_client/UI.html#UI.renderSubmit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cybergis_compute_client.UI.UI.renderSubmit" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Render submit button. If the job has been submitted, display that, otherwise display the submit button.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cybergis_compute_client.UI.UI.renderUploadData">
 <span class="sig-name descname"><span class="pre">renderUploadData</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cybergis_compute_client/UI.html#UI.renderUploadData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cybergis_compute_client.UI.UI.renderUploadData" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Lets the user select the upload data location from a file chooser.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cybergis_compute_client.UI.UI.rerender">
 <span class="sig-name descname"><span class="pre">rerender</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">components</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cybergis_compute_client/UI.html#UI.rerender"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cybergis_compute_client.UI.UI.rerender" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Clears and renders the specified components
+:param components: components to be rerendered
+:type components: list</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cybergis_compute_client.UI.UI.secondsToTime">
 <span class="sig-name descname"><span class="pre">secondsToTime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seconds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cybergis_compute_client/UI.html#UI.secondsToTime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cybergis_compute_client.UI.UI.secondsToTime" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Helper function that turns seconds into minutes, days, hours format</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cybergis_compute_client.UI.UI.unitTimeToSecond">
 <span class="sig-name descname"><span class="pre">unitTimeToSecond</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">unit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cybergis_compute_client/UI.html#UI.unitTimeToSecond"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cybergis_compute_client.UI.UI.unitTimeToSecond" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Helper function that turns time in a specific unit into seconds
+:param unit: The unit of the time being passed (Minutes, Hours, or Days)
+:type unit: string
+:param time: The time in that specific unit
+:type time: int</p>
+</dd></dl>
 
 </dd></dl>
 
