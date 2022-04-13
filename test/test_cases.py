@@ -1,11 +1,14 @@
 import io
 import sys
+import os
 from unittest.mock import patch
 import pytest
 import socket
 
 from cybergis_compute_client.CyberGISCompute import *
 from cybergis_compute_client.Job import *
+from cybergis_compute_client.GlobusUtil import *
+from cybergis_compute_client.Zip import *
 
 def test_Session_event(mocker):
     mocker.patch(
@@ -21,6 +24,31 @@ def test_Session_event(mocker):
     # assert expected_failure == actual
     assert expected_pass == actual
 
+def test_GlobusUtil():
+    destination_Name = "summa" 
+    community_Summa_Session = CyberGISCompute(destination_Name)
+    globusutil = GlobusUtil(community_Summa_Session) 
+    # Checks that socket exception is occuring
+    with pytest.raises(Exception) as exc_info:
+         globusutil.download('x','y','z')
+    exception_raised = exc_info.value
+    assert isinstance(exception_raised,socket.gaierror)
+    
+    with pytest.raises(Exception) as exc_info:
+         globusutil.upload('x','y','z')
+    exception_raised = exc_info.value
+    assert isinstance(exception_raised,socket.gaierror)
+
+def test_Zip():
+    zip = Zip()
+    zip.mkdir('x')
+    b1 = zip.read()
+    zip.append('x','1')
+    b2 = zip.read()
+    assert (len(b2) - len(b1)) == 81  
+    zip.write('y')
+    assert len(open('y','rb').read()) == len(zip.read())
+    os.remove("y")
 
 def test_CyberGISCompute():
     destination_Name = "summa"  # can fetch from Session.destinations()
@@ -81,3 +109,4 @@ def test_Session_destinations():
         # print('Captured \n', std_output)
 
         assert "summa" == output_message
+
