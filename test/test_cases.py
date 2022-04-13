@@ -1,34 +1,66 @@
 import io
 import sys
 from unittest.mock import patch
+import pytest
+import socket
 
-from job_supervisor_client import Session, Job
-
+from cybergis_compute_client.CyberGISCompute import *
+from cybergis_compute_client.Job import *
 
 def test_Session_event(mocker):
     mocker.patch(
-        'job_supervisor_client.Session.status',
+        'cybergis_compute_client.Job.status',
         return_value={'events': {'new_event': 'my_event'}, 'logs': {}}
     )
 
     expected_failure = {'events': {}, 'logs': {}}
     expected_pass = {'new_event': 'my_event'}
     destination_Name = "summa"  # can fetch from Session.destinations()
-    community_Summa_Session = Session(destination_Name)
-    actual = community_Summa_Session.events()
+    community_Summa_Session = CyberGISCompute(destination_Name)
+    actual = community_Summa_Session.job()
     # assert expected_failure == actual
     assert expected_pass == actual
 
 
-def test_Session_job():
+def test_CyberGISCompute():
     destination_Name = "summa"  # can fetch from Session.destinations()
-    community_Summa_Session = Session(destination_Name)
-    actual = community_Summa_Session.job()
-    assert isinstance(actual, Job)
+    community_Summa_Session = CyberGISCompute(destination_Name)
+    assert isinstance(community_Summa_Session, CyberGISCompute)
+    assert community_Summa_Session.job == None
+    assert community_Summa_Session.client.url == 'summa:443'
+    assert community_Summa_Session.client.protocol == 'HTTPS' 
+    assert community_Summa_Session.jupyterhubApiToken == None
+    assert community_Summa_Session.isJupyter == True
+    assert community_Summa_Session.recentDownloadPath == None
+
+    # Checks that output is being returned
+    with patch("cybergis_compute_client.CyberGISCompute.login") as patched_function:
+        capturedOutput = io.StringIO()
+        sys.stdout = capturedOutput
+
+    # Checks that socket exception is occuring
+    with pytest.raises(Exception) as exc_info:
+        community_Summa_Session.list_info()
+    exception_raised = exc_info.value
+    assert isinstance(exception_raised,socket.gaierror)
+
+   
+    # Checks that socket exception is occuring
+    with pytest.raises(Exception) as exc_info:
+        community_Summa_Session.get_job_by_id()
+    exception_raised = exc_info.value
+    assert isinstance(exception_raised,socket.gaierror)
+
+    
+    # Checks that socket exception is occuring
+    with pytest.raises(Exception) as exc_info:
+        community_Summa_Session.create_job()
+    exception_raised = exc_info.value
+    assert isinstance(exception_raised,socket.gaierror) 
 
 
 def test_Session_destinations():
-    with patch("job_supervisor_client.Client.request") as patched_function:
+    with patch("cybergis_compute_client.Client.request") as patched_function:
         capturedOutput = io.StringIO()
         sys.stdout = capturedOutput
 
@@ -40,8 +72,8 @@ def test_Session_destinations():
                                            'ignoreEverythingExceptMustHave': True}}}}
 
         destination_Name = "summa"
-        community_Summa_Session = Session(destination_Name)
-        community_Summa_Session.destinations()
+        community_Summa_Session = CyberGISCompute(destination_Name)
+        community_Summa_Session.client
 
         sys.stdout = sys.__stdout__  # Reset redirect.
         std_output = capturedOutput.getvalue()
