@@ -4,6 +4,7 @@ import ipywidgets as widgets
 from ipyfilechooser import FileChooser
 from IPython.display import Markdown, display, clear_output
 
+
 class UI:
     """
     UI class
@@ -32,7 +33,7 @@ class UI:
         self.jobs = None
         self.hpcs = None
         self.defaultJobName = defaultJobName
-        if defaultRemoteResultFolder != None:
+        if defaultRemoteResultFolder is not None:
             self.defaultRemoteResultFolder = defaultRemoteResultFolder if defaultRemoteResultFolder[0] == '/' else '/' + defaultRemoteResultFolder
         self.defaultDataFolder = defaultDataFolder
         # slurm configs
@@ -57,7 +58,7 @@ class UI:
         job_config = widgets.Output()
         with job_config:
             display(Markdown('# Welcome to CyberGIS-Compute'))
-            display(Markdown('Some description about CyberGIS-Compute'))
+            display(Markdown('A scalable middleware framework for enabling high-performance and data-intensive geospatial research and education on CyberGIS-Jupyter'))
             display(divider)
             display(self.jobTemplate['output'])
             display(self.description['output'])
@@ -67,7 +68,7 @@ class UI:
             display(self.uploadData['output'])
             display(self.email['output'])
             display(self.submit['output'])
-        
+
         # 2. job status
         job_status = widgets.Output()
         with job_status:
@@ -118,6 +119,7 @@ class UI:
         Display a dropdown of jobs to run. Update jobTemplate when the dropdown changes.
         """
         if self.jobTemplate['output'] == None:
+
             self.jobTemplate['output'] = widgets.Output()
         # create components
         self.jobTemplate['dropdown'] = widgets.Dropdown(options=[i for i in self.jobs], value=self.jobName, description='📦 Job Templates:', style=self.style, layout=self.layout)
@@ -131,6 +133,7 @@ class UI:
         """
         if self.description['output'] == None:
                 self.description['output'] = widgets.Output()
+
         self.description['job_description'] = Markdown('**' + self.jobName + ' Job Description:** ' + self.job['description'])
         self.description['computing_resource_description'] = Markdown('**' + self.hpcName + ' HPC Description**: ' + self.hpc['description'])
         self.description['estimated_runtime'] = Markdown('**Estimated Runtime:** ' + self.job['estimated_runtime'])
@@ -145,7 +148,7 @@ class UI:
             self.computingResource['output'] = widgets.Output()
         # create components
         self.computingResource['dropdown'] = widgets.Dropdown(options=[i for i in self.job['supported_hpc']], value=self.hpcName, description='🖥 Computing Recourse:', style=self.style, layout=self.layout)
-        self.computingResource['accordion'] = widgets.Accordion(children=( self.computingResource['dropdown'], ), selected_index=None)
+        self.computingResource['accordion'] = widgets.Accordion(children=(self.computingResource['dropdown'], ), selected_index=None)
         self.computingResource['accordion'].set_title(0, 'Computing Resource')
         self.computingResource['dropdown'].observe(self.onComputingResourceDropdownChange())
         with self.computingResource['output']:
@@ -156,6 +159,7 @@ class UI:
         Displays a checkbox that lets the user recieve an email on job status and input their email.
         """
         if self.email['output'] == None:
+
             self.email['output'] = widgets.Output()
         # create components
         self.email['checkbox'] = widgets.Checkbox(description='receive email on job status? ', value=False, style=self.style)
@@ -216,12 +220,12 @@ class UI:
 
         w = []
         for i in self.slurm_configs:
-            if self.slurm[i] != None:
+            if self.slurm[i] is not None:
                 w.append(self.slurm[i])
         self.slurm['vbox'] = widgets.VBox(w)
 
         # settings end
-        self.slurm['accordion'] = widgets.Accordion(children=( widgets.VBox(children=(self.slurm['description'], self.slurm['vbox'])), ), selected_index=None)
+        self.slurm['accordion'] = widgets.Accordion(children=(widgets.VBox(children=(self.slurm['description'], self.slurm['vbox'])), ), selected_index=None)
         self.slurm['accordion'].set_title(0, 'Slurm Computing Configurations')
         with self.slurm['output']:
             display(self.slurm['accordion'])
@@ -233,13 +237,14 @@ class UI:
         if self.uploadData['output'] == None:
             self.uploadData['output'] = widgets.Output()
         # check if necessary to render
-        if not self.job['require_upload_data']: return
+        if not self.job['require_upload_data']:
+            return
         # render all
         self.uploadData['selector'] = FileChooser(self.defaultDataFolder, select_default=True if self.defaultDataFolder != './' else False)
         self.uploadData['selector'].show_only_dirs = True
         self.uploadData['selector'].title = 'Job requires upload data. Please select a folder to upload'
         # settings end
-        self.uploadData['accordion'] = widgets.Accordion(children=( self.uploadData['selector'], ), selected_index=None)
+        self.uploadData['accordion'] = widgets.Accordion(children=(self.uploadData['selector'], ), selected_index=None)
         self.uploadData['accordion'].set_title(0, 'Upload Data')
         with self.uploadData['output']:
             display(self.uploadData['accordion'])
@@ -299,7 +304,7 @@ class UI:
         # render all
         self.param['vbox'] = widgets.VBox([self.param[i] for i in self.job['param_rules']])
         # settings end
-        self.param['accordion'] = widgets.Accordion(children=( self.param['vbox'], ), selected_index=None)
+        self.param['accordion'] = widgets.Accordion(children=(self.param['vbox'], ), selected_index=None)
         self.param['accordion'].set_title(0, 'Input Parameters')
         with self.param['output']:
             display(self.param['accordion'])
@@ -310,7 +315,7 @@ class UI:
         """
         if self.submit['output'] == None:
             self.submit['output'] = widgets.Output()
-        if self.submit['alert_output'] == None:
+        if self.submit['alert_output'] is None:
             self.submit['alert_output'] = widgets.Output()
         # create components
         if self.submitted:
@@ -318,7 +323,7 @@ class UI:
         else:
             self.submit['button'] = widgets.Button(description="Submit Job")
         self.submit['button'].on_click(self.onSubmitButtonClick())
-        
+
         with self.submit['output']:
             display(self.submit['alert_output'])
             display(self.submit['button'])
@@ -329,9 +334,9 @@ class UI:
         """
         if self.download['output'] == None:
             self.download['output'] = widgets.Output()
-        if self.download['alert_output'] == None:
+        if self.download['alert_output'] is None:
             self.download['alert_output'] = widgets.Output()
-        if self.download['result_output'] == None:
+        if self.download['result_output'] is None:
             self.download['result_output'] = widgets.Output()
         # create components
         if self.jobFinished:
@@ -339,13 +344,14 @@ class UI:
             # push default value to front
             try:
                 result_folder_content.insert(0, result_folder_content.pop(result_folder_content.index(self.defaultRemoteResultFolder)))
-            except: result_folder_content
+            except:
+                result_folder_content
             self.download['dropdown'] = widgets.Dropdown(options=result_folder_content, value=result_folder_content[0], description='select file/folder')
             self.download['button'] = widgets.Button(description="Download")
             self.download['button'].on_click(self.onDownloadButtonClick())
         else:
             self.download['button'] = widgets.Button(description="Download", disabled=True)
-        
+
         with self.download['output']:
             if self.jobFinished:
                 display(Markdown('# ☁️ Download Job Output Files'))
@@ -362,7 +368,7 @@ class UI:
         """
         if self.resultStatus['output'] == None:
             self.resultStatus['output'] = widgets.Output()
-        
+
         if not self.submitted:
             with self.resultStatus['output']:
                 display(Markdown('# 😴 No Job to Work On'))
@@ -380,8 +386,9 @@ class UI:
         """
         if self.resultEvents['output'] == None:
             self.resultEvents['output'] = widgets.Output()
-        
-        if not self.submitted: return
+
+        if not self.submitted:
+            return
 
         with self.resultEvents['output']:
             self.compute.job.events()
@@ -394,7 +401,8 @@ class UI:
         if self.resultLogs['output'] == None:
             self.resultLogs['output'] = widgets.Output()
 
-        if not self.submitted: return
+        if not self.submitted:
+            return
         with self.resultLogs['output']:
             self.compute.job.logs()
             self.tab.set_title(1, '✅ Your Job Status')
@@ -431,15 +439,17 @@ class UI:
             """
             Submit the job, then rerender the result status, result events, result logs, and submit button.
             """
-            if self.submitted: return
-            with self.submit['alert_output']: clear_output(wait=True)
+            if self.submitted:
+                return
+            with self.submit['alert_output']:
+                clear_output(wait=True)
 
             self.compute.login()
             dataFolder = None
             self.jupyter_globus = self.compute.get_user_jupyter_globus()
             if self.job['require_upload_data']:
                 dataFolder = self.uploadData['selector'].selected
-                if dataFolder == None:
+                if dataFolder is None:
                     with self.submit['alert_output']:
                         display(Markdown('⚠️ please select a folder before upload...'))
                         return
@@ -451,7 +461,7 @@ class UI:
             self.compute.job = self.compute.create_job(hpc=data['computing_resource'], printJob=False)
             # slurm
             slurm = data['slurm']
-            if data['email'] != None:
+            if data['email'] is not None:
                 slurm['mail_user'] = [data['email']]
                 slurm['mail_type'] = ['FAIL', 'END', 'BEGIN']
             # param
@@ -490,7 +500,8 @@ class UI:
             If the information in the computing resources dropdown is changed, update the hpcName and hpc, then rerender the description, computing resources, sulurn, param and upload data.
             """
             if change['type'] == 'change':
-                if self.submitted: return
+                if self.submitted:
+                    return
                 self.hpcName = self.computingResource['dropdown'].value
                 self.hpc = self.hpcs[self.hpcName]
                 self.rerender(['description', 'slurm', 'param', 'uploadData'])
@@ -505,36 +516,35 @@ class UI:
         with silent:
             self.compute.login()
 
-        if self.jobs == None:
-            self.jobs = self.compute.list_git(raw=True)
-        if self.hpcs == None:
-            self.hpcs = self.compute.list_hpc(raw=True)
+        self.jobs = self.compute.list_git(raw=True)
+        self.hpcs = self.compute.list_hpc(raw=True)
         # state
         self.submitted = False
         self.jobFinished = False
         self.downloading = False
         # components
-        self.jobTemplate = { 'output': None }
-        self.description = { 'output': None }
-        self.computingResource = { 'output': None }
-        self.slurm = { 'output': None }
-        self.email = { 'output': None }
-        self.submit = { 'output': None, 'alert_output': None }
-        self.param = { 'output': None }
-        self.uploadData = { 'output': None }
-        self.resultStatus = { 'output': None }
-        self.resultEvents = { 'output': None }
-        self.resultLogs = { 'output': None }
-        self.download = { 'output': None, 'alert_output': None, 'result_output': None }
+        self.jobTemplate = {'output': None}
+        self.description = {'output': None}
+        self.computingResource = {'output': None}
+        self.slurm = {'output': None}
+        self.email = {'output': None}
+        self.submit = {'output': None, 'alert_output': None}
+        self.param = {'output': None}
+        self.uploadData = {'output': None}
+        self.resultStatus = {'output': None}
+        self.resultEvents = {'output': None}
+        self.resultLogs = {'output': None}
+        self.download = {'output': None, 'alert_output': None, 'result_output': None}
         # main
         self.tab = None
         # information
         self.jobName = self.defaultJobName
-        self.job  = self.jobs[self.jobName]
+        self.job = self.jobs[self.jobName]
         self.hpcName = self.job['default_hpc']
         self.hpc = self.hpcs[self.hpcName]
 
-    def rerender(self, components = []):
+
+    def rerender(self, components=[]):
         """
         Clears and renders the specified components
         Args:
@@ -557,13 +567,18 @@ class UI:
         out = {
             'job_template': self.jobTemplate['dropdown'].value,
             'computing_resource': self.computingResource['dropdown'].value,
-            'slurm': {},
+            'slurm': {
+                'time': '01:00:00',
+                'num_of_task': 1,
+                'cpu_per_task': 1
+            },
             'param': {},
             'email': self.email['text'].value if self.email['checkbox'].value else None,
         }
 
         for i in self.slurm_configs:
-            if self.slurm[i] != None:
+            if self.slurm[i] != None and i in self.job['slurm_input_rules']:
+                if not self.slurm[i].value: continue # skip null value
                 config = self.job['slurm_input_rules'][i]
                 if i in self.slurm_integer_storage_unit_config:
                     out['slurm'][i] = str(self.slurm[i].value) + str(config['unit'])
@@ -585,7 +600,7 @@ class UI:
         """
         days = math.floor(seconds / (60 * 60 * 24))
         hours = math.floor(seconds / (60 * 60) - (days * 24))
-        minutes = math.floor(seconds / 60 -  (days * 60 * 24) - (hours * 60))
+        minutes = math.floor(seconds / 60 - (days * 60 * 24) - (hours * 60))
 
         d = '0' + str(days) if days < 10 else str(days)
         h = '0' + str(hours) if hours < 10 else str(hours)
@@ -606,6 +621,9 @@ class UI:
             unit (string): The unit of the time being passed (Minutes, Hours, or Days)
             time (int): The time in that specific unit
         """
-        if unit == 'Minutes': return time * 60
-        elif unit == 'Hours': return time * 60 * 60
-        elif unit == 'Days': return time * 60 * 60 * 24
+        if unit == 'Minutes':
+            return time * 60
+        elif unit == 'Hours':
+            return time * 60 * 60
+        elif unit == 'Days':
+            return time * 60 * 60 * 24
