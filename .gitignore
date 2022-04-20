@@ -6,6 +6,7 @@ job*.*
 __pycache__/
 *.py[cod]
 *$py.class
+/y
 
 # C extensions
 *.so
