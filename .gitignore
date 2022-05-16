@@ -1,6 +1,7 @@
 # my stuff
 access_result/*
 job*.*
+.vscode/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -71,9 +72,6 @@ instance/
 
 # Scrapy stuff:
 .scrapy
-
-# Sphinx documentation
-docs/_build/
 
 # PyBuilder
 target/

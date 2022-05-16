@@ -1,0 +1,12 @@
+furo
+ipyfilechooser
+ipywidgets
+ipyfilechooser
+myst-parser
+requests
+tabulate
+nbsphinx
+nbsphinx-link
+sphinx
+sphinx-markdown-builder
+sphinx_rtd_theme
