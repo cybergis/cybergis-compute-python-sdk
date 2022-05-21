@@ -68,6 +68,7 @@ class UI:
             display(self.uploadData['output'])
             display(self.email['output'])
             display(self.submit['output'])
+            display(self.refresh['output'])
 
         # 2. job status
         job_status = widgets.Output()
@@ -112,6 +113,7 @@ class UI:
         self.renderResultEvents()
         self.renderResultLogs()
         self.renderDownload()
+        self.renderRefreshButton()
 
     # components
     def renderJobTemplate(self):
@@ -413,6 +415,20 @@ class UI:
             self.rerender(['download'])
         return
 
+    def renderRefreshButton(self):
+        if self.refresh['output'] == None:
+            self.refresh['output'] = widgets.Output()
+            self.refresh['job_id'] = widgets.Text(value='job id', style=self.style)
+            self.refresh['submit'] = widgets.Button(description="Refresh")
+        with self.refresh['output']:
+            display(Markdown('Refresh Job Status'))
+            self.refresh['job_id'] = widgets.Text(value='job id', style=self.style)
+            self.refresh['submit'] = widgets.Button(description="Refresh")
+            display(self.refresh['job_id'])
+            display(self.refresh['submit'])
+        self.refresh['submit'].on_click(self.onRefreshButtonClick())
+        
+
     # events
     def onDownloadButtonClick(self):
         def on_click(change):
@@ -507,6 +523,28 @@ class UI:
                 self.rerender(['description', 'slurm', 'param', 'uploadData'])
         return on_change
 
+    def onRefreshButtonClick(self):
+        def on_click(change):
+            self.job_id = self.refresh['job_id'].value
+            job = self.compute.get_job_by_id(str(self.job_id)) #str(self.job_id)
+            self.compute.job = job
+            self.jupyter_globus = self.compute.get_user_jupyter_globus()
+            self.globus_filename = 'globus_download_' + self.compute.job.id
+            resultFolder = 'globus://' + self.jupyter_globus['endpoint'] + ':' + os.path.join(self.jupyter_globus['root_path'], self.globus_filename)
+            self.tab.selected_index = 1
+            self.submitted = True
+            self.tab.set_title(1, '⏳ Your Job Status')
+            self.rerender(['resultStatus', 'resultEvents', 'resultLogs', 'submit'])
+            
+            
+            #local_resultFolder = job.status(raw=True)['resultFolder']
+            #job.events()
+            #job.result_folder_content()
+            #job.download_result_folder(localPath=local_resultFolder, remotePath='/slurm_log')
+        return on_click
+            
+
+
     # helpers
     def init(self):
         """
@@ -535,6 +573,7 @@ class UI:
         self.resultEvents = {'output': None}
         self.resultLogs = {'output': None}
         self.download = {'output': None, 'alert_output': None, 'result_output': None}
+        self.refresh = {'output': None, 'job_id': None, 'submit': None}
         # main
         self.tab = None
         # information
