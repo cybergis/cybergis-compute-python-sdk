@@ -1,7 +1,11 @@
 # CyberGIS-Compute Python SDK
+![GitHub](https://img.shields.io/github/license/cybergis/cybergis-compute-python-sdk)
+[![Docs](https://img.shields.io/badge/docs-site-blueviolet)](https://cybergis.github.io/cybergis-compute-python-sdk/reference.html)
+
+
+[![Docs Deployed](https://github.com/cybergis/cybergis-compute-python-sdk/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/cybergis/cybergis-compute-python-sdk/actions/workflows/pages/pages-build-deployment)
 [![PythonCodeQuality](https://github.com/cybergis/cybergis-compute-python-sdk/workflows/Python%20Code%20Quality/badge.svg)](https://github.com/cybergis/cybergis-compute-python-sdk/actions)
 [![PythonCodeTest](https://github.com/cybergis/cybergis-compute-python-sdk/workflows/Python%20Code%20Test/badge.svg)](https://github.com/cybergis/cybergis-compute-python-sdk/actions)
-![GitHub](https://img.shields.io/github/license/cybergis/cybergis-compute-python-sdk)
 
 **CyberGIS-Compute** is a scalable middleware framework for enabling high-performance and data-intensive geospatial research and education on CyberGISX. This API can be used to send [supported jobs](https://github.com/cybergis/cybergis-compute-core#supported-git-projects) to various [supported HPC & computing resources](https://github.com/cybergis/cybergis-compute-core#supported-hpc--computing-resources).
 
