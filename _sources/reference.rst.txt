@@ -1,9 +1,6 @@
-User Reference
-==============
+SDK Documentation
+=================
 
-
-.. attention::
-    This site is still under construction. 
 
 User reference for the CyberGIS-Compute Python SDK
 
