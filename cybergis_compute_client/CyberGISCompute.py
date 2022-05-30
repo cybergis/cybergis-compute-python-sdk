@@ -391,12 +391,24 @@ class CyberGISCompute:
         Returns:
             None
         """
+        self.show_ui(defaultJob, defaultDataFolder, defaultRemoteResultFolder)
+
+    def show_ui(self, defaultJob="hello_world", defaultDataFolder="./", defaultRemoteResultFolder=None):
+        """
+        Displays the job submission UI
+        Args:
+            defaultJob (str)                      : Stores the default job that shows up on the UI
+            defaultDataFolder (str)               : Stores the default input folder that shows up on the UI
+            defaultRemoteResultFolder (str)       : Stores the default output folder that shows up on the UI
+        Returns:
+            None
+        """
         self.ui.defaultJobName = defaultJob
         self.ui.defaultDataFolder = defaultDataFolder
         if defaultRemoteResultFolder is not None:
             self.ui.defaultRemoteResultFolder = defaultRemoteResultFolder if defaultRemoteResultFolder[0] == '/' else '/' + defaultRemoteResultFolder
         self.ui.render()
-
+        
     def get_latest_created_job(self):
         """
         Return the current job instance

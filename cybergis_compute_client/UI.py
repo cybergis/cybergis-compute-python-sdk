@@ -68,10 +68,15 @@ class UI:
             display(self.uploadData['output'])
             display(self.email['output'])
             display(self.submit['output'])
-            display(self.recently_submitted['output'])
-            display(self.refresh['output'])
+            
 
-        # 2. job status
+        # 2. job refresh
+        job_refresh = widgets.Output()
+        with job_refresh:
+            display(self.recently_submitted['output'])
+            display(self.load_more['output'])
+        
+        # 3. job status
         job_status = widgets.Output()
         with job_status:
             display(self.resultStatus['output'])
@@ -82,7 +87,7 @@ class UI:
             display(Markdown('## 📋 job logs'))
             display(self.resultLogs['output'])
 
-        # 3. download
+        # 4. download
         download = widgets.Output()
         with download:
             display(self.download['output'])
@@ -90,12 +95,14 @@ class UI:
         # assemble into tabs
         self.tab = widgets.Tab(children=[
             job_config,
+            job_refresh,
             job_status,
             download
         ])
         self.tab.set_title(0, 'Job Configuration')
-        self.tab.set_title(1, 'Your Job Status')
-        self.tab.set_title(2, 'Download Job Result')
+        self.tab.set_title(1, 'Job Refresh')
+        self.tab.set_title(2, 'Your Job Status')
+        self.tab.set_title(3, 'Download Job Result')
         display(self.tab)
 
     def renderComponents(self):
@@ -115,7 +122,7 @@ class UI:
         self.renderResultLogs()
         self.renderDownload()
         self.renderRecentlySubmittedJobs()
-        self.renderRefreshButton()
+        self.renderLoadMore()
 
     # components
     def renderJobTemplate(self):
@@ -409,7 +416,7 @@ class UI:
             return
         with self.resultLogs['output']:
             self.compute.job.logs()
-            self.tab.set_title(1, '✅ Your Job Status')
+            self.tab.set_title(0, '✅ Your Job Status')
             self.tab.set_title(2, '✅ Download Job Result')
             display(Markdown('***'))
             display(Markdown('## ✅ your job completed'))
@@ -420,17 +427,33 @@ class UI:
     def renderRecentlySubmittedJobs(self):
         if self.recently_submitted['output'] == None:
             self.recently_submitted['output'] = widgets.Output()
+            jobs = self.compute.client.request('GET', '/user/job', {'jupyterhubApiToken': self.compute.jupyterhubApiToken})
+            for i in range(len(jobs['job'])):
+                self.recently_submitted['submit'][jobs['job'][i]['id']] = widgets.Button(description="Restore")
         with self.recently_submitted['output']:
             display(Markdown('**Recently Submitted Jobs for ' + self.compute.username.split('@')[0] + '**'))
             jobs = self.compute.client.request('GET', '/user/job', {'jupyterhubApiToken': self.compute.jupyterhubApiToken})
-            list_size = 5
-            if len(jobs['job']) < 5:
-                list_size = len(jobs['job'])
-            for i in range(len(jobs['job'])-1, len(jobs['job'])-list_size-1, -1):
+            if len(jobs['job']) < self.recently_submitted['job_list_size']:
+                self.recently_submitted['job_list_size'] = len(jobs['job'])
+            for i in range(len(jobs['job'])-1, len(jobs['job'])-self.recently_submitted['job_list_size']-1, -1):
                 job = self.compute.get_job_by_id(jobs['job'][i]['id'], printJob=False)
-                job._print_job(jobs['job'][i])
-        return
-    
+                jobDetails = jobs['job'][i]
+                job._print_job(jobDetails)
+                self.recently_submitted['submit'][jobs['job'][i]['id']] = widgets.Button(description="Restore")
+                display(self.recently_submitted['submit'][jobDetails['id']])
+        for i in self.recently_submitted['submit'].keys():
+            self.recently_submitted['submit'][i].on_click(self.onJobEntryButtonClick(i))
+        
+    def renderLoadMore(self):
+        if self.load_more['output'] == None:
+            self.load_more['output'] = widgets.Output()
+            self.load_more['load_more'] = widgets.Button(description="Load More")
+        with self.load_more['output']:
+            self.load_more['load_more'] = widgets.Button(description="Load More")
+            display(self.load_more['load_more'])
+        self.load_more['load_more'].on_click(self.onLoadMoreClick())
+            
+
     def renderRefreshButton(self):
         if self.refresh['output'] == None:
             self.refresh['output'] = widgets.Output()
@@ -485,6 +508,7 @@ class UI:
                     with self.submit['alert_output']:
                         display(Markdown('⚠️ please select a folder before upload...'))
                         return
+                else:
                     dataFolder = dataFolder.replace(self.jupyter_globus['container_home_path'].strip('/'), '')
                     dataFolder = 'globus://' + self.jupyter_globus['endpoint'] + ':' + os.path.join(self.jupyter_globus['root_path'], dataFolder.strip('/'))
 
@@ -508,7 +532,6 @@ class UI:
             self.submitted = True
             self.tab.set_title(1, '⏳ Your Job Status')
             self.rerender(['resultStatus', 'resultEvents', 'resultLogs', 'submit', 'recently_submitted'])
-            self.renderRecentlySubmittedJobs()
         return on_click
 
     def onJobDropdownChange(self):
@@ -523,7 +546,7 @@ class UI:
                 self.job = self.jobs[self.jobName]
                 self.hpcName = self.job['default_hpc']
                 self.hpc = self.hpcs[self.hpcName]
-                self.rerender(['description', 'computingResource', 'slurm', 'param'])
+                self.rerender(['description', 'computingResource', 'slurm', 'param', 'uploadData'])
         return on_change
 
     def onComputingResourceDropdownChange(self):
@@ -547,10 +570,43 @@ class UI:
             self.jupyter_globus = self.compute.get_user_jupyter_globus()
             self.globus_filename = 'globus_download_' + self.compute.job.id
             resultFolder = 'globus://' + self.jupyter_globus['endpoint'] + ':' + os.path.join(self.jupyter_globus['root_path'], self.globus_filename)
-            self.tab.selected_index = 1
+            self.tab.selected_index = 2
             self.submitted = True
-            self.tab.set_title(1, '⏳ Your Job Status')
+            self.tab.set_title(2, '⏳ Your Job Status')
             self.rerender(['resultStatus', 'resultEvents', 'resultLogs', 'submit'])
+            getattr(self, 'recently_submitted')['output'].clear_output()
+            getattr(self, 'load_more')['output'].clear_output()
+            self.renderRecentlySubmittedJobs()
+            self.renderLoadMore()
+            #display(self.load_more['output'])
+            #display(self.recently_submitted['output'])
+        return on_click
+    
+    def onLoadMoreClick(self):
+        def on_click(change):
+            self.recently_submitted['job_list_size'] += 5
+            getattr(self, 'recently_submitted')['output'].clear_output()
+            getattr(self, 'load_more')['output'].clear_output()
+            self.renderRecentlySubmittedJobs()
+            self.renderLoadMore()
+            #display(self.load_more['output'])
+        return on_click
+    
+    def onJobEntryButtonClick(self, job_id):
+        def on_click(change):
+            job = self.compute.get_job_by_id(job_id, printJob=False)
+            self.compute.job = job
+            self.jupyter_globus = self.compute.get_user_jupyter_globus()
+            self.globus_filename = 'globus_download_' + self.compute.job.id
+            resultFolder = 'globus://' + self.jupyter_globus['endpoint'] + ':' + os.path.join(self.jupyter_globus['root_path'], self.globus_filename)
+            self.tab.selected_index = 2
+            self.submitted = True
+            self.tab.set_title(2, '⏳ Your Job Status')
+            self.rerender(['resultStatus', 'resultEvents', 'resultLogs', 'submit'])
+            getattr(self, 'recently_submitted')['output'].clear_output()
+            getattr(self, 'load_more')['output'].clear_output()
+            self.renderRecentlySubmittedJobs()
+            self.renderLoadMore()
         return on_click
             
 
@@ -584,7 +640,8 @@ class UI:
         self.resultLogs = {'output': None}
         self.download = {'output': None, 'alert_output': None, 'result_output': None}
         self.refresh = {'output': None, 'job_id': None, 'submit': None}
-        self.recently_submitted = {'output': None}
+        self.recently_submitted = {'output': None, 'submit': {}, 'job_list_size': 5, 'load_more': None}
+        self.load_more = {'output': None, 'load_more': None}
         # main
         self.tab = None
         # information
@@ -592,6 +649,7 @@ class UI:
         self.job = self.jobs[self.jobName]
         self.hpcName = self.job['default_hpc']
         self.hpc = self.hpcs[self.hpcName]
+        
 
 
     def rerender(self, components=[]):
