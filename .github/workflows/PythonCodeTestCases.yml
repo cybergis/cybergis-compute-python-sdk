@@ -22,5 +22,5 @@ jobs:
         run: |
           pip install pytest
           pip install pytest-cov
-          pytest --cov-report term --cov=./job_supervisor_client test > coverage_report.txt
+          pytest --cov-report term --cov=./cybergis_compute_client test > coverage_report.txt
           coverage report

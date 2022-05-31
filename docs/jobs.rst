@@ -7,6 +7,8 @@ Hello World
 
 Our simple "Hello World" job is available on Github: `cybergis/cybergis-compute-hello-world <https://github.com/cybergis/cybergis-compute-hello-world>`_
 
+`You can view the UI for the Hello World notebook here. <notebooks/hello_world.html>`_
+
 SUMMA
 -----
 

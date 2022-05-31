@@ -17,6 +17,8 @@ Demo Hello World
     
     Here you can see submission of a simple "Hello World" job. It uploads and downloads data while running a few commands on the Keeling compute cluster.
 
+`You can view the UI for the Hello World notebook here. <notebooks/hello_world.html>`_
+
 
 Table of Contents
 -----------------

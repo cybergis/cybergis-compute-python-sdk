@@ -4,4 +4,4 @@ nbsphinx
 nbsphinx-link
 sphinx
 sphinx-markdown-builder
-sphinx_rtd_theme
+sphinx-material
