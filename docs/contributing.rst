@@ -1,13 +1,12 @@
 Contributing
 ============
 
-.. contents:: Table of Contents
-    :depth: 3
 
 Contributing Jobs
 -----------------
 
-We are always looking to expand our gallery of jobs and are working on a pipeline for new job submissions! Keep an eye out for updates!
+.. note::
+    We are always looking to expand our gallery of jobs, and are working on a pipeline for new job submissions! Keep an eye out for updates!
 
 .. raw:: html
 

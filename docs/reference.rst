@@ -1,8 +1,11 @@
-SDK Documentation
-=================
+Developer Documentation
+=======================
 
 
-User reference for the CyberGIS-Compute Python SDK
+Reference for the CyberGIS-Compute Python SDK
+
+.. attention::
+    These are auto-generated documentation which describe the inner workings of the Python SDK. They are helpful for those who want to contribute to the project, but not designed to help users run jobs. If you are just trying to use the SDK, check out the `Help page <help.html>`_.
 
 cybergis_compute_client.Client module
 -------------------------------------

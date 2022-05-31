@@ -3,11 +3,13 @@ name: Sphinx build
 on: push
 
 jobs:
-  build:
+  sphinx-build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - name: Build HTML
+      with:
+        pre-build-command: "apt install -y pandoc"
       uses: ammaraskar/sphinx-action@0.4
     - name: Upload artifacts
       uses: actions/upload-artifact@v1
