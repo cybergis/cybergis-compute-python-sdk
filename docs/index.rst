@@ -27,6 +27,7 @@ Table of Contents
    about.rst
    jobs.rst
    external.rst
+   help.rst
    reference.rst
    contributing.rst
 
