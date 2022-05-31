@@ -3,7 +3,7 @@ name: Python Code Test
 on: [push]
 
 jobs:
-  build:
+  run-tests:
 
     runs-on: ubuntu-latest
     strategy:

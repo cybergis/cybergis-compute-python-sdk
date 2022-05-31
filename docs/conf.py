@@ -40,7 +40,6 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
     'sphinx_markdown_builder',
-    'sphinx_rtd_theme',
     'nbsphinx',
     'nbsphinx_link'
 ]

@@ -1,7 +1,0 @@
-ipyfilechooser
-myst-parser
-nbsphinx
-nbsphinx-link
-sphinx
-sphinx-markdown-builder
-sphinx-material
