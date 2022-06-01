@@ -406,7 +406,7 @@ class CyberGISCompute:
         if defaultRemoteResultFolder is not None:
             self.ui.defaultRemoteResultFolder = defaultRemoteResultFolder if defaultRemoteResultFolder[0] == '/' else '/' + defaultRemoteResultFolder
         self.ui.render()
-        
+
     def get_latest_created_job(self):
         """
         Return the current job instance
