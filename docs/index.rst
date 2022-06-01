@@ -6,21 +6,37 @@
 Welcome to CyberGIS-Compute Python SDK's documentation!
 =======================================================
 
-
 .. attention::
     This site is still under construction.
+
+Demo Hello World
+----------------
+
+.. figure:: _static/gif/CyberGIS-ComputeHello.gif
+    :alt: A gif showing off the functionality of the CyberGIS-Compute Python SDK.
+    
+    Here you can see submission of a simple "Hello World" job. It uploads and downloads data while running a few commands on the Keeling compute cluster.
+
+`You can view the UI for the Hello World notebook here. <notebooks/hello_world.html>`_
+
+
+Table of Contents
+-----------------
 
 .. toctree::
    :maxdepth: 2
    
-   reference.rst
+   about.rst
+   jobs.rst
    external.rst
+   help.rst
+   reference.rst
    contributing.rst
 
 
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`

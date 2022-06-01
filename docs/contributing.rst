@@ -1,14 +1,24 @@
 Contributing
 ============
 
-We welcome contributions, but before you send a pull request, please check that your code meets our standards. Specifically:
 
-.. contents:: Table of Contents
-    :depth: 3
+Contributing Jobs
+-----------------
 
+.. note::
+    We are always looking to expand our gallery of jobs, and are working on a pipeline for new job submissions! Keep an eye out for updates!
+
+.. raw:: html
+
+   <hr>
+
+Contributing to the SDK
+-----------------------
+
+First, consider if the change requires changes to the SDK (this repo), the Core (the server/backend) or both. We welcome contributions, but before you send a pull request, please check that your code meets our standards. Specifically:
 
 Code Quaity
------------
+^^^^^^^^^^^
 
 We recommend using flake8 and you can check the Github workflow (`.github/workflows/PythonQualityCheck.yml`) to see any errors/warning you can safely ignore. Some resources for linting:
 
@@ -16,19 +26,20 @@ We recommend using flake8 and you can check the Github workflow (`.github/workfl
 * `Linting Python in Visual Studio Code <https://code.visualstudio.com/docs/python/linting>`_.
 
 Code Tests
-----------
+^^^^^^^^^^
 
-.. attention::
-    **We are still working on testing, you can safely ignore Code Tests passing for now.**
+We have limited code tests to check for changes that break the SDK. Please check that your code passes our checks before submitting. If the changes you have made break our tests for a good reason, feel free submit the Pull Request and let us know!
+
+We are also hoping to grow our test cases and welcome help on that end!
 
 
 Tools for Testing Github Actions Locally
-----------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 We prefer that contributions pass our Github actions, so here are some tips on checking they pass locally.
 
 `act <https://github.com/nektos/act>`_
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+""""""""""""""""""""""""""""""""""""""
 
 There are a variety of ways to install act, and once installed it offers a flexible tool for testing that your code passes Github actions. All commands should be run from the root of the repository. 
 
@@ -50,7 +61,7 @@ There are a variety of ways to install act, and once installed it offers a flexi
     > act
 
 Contributing to the Docs
-------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 We welcome contributions to the documentation! Please ensure that any contributions are appropriate for this repository and not the many related projects: :doc:`/external`
 
