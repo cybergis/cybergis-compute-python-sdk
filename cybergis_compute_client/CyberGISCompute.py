@@ -2,7 +2,6 @@
 This module exposes CyberGISCompute class which creates a CyberGISCompute
 object that serves as an entry point to the CyberGISX environment from a Python/Jupyter notebook.
 All interactions with the High Performance Computing (HPC) backend are performed using this object.
-
 Example:
         cybergis = CyberGISCompute(url='localhost', port='3030', protocol='HTTP', isJupyter=False)
 """
