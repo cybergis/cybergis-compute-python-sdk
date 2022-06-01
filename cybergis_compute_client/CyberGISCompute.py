@@ -2,7 +2,6 @@
 This module exposes CyberGISCompute class which creates a CyberGISCompute
 object that serves as an entry point to the CyberGISX environment from a Python/Jupyter notebook.
 All interactions with the High Performance Computing (HPC) backend are performed using this object.
-
 Example:
         cybergis = CyberGISCompute(url='localhost', port='3030', protocol='HTTP', isJupyter=False)
 """
@@ -59,7 +58,7 @@ class CyberGISCompute:
         self.job = None
         self.recentDownloadPath = None
 
-    def login(self, manualLogin=True, printJob=True):
+    def login(self, manualLogin=True):
         """
         Authenticates the client's jupyterhubApiToken and gives them access
         to CyberGISCompute features
@@ -69,8 +68,7 @@ class CyberGISCompute:
             None
         """
         if self.jupyterhubApiToken is not None:
-            if printJob:
-                print('🎯 Logged in as ' + self.username)
+            print('🎯 Logged in as ' + self.username)
             return
 
         # login via env variable
@@ -140,7 +138,7 @@ class CyberGISCompute:
         self.login()
         return Job(maintainer=maintainer, hpc=hpc, id=None, hpcUsername=hpcUsername, hpcPassword=hpcPassword, client=self.client, isJupyter=self.isJupyter, jupyterhubApiToken=self.jupyterhubApiToken, printJob=printJob)
 
-    def get_job_by_id(self, id=None, printJob=True):
+    def get_job_by_id(self, id=None):
         """
         Returns Job object with the specified id
         Args:
@@ -148,7 +146,7 @@ class CyberGISCompute:
         Returns
             (Job)                   : Job object with the specified id otherwise None
         """
-        self.login(printJob=printJob)
+        self.login()
         jobs = self.client.request('GET', '/user/job', {"jupyterhubApiToken": self.jupyterhubApiToken})
         token = None
         for job in jobs['job']:
@@ -156,7 +154,7 @@ class CyberGISCompute:
                 token = job['secretToken']
         if (token is None):
             print('❌ job with id ' + id + ' was not found')
-        return Job(secretToken=token, client=self.client, id=id, isJupyter=self.isJupyter, jupyterhubApiToken=self.jupyterhubApiToken, printJob=printJob)
+        return Job(secretToken=token, client=self.client, id=id, isJupyter=self.isJupyter, jupyterhubApiToken=self.jupyterhubApiToken)
 
     def get_slurm_usage(self, raw=False):
         """
