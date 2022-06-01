@@ -122,7 +122,7 @@ class UI:
         """
         Display a dropdown of jobs to run. Update jobTemplate when the dropdown changes.
         """
-        if self.jobTemplate['output'] == None:
+        if self.jobTemplate['output'] is None:
 
             self.jobTemplate['output'] = widgets.Output()
         # create components
@@ -135,8 +135,8 @@ class UI:
         """
         Display information about the job (job name, job description, HPC name, HPC description, estimated runtime)
         """
-        if self.description['output'] == None:
-                self.description['output'] = widgets.Output()
+        if self.description['output'] is None:
+            self.description['output'] = widgets.Output()
 
         self.description['job_description'] = Markdown('**' + self.jobName + ' Job Description:** ' + self.job['description'])
         self.description['computing_resource_description'] = Markdown('**' + self.hpcName + ' HPC Description**: ' + self.hpc['description'])
@@ -148,7 +148,7 @@ class UI:
         """
         Display computing resources in a dropdown for the user to select
         """
-        if self.computingResource['output'] == None:
+        if self.computingResource['output'] is None:
             self.computingResource['output'] = widgets.Output()
         # create components
         self.computingResource['dropdown'] = widgets.Dropdown(options=[i for i in self.job['supported_hpc']], value=self.hpcName, description='🖥 Computing Recourse:', style=self.style, layout=self.layout)
@@ -162,7 +162,7 @@ class UI:
         """
         Displays a checkbox that lets the user recieve an email on job status and input their email.
         """
-        if self.email['output'] == None:
+        if self.email['output'] is None:
 
             self.email['output'] = widgets.Output()
         # create components
@@ -176,7 +176,7 @@ class UI:
         """
         Configures Slurm input rules (default value, min, m), allows the user to input custom input rules if they want.
         """
-        if self.slurm['output'] == None:
+        if self.slurm['output'] is None:
             self.slurm['output'] = widgets.Output()
         # check if necessary to render
         if self.job['slurm_input_rules'] == {}:
@@ -238,7 +238,7 @@ class UI:
         """
         Lets the user select the upload data location from a file chooser.
         """
-        if self.uploadData['output'] == None:
+        if self.uploadData['output'] is None:
             self.uploadData['output'] = widgets.Output()
         # check if necessary to render
         if not self.job['require_upload_data']:
@@ -257,7 +257,7 @@ class UI:
         """
         Displays input areas for the job parameters
         """
-        if self.param['output'] == None:
+        if self.param['output'] is None:
             self.param['output'] = widgets.Output()
         # check if necessary to render
         if self.job['param_rules'] == {}:
@@ -317,7 +317,7 @@ class UI:
         """
         Render submit button. If the job has been submitted, display that, otherwise display the submit button.
         """
-        if self.submit['output'] == None:
+        if self.submit['output'] is None:
             self.submit['output'] = widgets.Output()
         if self.submit['alert_output'] is None:
             self.submit['alert_output'] = widgets.Output()
@@ -336,7 +336,7 @@ class UI:
         """
         Creates the components of the download section
         """
-        if self.download['output'] == None:
+        if self.download['output'] is None:
             self.download['output'] = widgets.Output()
         if self.download['alert_output'] is None:
             self.download['alert_output'] = widgets.Output()
@@ -370,7 +370,7 @@ class UI:
         """
         Display the status of the job.
         """
-        if self.resultStatus['output'] == None:
+        if self.resultStatus['output'] is None:
             self.resultStatus['output'] = widgets.Output()
 
         if not self.submitted:
@@ -388,7 +388,7 @@ class UI:
         """
         Display any events that occured while the job was being processed.
         """
-        if self.resultEvents['output'] == None:
+        if self.resultEvents['output'] is None:
             self.resultEvents['output'] = widgets.Output()
 
         if not self.submitted:
@@ -402,7 +402,7 @@ class UI:
         """
         Display when the job is finished and rerender the download section when it is.
         """
-        if self.resultLogs['output'] == None:
+        if self.resultLogs['output'] is None:
             self.resultLogs['output'] = widgets.Output()
 
         if not self.submitted:
@@ -418,7 +418,7 @@ class UI:
         return
 
     def renderRecentlySubmittedJobs(self):
-        if self.recently_submitted['output'] == None:
+        if self.recently_submitted['output'] is None:
             self.recently_submitted['output'] = widgets.Output()
         with self.recently_submitted['output']:
             display(Markdown('**Recently Submitted Jobs for ' + self.compute.username.split('@')[0] + '**'))
@@ -426,13 +426,13 @@ class UI:
             list_size = 5
             if len(jobs['job']) < 5:
                 list_size = len(jobs['job'])
-            for i in range(len(jobs['job'])-1, len(jobs['job'])-list_size-1, -1):
+            for i in range(len(jobs['job']) - 1, len(jobs['job']) - list_size - 1, -1):
                 job = self.compute.get_job_by_id(jobs['job'][i]['id'], printJob=False)
                 job._print_job(jobs['job'][i])
         return
-    
+
     def renderRefreshButton(self):
-        if self.refresh['output'] == None:
+        if self.refresh['output'] is None:
             self.refresh['output'] = widgets.Output()
             self.refresh['job_id'] = widgets.Text(value='job id', style=self.style)
             self.refresh['submit'] = widgets.Button(description="Refresh")
@@ -443,10 +443,10 @@ class UI:
             display(self.refresh['job_id'])
             display(self.refresh['submit'])
         self.refresh['submit'].on_click(self.onRefreshButtonClick())
-        
 
     # events
     def onDownloadButtonClick(self):
+
         def on_click(change):
             """
             Download the output data to the specified path and display the location.
@@ -627,8 +627,9 @@ class UI:
         }
 
         for i in self.slurm_configs:
-            if self.slurm[i] != None and i in self.job['slurm_input_rules']:
-                if not self.slurm[i].value: continue # skip null value
+            if self.slurm[i] is not None and i in self.job['slurm_input_rules']:
+                if not self.slurm[i].value:
+                    continue  # skip null value
                 config = self.job['slurm_input_rules'][i]
                 if i in self.slurm_integer_storage_unit_config:
                     out['slurm'][i] = str(self.slurm[i].value) + str(config['unit'])
