@@ -546,14 +546,11 @@ class UI:
             self.compute.job = job
             self.jupyter_globus = self.compute.get_user_jupyter_globus()
             self.globus_filename = 'globus_download_' + self.compute.job.id
-            resultFolder = 'globus://' + self.jupyter_globus['endpoint'] + ':' + os.path.join(self.jupyter_globus['root_path'], self.globus_filename)
             self.tab.selected_index = 1
             self.submitted = True
             self.tab.set_title(1, '⏳ Your Job Status')
             self.rerender(['resultStatus', 'resultEvents', 'resultLogs', 'submit'])
         return on_click
-            
-
 
     # helpers
     def init(self):
@@ -592,7 +589,6 @@ class UI:
         self.job = self.jobs[self.jobName]
         self.hpcName = self.job['default_hpc']
         self.hpc = self.hpcs[self.hpcName]
-
 
     def rerender(self, components=[]):
         """
