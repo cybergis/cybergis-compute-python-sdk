@@ -432,7 +432,7 @@ class UI:
             jobs = self.compute.client.request('GET', '/user/job', {'jupyterhubApiToken': self.compute.jupyterhubApiToken})
             if len(jobs['job']) < self.recently_submitted['job_list_size']:
                 self.recently_submitted['job_list_size'] = len(jobs['job'])
-            for i in range(len(jobs['job'])-1, len(jobs['job']) - self.recently_submitted['job_list_size'] - 1, -1):
+            for i in range(len(jobs['job']) - 1, len(jobs['job']) - self.recently_submitted['job_list_size'] - 1, -1):
                 job = self.compute.get_job_by_id(jobs['job'][i]['id'], printJob=False)
                 jobDetails = jobs['job'][i]
                 job._print_job(jobDetails)
