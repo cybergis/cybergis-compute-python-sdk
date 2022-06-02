@@ -8,6 +8,9 @@ from IPython.display import Markdown, display, clear_output
 class UI:
     """
     UI class
+
+    Args: None
+
     Attributes:
         compute: Instance of CyberGISCompute
         style (dict): Style of each widget (specifically width)
@@ -546,6 +549,7 @@ class UI:
     def rerender(self, components=[]):
         """
         Clears and renders the specified components
+        
         Args:
             components (list): components to be rerendered
         """
@@ -561,7 +565,9 @@ class UI:
     def get_data(self):
         """
         Get data about the job submitted (template, computing resource used, slurm rules, param rules, user email)
-        Returns: (dict) Information about the job submitted (template, computing resource used, slurm rules, param rules, user email)
+        
+        Returns: 
+            dict : Information about the job submitted (template, computing resource used, slurm rules, param rules, user email)
         """
         out = {
             'job_template': self.jobTemplate['dropdown'].value,
@@ -617,6 +623,7 @@ class UI:
     def unitTimeToSecond(self, unit, time):
         """
         Helper function that turns time in a specific unit into seconds
+        
         Args:
             unit (string): The unit of the time being passed (Minutes, Hours, or Days)
             time (int): The time in that specific unit
