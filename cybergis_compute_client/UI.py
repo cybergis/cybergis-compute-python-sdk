@@ -698,7 +698,7 @@ class UI:
     def unitTimeToSecond(self, unit, time):
         """
         Helper function that turns time in a specific unit into seconds
-        
+
         Args:
             unit (string): The unit of the time being passed (Minutes, Hours, or Days)
             time (int): The time in that specific unit

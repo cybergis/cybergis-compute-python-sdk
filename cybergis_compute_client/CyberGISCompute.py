@@ -406,12 +406,12 @@ class CyberGISCompute:
     def create_job_by_ui(self, defaultJob="hello_world", defaultDataFolder="./", defaultRemoteResultFolder=None):
         """
         Displays the job submission UI
-        
+
         Args:
             defaultJob (str)                      : Stores the default job that shows up on the UI
             defaultDataFolder (str)               : Stores the default input folder that shows up on the UI
             defaultRemoteResultFolder (str)       : Stores the default output folder that shows up on the UI
-        
+
         Returns:
             None
         """
