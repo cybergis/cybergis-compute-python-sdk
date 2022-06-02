@@ -437,7 +437,7 @@ class UI:
             if len(jobs['job']) < self.recently_submitted['job_list_size']:
                 self.recently_submitted['job_list_size'] = len(jobs['job'])
             for i in range(len(jobs['job']) - 1, len(jobs['job']) - self.recently_submitted['job_list_size'] - 1, -1):
-                job = self.compute.get_job_by_id(jobs['job'][i]['id'], printJob=False)
+                job = self.compute.get_job_by_id(jobs['job'][i]['id'], verbose=False)
                 jobDetails = jobs['job'][i]
                 job._print_job(jobDetails)
                 self.recently_submitted['submit'][jobs['job'][i]['id']] = widgets.Button(description="Restore")
@@ -502,7 +502,7 @@ class UI:
                     dataFolder = 'globus://' + self.jupyter_globus['endpoint'] + ':' + os.path.join(self.jupyter_globus['root_path'], dataFolder.strip('/'))
 
             data = self.get_data()
-            self.compute.job = self.compute.create_job(hpc=data['computing_resource'], printJob=False)
+            self.compute.job = self.compute.create_job(hpc=data['computing_resource'], verbose=False)
             # slurm
             slurm = data['slurm']
             if data['email'] is not None:
@@ -569,7 +569,7 @@ class UI:
             """
             When the restore job button is pressed, restore the state of the UI to when that job was just submitted so the user can read logs and download data.
             """
-            job = self.compute.get_job_by_id(job_id, printJob=False)
+            job = self.compute.get_job_by_id(job_id, verbose=False)
             self.compute.job = job
             self.jupyter_globus = self.compute.get_user_jupyter_globus()
             self.globus_filename = 'globus_download_' + self.compute.job.id

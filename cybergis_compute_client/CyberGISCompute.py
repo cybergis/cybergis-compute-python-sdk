@@ -61,7 +61,7 @@ class CyberGISCompute:
         self.job = None
         self.recentDownloadPath = None
 
-    def login(self, manualLogin=True, printJob=True):
+    def login(self, manualLogin=True, verbose=True):
         """
         Authenticates the client's jupyterhubApiToken and gives them access
         to CyberGISCompute features
@@ -73,7 +73,7 @@ class CyberGISCompute:
             None
         """
         if self.jupyterhubApiToken is not None:
-            if printJob:
+            if verbose:
                 print('🎯 Logged in as ' + self.username)
             return
 
@@ -127,7 +127,7 @@ class CyberGISCompute:
         else:
             print('❌ Not logged in. To enable more features, use .login()')
 
-    def create_job(self, maintainer='community_contribution', hpc=None, hpcUsername=None, hpcPassword=None, printJob=True):
+    def create_job(self, maintainer='community_contribution', hpc=None, hpcUsername=None, hpcPassword=None, verbose=True):
         """
         Creates a job object
         Initializes instance CyberGISCompute using inputs from the client
@@ -144,9 +144,9 @@ class CyberGISCompute:
             (Job) : The new job instance that was initialized
         """
         self.login()
-        return Job(maintainer=maintainer, hpc=hpc, id=None, hpcUsername=hpcUsername, hpcPassword=hpcPassword, client=self.client, isJupyter=self.isJupyter, jupyterhubApiToken=self.jupyterhubApiToken, printJob=printJob)
+        return Job(maintainer=maintainer, hpc=hpc, id=None, hpcUsername=hpcUsername, hpcPassword=hpcPassword, client=self.client, isJupyter=self.isJupyter, jupyterhubApiToken=self.jupyterhubApiToken, printJob=verbose)
 
-    def get_job_by_id(self, id=None, printJob=True):
+    def get_job_by_id(self, id=None, verbose=True):
         """
         Returns Job object with the specified id
 
@@ -156,7 +156,7 @@ class CyberGISCompute:
         Returns:
             (Job)                   : Job object with the specified id otherwise None
         """
-        self.login(printJob=False)
+        self.login(verbose=False)
         jobs = self.client.request('GET', '/user/job', {"jupyterhubApiToken": self.jupyterhubApiToken})
         token = None
         for job in jobs['job']:
@@ -164,7 +164,7 @@ class CyberGISCompute:
                 token = job['secretToken']
         if (token is None):
             print('❌ job with id ' + id + ' was not found')
-        return Job(secretToken=token, client=self.client, id=id, isJupyter=self.isJupyter, jupyterhubApiToken=self.jupyterhubApiToken, printJob=printJob)
+        return Job(secretToken=token, client=self.client, id=id, isJupyter=self.isJupyter, jupyterhubApiToken=self.jupyterhubApiToken, printJob=verbose)
 
     def get_slurm_usage(self, raw=False):
         """
