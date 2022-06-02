@@ -8,6 +8,7 @@ from IPython.display import Markdown, display, clear_output
 class UI:
     """
     UI class
+
     Attributes:
         compute: Instance of CyberGISCompute
         style (dict): Style of each widget (specifically width)
@@ -424,6 +425,9 @@ class UI:
         return
 
     def renderRecentlySubmittedJobs(self):
+        """
+        Display the jobs most recently submitted by the logged in user, allows user to restore these jobs.
+        """
         if self.recently_submitted['output'] is None:
             self.recently_submitted['output'] = widgets.Output()
             jobs = self.compute.client.request('GET', '/user/job', {'jupyterhubApiToken': self.compute.jupyterhubApiToken})
@@ -442,6 +446,9 @@ class UI:
             self.recently_submitted['submit'][i].on_click(self.onJobEntryButtonClick(i))
 
     def renderLoadMore(self):
+        """
+        Renders a button to load more recently submitted jobs.
+        """
         if self.load_more['output'] is None:
             self.load_more['output'] = widgets.Output()
             self.load_more['load_more'] = widgets.Button(description="Load More")
@@ -547,15 +554,21 @@ class UI:
 
     def onLoadMoreClick(self):
         def on_click(change):
+            """
+            Increase the number of recently submitted jobs being displayed by five and rerender teh recently subsmitted and load more attributes.
+            """
             self.recently_submitted['job_list_size'] += 5
-            getattr(self, 'recently_submitted')['output'].clear_output()
-            getattr(self, 'load_more')['output'].clear_output()
+            self.recently_submitted['output'].clear_output()
+            self.load_more['output'].clear_output()
             self.renderRecentlySubmittedJobs()
             self.renderLoadMore()
         return on_click
 
     def onJobEntryButtonClick(self, job_id):
         def on_click(change):
+            """
+            When the restore job button is pressed, restore the state of the UI to when that job was just submitted so the user can read logs and download data.
+            """
             job = self.compute.get_job_by_id(job_id, printJob=False)
             self.compute.job = job
             self.jupyter_globus = self.compute.get_user_jupyter_globus()
@@ -564,8 +577,8 @@ class UI:
             self.submitted = True
             self.tab.set_title(2, '⏳ Your Job Status')
             self.rerender(['resultStatus', 'resultEvents', 'resultLogs', 'submit'])
-            getattr(self, 'recently_submitted')['output'].clear_output()
-            getattr(self, 'load_more')['output'].clear_output()
+            self.recently_submitted['output'].clear_output()
+            self.load_more['output'].clear_output()
             self.renderRecentlySubmittedJobs()
             self.renderLoadMore()
         return on_click
@@ -611,6 +624,7 @@ class UI:
     def rerender(self, components=[]):
         """
         Clears and renders the specified components
+
         Args:
             components (list): components to be rerendered
         """
@@ -626,7 +640,9 @@ class UI:
     def get_data(self):
         """
         Get data about the job submitted (template, computing resource used, slurm rules, param rules, user email)
-        Returns: (dict) Information about the job submitted (template, computing resource used, slurm rules, param rules, user email)
+
+        Returns:
+            (dict) Information about the job submitted (template, computing resource used, slurm rules, param rules, user email)
         """
         out = {
             'job_template': self.jobTemplate['dropdown'].value,
@@ -682,6 +698,7 @@ class UI:
     def unitTimeToSecond(self, unit, time):
         """
         Helper function that turns time in a specific unit into seconds
+        
         Args:
             unit (string): The unit of the time being passed (Minutes, Hours, or Days)
             time (int): The time in that specific unit
