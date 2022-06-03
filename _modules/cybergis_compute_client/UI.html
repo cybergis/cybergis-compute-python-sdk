@@ -9,6 +9,7 @@
 <div class=viewcode-block  id=UI ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.UI.UI">[docs]</a><span class=k >class</span> <span class=nc >UI</span><span class=p >:</span>
     <span class=sd >"""</span>
 <span class=sd >    UI class</span>
+
 <span class=sd >    Attributes:</span>
 <span class=sd >        compute: Instance of CyberGISCompute</span>
 <span class=sd >        style (dict): Style of each widget (specifically width)</span>
@@ -86,15 +87,23 @@
         <span class=k >with</span> <span class=n >download</span><span class=p >:</span>
             <span class=n >display</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >download</span><span class=p >[</span><span class=s1 >'output'</span><span class=p >])</span>
 
+        <span class=c1 ># 4. your jobs</span>
+        <span class=n >job_refresh</span> <span class=o >=</span> <span class=n >widgets</span><span class=o >.</span><span class=n >Output</span><span class=p >()</span>
+        <span class=k >with</span> <span class=n >job_refresh</span><span class=p >:</span>
+            <span class=n >display</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >recently_submitted</span><span class=p >[</span><span class=s1 >'output'</span><span class=p >])</span>
+            <span class=n >display</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >load_more</span><span class=p >[</span><span class=s1 >'output'</span><span class=p >])</span>
+
         <span class=c1 ># assemble into tabs</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >tab</span> <span class=o >=</span> <span class=n >widgets</span><span class=o >.</span><span class=n >Tab</span><span class=p >(</span><span class=n >children</span><span class=o >=</span><span class=p >[</span>
             <span class=n >job_config</span><span class=p >,</span>
             <span class=n >job_status</span><span class=p >,</span>
-            <span class=n >download</span>
+            <span class=n >download</span><span class=p >,</span>
+            <span class=n >job_refresh</span>
         <span class=p >])</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >tab</span><span class=o >.</span><span class=n >set_title</span><span class=p >(</span><span class=mi >0</span><span class=p >,</span> <span class=s1 >'Job Configuration'</span><span class=p >)</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >tab</span><span class=o >.</span><span class=n >set_title</span><span class=p >(</span><span class=mi >1</span><span class=p >,</span> <span class=s1 >'Your Job Status'</span><span class=p >)</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >tab</span><span class=o >.</span><span class=n >set_title</span><span class=p >(</span><span class=mi >2</span><span class=p >,</span> <span class=s1 >'Download Job Result'</span><span class=p >)</span>
+        <span class=bp >self</span><span class=o >.</span><span class=n >tab</span><span class=o >.</span><span class=n >set_title</span><span class=p >(</span><span class=mi >3</span><span class=p >,</span> <span class=s1 >'Your Jobs'</span><span class=p >)</span>
         <span class=n >display</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >tab</span><span class=p >)</span></div>
 
 <div class=viewcode-block  id=UI.renderComponents ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.UI.UI.renderComponents">[docs]</a>    <span class=k >def</span> <span class=nf >renderComponents</span><span class=p >(</span><span class=bp >self</span><span class=p >):</span>
@@ -112,7 +121,9 @@
         <span class=bp >self</span><span class=o >.</span><span class=n >renderResultStatus</span><span class=p >()</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >renderResultEvents</span><span class=p >()</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >renderResultLogs</span><span class=p >()</span>
-        <span class=bp >self</span><span class=o >.</span><span class=n >renderDownload</span><span class=p >()</span></div>
+        <span class=bp >self</span><span class=o >.</span><span class=n >renderDownload</span><span class=p >()</span>
+        <span class=bp >self</span><span class=o >.</span><span class=n >renderRecentlySubmittedJobs</span><span class=p >()</span>
+        <span class=bp >self</span><span class=o >.</span><span class=n >renderLoadMore</span><span class=p >()</span></div>
 
     <span class=c1 ># components</span>
 <div class=viewcode-block  id=UI.renderJobTemplate ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.UI.UI.renderJobTemplate">[docs]</a>    <span class=k >def</span> <span class=nf >renderJobTemplate</span><span class=p >(</span><span class=bp >self</span><span class=p >):</span>
@@ -406,13 +417,52 @@
             <span class=k >return</span>
         <span class=k >with</span> <span class=bp >self</span><span class=o >.</span><span class=n >resultLogs</span><span class=p >[</span><span class=s1 >'output'</span><span class=p >]:</span>
             <span class=bp >self</span><span class=o >.</span><span class=n >compute</span><span class=o >.</span><span class=n >job</span><span class=o >.</span><span class=n >logs</span><span class=p >()</span>
-            <span class=bp >self</span><span class=o >.</span><span class=n >tab</span><span class=o >.</span><span class=n >set_title</span><span class=p >(</span><span class=mi >1</span><span class=p >,</span> <span class=s1 >'✅ Your Job Status'</span><span class=p >)</span>
+            <span class=bp >self</span><span class=o >.</span><span class=n >tab</span><span class=o >.</span><span class=n >set_title</span><span class=p >(</span><span class=mi >0</span><span class=p >,</span> <span class=s1 >'✅ Your Job Status'</span><span class=p >)</span>
             <span class=bp >self</span><span class=o >.</span><span class=n >tab</span><span class=o >.</span><span class=n >set_title</span><span class=p >(</span><span class=mi >2</span><span class=p >,</span> <span class=s1 >'✅ Download Job Result'</span><span class=p >)</span>
             <span class=n >display</span><span class=p >(</span><span class=n >Markdown</span><span class=p >(</span><span class=s1 >'***'</span><span class=p >))</span>
             <span class=n >display</span><span class=p >(</span><span class=n >Markdown</span><span class=p >(</span><span class=s1 >'## ✅ your job completed'</span><span class=p >))</span>
             <span class=bp >self</span><span class=o >.</span><span class=n >jobFinished</span> <span class=o >=</span> <span class=kc >True</span>
             <span class=bp >self</span><span class=o >.</span><span class=n >rerender</span><span class=p >([</span><span class=s1 >'download'</span><span class=p >])</span>
         <span class=k >return</span></div>
+
+<div class=viewcode-block  id=UI.renderRecentlySubmittedJobs ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.UI.UI.renderRecentlySubmittedJobs">[docs]</a>    <span class=k >def</span> <span class=nf >renderRecentlySubmittedJobs</span><span class=p >(</span><span class=bp >self</span><span class=p >):</span>
+        <span class=sd >"""</span>
+<span class=sd >        Display the jobs most recently submitted by the logged in user, allows user to restore these jobs.</span>
+<span class=sd >        """</span>
+        <span class=k >if</span> <span class=bp >self</span><span class=o >.</span><span class=n >recently_submitted</span><span class=p >[</span><span class=s1 >'output'</span><span class=p >]</span> <span class=ow >is</span> <span class=kc >None</span><span class=p >:</span>
+            <span class=bp >self</span><span class=o >.</span><span class=n >recently_submitted</span><span class=p >[</span><span class=s1 >'output'</span><span class=p >]</span> <span class=o >=</span> <span class=n >widgets</span><span class=o >.</span><span class=n >Output</span><span class=p >()</span>
+            <span class=n >jobs</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >compute</span><span class=o >.</span><span class=n >client</span><span class=o >.</span><span class=n >request</span><span class=p >(</span><span class=s1 >'GET'</span><span class=p >,</span> <span class=s1 >'/user/job'</span><span class=p >,</span> <span class=p >{</span><span class=s1 >'jupyterhubApiToken'</span><span class=p >:</span> <span class=bp >self</span><span class=o >.</span><span class=n >compute</span><span class=o >.</span><span class=n >jupyterhubApiToken</span><span class=p >})</span>
+        <span class=k >with</span> <span class=bp >self</span><span class=o >.</span><span class=n >recently_submitted</span><span class=p >[</span><span class=s1 >'output'</span><span class=p >]:</span>
+            <span class=n >display</span><span class=p >(</span><span class=n >Markdown</span><span class=p >(</span><span class=s1 >'**Recently Submitted Jobs for '</span> <span class=o >+</span> <span class=bp >self</span><span class=o >.</span><span class=n >compute</span><span class=o >.</span><span class=n >username</span><span class=o >.</span><span class=n >split</span><span class=p >(</span><span class=s1 >'@'</span><span class=p >)[</span><span class=mi >0</span><span class=p >]</span> <span class=o >+</span> <span class=s1 >'**'</span><span class=p >))</span>
+            <span class=n >jobs</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >compute</span><span class=o >.</span><span class=n >client</span><span class=o >.</span><span class=n >request</span><span class=p >(</span><span class=s1 >'GET'</span><span class=p >,</span> <span class=s1 >'/user/job'</span><span class=p >,</span> <span class=p >{</span><span class=s1 >'jupyterhubApiToken'</span><span class=p >:</span> <span class=bp >self</span><span class=o >.</span><span class=n >compute</span><span class=o >.</span><span class=n >jupyterhubApiToken</span><span class=p >})</span>
+            <span class=k >if</span> <span class=nb >len</span><span class=p >(</span><span class=n >jobs</span><span class=p >[</span><span class=s1 >'job'</span><span class=p >])</span> <span class=o >&lt;</span> <span class=bp >self</span><span class=o >.</span><span class=n >recently_submitted</span><span class=p >[</span><span class=s1 >'job_list_size'</span><span class=p >]:</span>
+                <span class=bp >self</span><span class=o >.</span><span class=n >recently_submitted</span><span class=p >[</span><span class=s1 >'job_list_size'</span><span class=p >]</span> <span class=o >=</span> <span class=nb >len</span><span class=p >(</span><span class=n >jobs</span><span class=p >[</span><span class=s1 >'job'</span><span class=p >])</span>
+            <span class=k >for</span> <span class=n >i</span> <span class=ow >in</span> <span class=nb >range</span><span class=p >(</span><span class=nb >len</span><span class=p >(</span><span class=n >jobs</span><span class=p >[</span><span class=s1 >'job'</span><span class=p >])</span> <span class=o >-</span> <span class=mi >1</span><span class=p >,</span> <span class=nb >len</span><span class=p >(</span><span class=n >jobs</span><span class=p >[</span><span class=s1 >'job'</span><span class=p >])</span> <span class=o >-</span> <span class=bp >self</span><span class=o >.</span><span class=n >recently_submitted</span><span class=p >[</span><span class=s1 >'job_list_size'</span><span class=p >]</span> <span class=o >-</span> <span class=mi >1</span><span class=p >,</span> <span class=o >-</span><span class=mi >1</span><span class=p >):</span>
+                <span class=n >job</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >compute</span><span class=o >.</span><span class=n >get_job_by_id</span><span class=p >(</span><span class=n >jobs</span><span class=p >[</span><span class=s1 >'job'</span><span class=p >][</span><span class=n >i</span><span class=p >][</span><span class=s1 >'id'</span><span class=p >],</span> <span class=n >verbose</span><span class=o >=</span><span class=kc >False</span><span class=p >)</span>
+                <span class=n >jobDetails</span> <span class=o >=</span> <span class=n >jobs</span><span class=p >[</span><span class=s1 >'job'</span><span class=p >][</span><span class=n >i</span><span class=p >]</span>
+                <span class=n >job</span><span class=o >.</span><span class=n >_print_job</span><span class=p >(</span><span class=n >jobDetails</span><span class=p >)</span>
+                <span class=k >if</span> <span class=bp >self</span><span class=o >.</span><span class=n >refreshing</span><span class=p >:</span>
+                    <span class=bp >self</span><span class=o >.</span><span class=n >recently_submitted</span><span class=p >[</span><span class=s1 >'submit'</span><span class=p >][</span><span class=n >jobs</span><span class=p >[</span><span class=s1 >'job'</span><span class=p >][</span><span class=n >i</span><span class=p >][</span><span class=s1 >'id'</span><span class=p >]]</span> <span class=o >=</span> <span class=n >widgets</span><span class=o >.</span><span class=n >Button</span><span class=p >(</span><span class=n >description</span><span class=o >=</span><span class=s2 >"🔁 Loading"</span><span class=p >,</span> <span class=n >disabled</span><span class=o >=</span><span class=kc >True</span><span class=p >)</span>
+                <span class=k >else</span><span class=p >:</span>
+                    <span class=bp >self</span><span class=o >.</span><span class=n >recently_submitted</span><span class=p >[</span><span class=s1 >'submit'</span><span class=p >][</span><span class=n >jobs</span><span class=p >[</span><span class=s1 >'job'</span><span class=p >][</span><span class=n >i</span><span class=p >][</span><span class=s1 >'id'</span><span class=p >]]</span> <span class=o >=</span> <span class=n >widgets</span><span class=o >.</span><span class=n >Button</span><span class=p >(</span><span class=n >description</span><span class=o >=</span><span class=s2 >"Restore"</span><span class=p >)</span>
+                <span class=n >display</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >recently_submitted</span><span class=p >[</span><span class=s1 >'submit'</span><span class=p >][</span><span class=n >jobDetails</span><span class=p >[</span><span class=s1 >'id'</span><span class=p >]])</span>
+        <span class=k >for</span> <span class=n >i</span> <span class=ow >in</span> <span class=bp >self</span><span class=o >.</span><span class=n >recently_submitted</span><span class=p >[</span><span class=s1 >'submit'</span><span class=p >]</span><span class=o >.</span><span class=n >keys</span><span class=p >():</span>
+            <span class=bp >self</span><span class=o >.</span><span class=n >recently_submitted</span><span class=p >[</span><span class=s1 >'submit'</span><span class=p >][</span><span class=n >i</span><span class=p >]</span><span class=o >.</span><span class=n >on_click</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >onJobEntryButtonClick</span><span class=p >(</span><span class=n >i</span><span class=p >))</span></div>
+
+<div class=viewcode-block  id=UI.renderLoadMore ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.UI.UI.renderLoadMore">[docs]</a>    <span class=k >def</span> <span class=nf >renderLoadMore</span><span class=p >(</span><span class=bp >self</span><span class=p >):</span>
+        <span class=sd >"""</span>
+<span class=sd >        Renders a button to load more recently submitted jobs.</span>
+<span class=sd >        """</span>
+        <span class=k >if</span> <span class=bp >self</span><span class=o >.</span><span class=n >load_more</span><span class=p >[</span><span class=s1 >'output'</span><span class=p >]</span> <span class=ow >is</span> <span class=kc >None</span><span class=p >:</span>
+            <span class=bp >self</span><span class=o >.</span><span class=n >load_more</span><span class=p >[</span><span class=s1 >'output'</span><span class=p >]</span> <span class=o >=</span> <span class=n >widgets</span><span class=o >.</span><span class=n >Output</span><span class=p >()</span>
+            <span class=bp >self</span><span class=o >.</span><span class=n >load_more</span><span class=p >[</span><span class=s1 >'load_more'</span><span class=p >]</span> <span class=o >=</span> <span class=n >widgets</span><span class=o >.</span><span class=n >Button</span><span class=p >(</span><span class=n >description</span><span class=o >=</span><span class=s2 >"Load More"</span><span class=p >)</span>
+        <span class=k >with</span> <span class=bp >self</span><span class=o >.</span><span class=n >load_more</span><span class=p >[</span><span class=s1 >'output'</span><span class=p >]:</span>
+            <span class=k >if</span> <span class=bp >self</span><span class=o >.</span><span class=n >refreshing</span><span class=p >:</span>
+                <span class=bp >self</span><span class=o >.</span><span class=n >load_more</span><span class=p >[</span><span class=s1 >'load_more'</span><span class=p >]</span> <span class=o >=</span> <span class=n >widgets</span><span class=o >.</span><span class=n >Button</span><span class=p >(</span><span class=n >description</span><span class=o >=</span><span class=s2 >"🔁 Loading"</span><span class=p >,</span> <span class=n >disabled</span><span class=o >=</span><span class=kc >True</span><span class=p >)</span>
+            <span class=k >else</span><span class=p >:</span>
+                <span class=bp >self</span><span class=o >.</span><span class=n >load_more</span><span class=p >[</span><span class=s1 >'load_more'</span><span class=p >]</span> <span class=o >=</span> <span class=n >widgets</span><span class=o >.</span><span class=n >Button</span><span class=p >(</span><span class=n >description</span><span class=o >=</span><span class=s2 >"Load More"</span><span class=p >)</span>
+            <span class=n >display</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >load_more</span><span class=p >[</span><span class=s1 >'load_more'</span><span class=p >])</span>
+        <span class=bp >self</span><span class=o >.</span><span class=n >load_more</span><span class=p >[</span><span class=s1 >'load_more'</span><span class=p >]</span><span class=o >.</span><span class=n >on_click</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >onLoadMoreClick</span><span class=p >())</span></div>
 
     <span class=c1 ># events</span>
 <div class=viewcode-block  id=UI.onDownloadButtonClick ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.UI.UI.onDownloadButtonClick">[docs]</a>    <span class=k >def</span> <span class=nf >onDownloadButtonClick</span><span class=p >(</span><span class=bp >self</span><span class=p >):</span>
@@ -421,18 +471,31 @@
 <span class=sd >            Download the output data to the specified path and display the location.</span>
 <span class=sd >            """</span>
             <span class=k >if</span> <span class=bp >self</span><span class=o >.</span><span class=n >downloading</span><span class=p >:</span>
+
                 <span class=bp >self</span><span class=o >.</span><span class=n >download</span><span class=p >[</span><span class=s1 >'alert_output'</span><span class=p >]</span><span class=o >.</span><span class=n >clear_output</span><span class=p >(</span><span class=n >wait</span><span class=o >=</span><span class=kc >True</span><span class=p >)</span>
+
                 <span class=k >with</span> <span class=bp >self</span><span class=o >.</span><span class=n >download</span><span class=p >[</span><span class=s1 >'alert_output'</span><span class=p >]:</span>
                     <span class=n >display</span><span class=p >(</span><span class=n >Markdown</span><span class=p >(</span><span class=s1 >'⚠️ download process is running in background...'</span><span class=p >))</span>
                     <span class=k >return</span>
 
             <span class=k >with</span> <span class=bp >self</span><span class=o >.</span><span class=n >download</span><span class=p >[</span><span class=s1 >'result_output'</span><span class=p >]:</span>
+                <span class=bp >self</span><span class=o >.</span><span class=n >refreshing</span> <span class=o >=</span> <span class=kc >True</span>
+                <span class=bp >self</span><span class=o >.</span><span class=n >recently_submitted</span><span class=p >[</span><span class=s1 >'output'</span><span class=p >]</span><span class=o >.</span><span class=n >clear_output</span><span class=p >()</span>
+                <span class=bp >self</span><span class=o >.</span><span class=n >load_more</span><span class=p >[</span><span class=s1 >'output'</span><span class=p >]</span><span class=o >.</span><span class=n >clear_output</span><span class=p >()</span>
+                <span class=bp >self</span><span class=o >.</span><span class=n >renderRecentlySubmittedJobs</span><span class=p >()</span>
+                <span class=bp >self</span><span class=o >.</span><span class=n >renderLoadMore</span><span class=p >()</span>
                 <span class=bp >self</span><span class=o >.</span><span class=n >download</span><span class=p >[</span><span class=s1 >'alert_output'</span><span class=p >]</span><span class=o >.</span><span class=n >clear_output</span><span class=p >(</span><span class=n >wait</span><span class=o >=</span><span class=kc >True</span><span class=p >)</span>
                 <span class=bp >self</span><span class=o >.</span><span class=n >downloading</span> <span class=o >=</span> <span class=kc >True</span>
                 <span class=bp >self</span><span class=o >.</span><span class=n >compute</span><span class=o >.</span><span class=n >job</span><span class=o >.</span><span class=n >download_result_folder</span><span class=p >(</span><span class=n >remotePath</span><span class=o >=</span><span class=bp >self</span><span class=o >.</span><span class=n >download</span><span class=p >[</span><span class=s1 >'dropdown'</span><span class=p >]</span><span class=o >.</span><span class=n >value</span><span class=p >)</span>
                 <span class=nb >print</span><span class=p >(</span><span class=s1 >'please check your data at your root folder under "'</span> <span class=o >+</span> <span class=bp >self</span><span class=o >.</span><span class=n >globus_filename</span> <span class=o >+</span> <span class=s1 >'"'</span><span class=p >)</span>
                 <span class=bp >self</span><span class=o >.</span><span class=n >compute</span><span class=o >.</span><span class=n >recentDownloadPath</span> <span class=o >=</span> <span class=n >os</span><span class=o >.</span><span class=n >path</span><span class=o >.</span><span class=n >join</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >jupyter_globus</span><span class=p >[</span><span class=s1 >'container_home_path'</span><span class=p >],</span> <span class=bp >self</span><span class=o >.</span><span class=n >globus_filename</span><span class=p >)</span>
                 <span class=bp >self</span><span class=o >.</span><span class=n >downloading</span> <span class=o >=</span> <span class=kc >False</span>
+                <span class=bp >self</span><span class=o >.</span><span class=n >refreshing</span> <span class=o >=</span> <span class=kc >False</span>
+                <span class=bp >self</span><span class=o >.</span><span class=n >recently_submitted</span><span class=p >[</span><span class=s1 >'output'</span><span class=p >]</span><span class=o >.</span><span class=n >clear_output</span><span class=p >()</span>
+                <span class=bp >self</span><span class=o >.</span><span class=n >load_more</span><span class=p >[</span><span class=s1 >'output'</span><span class=p >]</span><span class=o >.</span><span class=n >clear_output</span><span class=p >()</span>
+                <span class=bp >self</span><span class=o >.</span><span class=n >renderRecentlySubmittedJobs</span><span class=p >()</span>
+                <span class=bp >self</span><span class=o >.</span><span class=n >renderLoadMore</span><span class=p >()</span>
+
         <span class=k >return</span> <span class=n >on_click</span></div>
 
 <div class=viewcode-block  id=UI.onSubmitButtonClick ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.UI.UI.onSubmitButtonClick">[docs]</a>    <span class=k >def</span> <span class=nf >onSubmitButtonClick</span><span class=p >(</span><span class=bp >self</span><span class=p >):</span>
@@ -459,7 +522,7 @@
                     <span class=n >dataFolder</span> <span class=o >=</span> <span class=s1 >'globus://'</span> <span class=o >+</span> <span class=bp >self</span><span class=o >.</span><span class=n >jupyter_globus</span><span class=p >[</span><span class=s1 >'endpoint'</span><span class=p >]</span> <span class=o >+</span> <span class=s1 >':'</span> <span class=o >+</span> <span class=n >os</span><span class=o >.</span><span class=n >path</span><span class=o >.</span><span class=n >join</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >jupyter_globus</span><span class=p >[</span><span class=s1 >'root_path'</span><span class=p >],</span> <span class=n >dataFolder</span><span class=o >.</span><span class=n >strip</span><span class=p >(</span><span class=s1 >'/'</span><span class=p >))</span>
 
             <span class=n >data</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >get_data</span><span class=p >()</span>
-            <span class=bp >self</span><span class=o >.</span><span class=n >compute</span><span class=o >.</span><span class=n >job</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >compute</span><span class=o >.</span><span class=n >create_job</span><span class=p >(</span><span class=n >hpc</span><span class=o >=</span><span class=n >data</span><span class=p >[</span><span class=s1 >'computing_resource'</span><span class=p >],</span> <span class=n >printJob</span><span class=o >=</span><span class=kc >False</span><span class=p >)</span>
+            <span class=bp >self</span><span class=o >.</span><span class=n >compute</span><span class=o >.</span><span class=n >job</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >compute</span><span class=o >.</span><span class=n >create_job</span><span class=p >(</span><span class=n >hpc</span><span class=o >=</span><span class=n >data</span><span class=p >[</span><span class=s1 >'computing_resource'</span><span class=p >],</span> <span class=n >verbose</span><span class=o >=</span><span class=kc >False</span><span class=p >)</span>
             <span class=c1 ># slurm</span>
             <span class=n >slurm</span> <span class=o >=</span> <span class=n >data</span><span class=p >[</span><span class=s1 >'slurm'</span><span class=p >]</span>
             <span class=k >if</span> <span class=n >data</span><span class=p >[</span><span class=s1 >'email'</span><span class=p >]</span> <span class=ow >is</span> <span class=ow >not</span> <span class=kc >None</span><span class=p >:</span>
@@ -476,8 +539,11 @@
             <span class=bp >self</span><span class=o >.</span><span class=n >compute</span><span class=o >.</span><span class=n >job</span><span class=o >.</span><span class=n >submit</span><span class=p >()</span>
             <span class=bp >self</span><span class=o >.</span><span class=n >tab</span><span class=o >.</span><span class=n >selected_index</span> <span class=o >=</span> <span class=mi >1</span>
             <span class=bp >self</span><span class=o >.</span><span class=n >submitted</span> <span class=o >=</span> <span class=kc >True</span>
-            <span class=bp >self</span><span class=o >.</span><span class=n >tab</span><span class=o >.</span><span class=n >set_title</span><span class=p >(</span><span class=mi >1</span><span class=p >,</span> <span class=s1 >'⏳ Your Job Status'</span><span class=p >)</span>
+            <span class=bp >self</span><span class=o >.</span><span class=n >tab</span><span class=o >.</span><span class=n >set_title</span><span class=p >(</span><span class=mi >2</span><span class=p >,</span> <span class=s1 >'⏳ Your Job Status'</span><span class=p >)</span>
             <span class=bp >self</span><span class=o >.</span><span class=n >rerender</span><span class=p >([</span><span class=s1 >'resultStatus'</span><span class=p >,</span> <span class=s1 >'resultEvents'</span><span class=p >,</span> <span class=s1 >'resultLogs'</span><span class=p >,</span> <span class=s1 >'submit'</span><span class=p >])</span>
+            <span class=bp >self</span><span class=o >.</span><span class=n >recently_submitted</span><span class=p >[</span><span class=s1 >'output'</span><span class=p >]</span><span class=o >.</span><span class=n >clear_output</span><span class=p >()</span>
+            <span class=bp >self</span><span class=o >.</span><span class=n >load_more</span><span class=p >[</span><span class=s1 >'output'</span><span class=p >]</span><span class=o >.</span><span class=n >clear_output</span><span class=p >()</span>
+            <span class=bp >self</span><span class=o >.</span><span class=n >renderRecentlySubmittedJobs</span><span class=p >()</span>
         <span class=k >return</span> <span class=n >on_click</span></div>
 
 <div class=viewcode-block  id=UI.onJobDropdownChange ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.UI.UI.onJobDropdownChange">[docs]</a>    <span class=k >def</span> <span class=nf >onJobDropdownChange</span><span class=p >(</span><span class=bp >self</span><span class=p >):</span>
@@ -508,6 +574,38 @@
                 <span class=bp >self</span><span class=o >.</span><span class=n >rerender</span><span class=p >([</span><span class=s1 >'description'</span><span class=p >,</span> <span class=s1 >'slurm'</span><span class=p >,</span> <span class=s1 >'param'</span><span class=p >,</span> <span class=s1 >'uploadData'</span><span class=p >])</span>
         <span class=k >return</span> <span class=n >on_change</span></div>
 
+<div class=viewcode-block  id=UI.onLoadMoreClick ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.UI.UI.onLoadMoreClick">[docs]</a>    <span class=k >def</span> <span class=nf >onLoadMoreClick</span><span class=p >(</span><span class=bp >self</span><span class=p >):</span>
+        <span class=k >def</span> <span class=nf >on_click</span><span class=p >(</span><span class=n >change</span><span class=p >):</span>
+            <span class=sd >"""</span>
+<span class=sd >            Increase the number of recently submitted jobs being displayed by five and rerender teh recently subsmitted and load more attributes.</span>
+<span class=sd >            """</span>
+            <span class=bp >self</span><span class=o >.</span><span class=n >recently_submitted</span><span class=p >[</span><span class=s1 >'job_list_size'</span><span class=p >]</span> <span class=o >+=</span> <span class=mi >5</span>
+            <span class=bp >self</span><span class=o >.</span><span class=n >recently_submitted</span><span class=p >[</span><span class=s1 >'output'</span><span class=p >]</span><span class=o >.</span><span class=n >clear_output</span><span class=p >()</span>
+            <span class=bp >self</span><span class=o >.</span><span class=n >load_more</span><span class=p >[</span><span class=s1 >'output'</span><span class=p >]</span><span class=o >.</span><span class=n >clear_output</span><span class=p >()</span>
+            <span class=bp >self</span><span class=o >.</span><span class=n >renderRecentlySubmittedJobs</span><span class=p >()</span>
+            <span class=bp >self</span><span class=o >.</span><span class=n >renderLoadMore</span><span class=p >()</span>
+        <span class=k >return</span> <span class=n >on_click</span></div>
+
+<div class=viewcode-block  id=UI.onJobEntryButtonClick ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.UI.UI.onJobEntryButtonClick">[docs]</a>    <span class=k >def</span> <span class=nf >onJobEntryButtonClick</span><span class=p >(</span><span class=bp >self</span><span class=p >,</span> <span class=n >job_id</span><span class=p >):</span>
+        <span class=k >def</span> <span class=nf >on_click</span><span class=p >(</span><span class=n >change</span><span class=p >):</span>
+            <span class=sd >"""</span>
+<span class=sd >            When the restore job button is pressed, restore the state of the UI to when that job was just submitted so the user can read logs and download data.</span>
+<span class=sd >            """</span>
+            <span class=n >job</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >compute</span><span class=o >.</span><span class=n >get_job_by_id</span><span class=p >(</span><span class=n >job_id</span><span class=p >,</span> <span class=n >verbose</span><span class=o >=</span><span class=kc >False</span><span class=p >)</span>
+            <span class=bp >self</span><span class=o >.</span><span class=n >compute</span><span class=o >.</span><span class=n >job</span> <span class=o >=</span> <span class=n >job</span>
+            <span class=bp >self</span><span class=o >.</span><span class=n >jupyter_globus</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >compute</span><span class=o >.</span><span class=n >get_user_jupyter_globus</span><span class=p >()</span>
+            <span class=bp >self</span><span class=o >.</span><span class=n >globus_filename</span> <span class=o >=</span> <span class=s1 >'globus_download_'</span> <span class=o >+</span> <span class=bp >self</span><span class=o >.</span><span class=n >compute</span><span class=o >.</span><span class=n >job</span><span class=o >.</span><span class=n >id</span>
+            <span class=bp >self</span><span class=o >.</span><span class=n >tab</span><span class=o >.</span><span class=n >selected_index</span> <span class=o >=</span> <span class=mi >1</span>
+            <span class=bp >self</span><span class=o >.</span><span class=n >submitted</span> <span class=o >=</span> <span class=kc >True</span>
+            <span class=bp >self</span><span class=o >.</span><span class=n >tab</span><span class=o >.</span><span class=n >set_title</span><span class=p >(</span><span class=mi >2</span><span class=p >,</span> <span class=s1 >'⏳ Your Job Status'</span><span class=p >)</span>
+            <span class=bp >self</span><span class=o >.</span><span class=n >rerender</span><span class=p >([</span><span class=s1 >'resultStatus'</span><span class=p >,</span> <span class=s1 >'resultEvents'</span><span class=p >,</span> <span class=s1 >'resultLogs'</span><span class=p >,</span> <span class=s1 >'submit'</span><span class=p >])</span>
+            <span class=bp >self</span><span class=o >.</span><span class=n >refreshing</span> <span class=o >=</span> <span class=kc >False</span>
+            <span class=bp >self</span><span class=o >.</span><span class=n >recently_submitted</span><span class=p >[</span><span class=s1 >'output'</span><span class=p >]</span><span class=o >.</span><span class=n >clear_output</span><span class=p >()</span>
+            <span class=bp >self</span><span class=o >.</span><span class=n >load_more</span><span class=p >[</span><span class=s1 >'output'</span><span class=p >]</span><span class=o >.</span><span class=n >clear_output</span><span class=p >()</span>
+            <span class=bp >self</span><span class=o >.</span><span class=n >renderRecentlySubmittedJobs</span><span class=p >()</span>
+            <span class=bp >self</span><span class=o >.</span><span class=n >renderLoadMore</span><span class=p >()</span>
+        <span class=k >return</span> <span class=n >on_click</span></div>
+
     <span class=c1 ># helpers</span>
 <div class=viewcode-block  id=UI.init ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.UI.UI.init">[docs]</a>    <span class=k >def</span> <span class=nf >init</span><span class=p >(</span><span class=bp >self</span><span class=p >):</span>
         <span class=sd >"""</span>
@@ -523,6 +621,7 @@
         <span class=bp >self</span><span class=o >.</span><span class=n >submitted</span> <span class=o >=</span> <span class=kc >False</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >jobFinished</span> <span class=o >=</span> <span class=kc >False</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >downloading</span> <span class=o >=</span> <span class=kc >False</span>
+        <span class=bp >self</span><span class=o >.</span><span class=n >refreshing</span> <span class=o >=</span> <span class=kc >False</span>
         <span class=c1 ># components</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >jobTemplate</span> <span class=o >=</span> <span class=p >{</span><span class=s1 >'output'</span><span class=p >:</span> <span class=kc >None</span><span class=p >}</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >description</span> <span class=o >=</span> <span class=p >{</span><span class=s1 >'output'</span><span class=p >:</span> <span class=kc >None</span><span class=p >}</span>
@@ -536,6 +635,8 @@
         <span class=bp >self</span><span class=o >.</span><span class=n >resultEvents</span> <span class=o >=</span> <span class=p >{</span><span class=s1 >'output'</span><span class=p >:</span> <span class=kc >None</span><span class=p >}</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >resultLogs</span> <span class=o >=</span> <span class=p >{</span><span class=s1 >'output'</span><span class=p >:</span> <span class=kc >None</span><span class=p >}</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >download</span> <span class=o >=</span> <span class=p >{</span><span class=s1 >'output'</span><span class=p >:</span> <span class=kc >None</span><span class=p >,</span> <span class=s1 >'alert_output'</span><span class=p >:</span> <span class=kc >None</span><span class=p >,</span> <span class=s1 >'result_output'</span><span class=p >:</span> <span class=kc >None</span><span class=p >}</span>
+        <span class=bp >self</span><span class=o >.</span><span class=n >recently_submitted</span> <span class=o >=</span> <span class=p >{</span><span class=s1 >'output'</span><span class=p >:</span> <span class=kc >None</span><span class=p >,</span> <span class=s1 >'submit'</span><span class=p >:</span> <span class=p >{},</span> <span class=s1 >'job_list_size'</span><span class=p >:</span> <span class=mi >5</span><span class=p >,</span> <span class=s1 >'load_more'</span><span class=p >:</span> <span class=kc >None</span><span class=p >}</span>
+        <span class=bp >self</span><span class=o >.</span><span class=n >load_more</span> <span class=o >=</span> <span class=p >{</span><span class=s1 >'output'</span><span class=p >:</span> <span class=kc >None</span><span class=p >,</span> <span class=s1 >'load_more'</span><span class=p >:</span> <span class=kc >None</span><span class=p >}</span>
         <span class=c1 ># main</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >tab</span> <span class=o >=</span> <span class=kc >None</span>
         <span class=c1 ># information</span>
@@ -547,6 +648,7 @@
 <div class=viewcode-block  id=UI.rerender ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.UI.UI.rerender">[docs]</a>    <span class=k >def</span> <span class=nf >rerender</span><span class=p >(</span><span class=bp >self</span><span class=p >,</span> <span class=n >components</span><span class=o >=</span><span class=p >[]):</span>
         <span class=sd >"""</span>
 <span class=sd >        Clears and renders the specified components</span>
+
 <span class=sd >        Args:</span>
 <span class=sd >            components (list): components to be rerendered</span>
 <span class=sd >        """</span>
@@ -562,7 +664,9 @@
 <div class=viewcode-block  id=UI.get_data ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.UI.UI.get_data">[docs]</a>    <span class=k >def</span> <span class=nf >get_data</span><span class=p >(</span><span class=bp >self</span><span class=p >):</span>
         <span class=sd >"""</span>
 <span class=sd >        Get data about the job submitted (template, computing resource used, slurm rules, param rules, user email)</span>
-<span class=sd >        Returns: (dict) Information about the job submitted (template, computing resource used, slurm rules, param rules, user email)</span>
+
+<span class=sd >        Returns:</span>
+<span class=sd >            (dict) Information about the job submitted (template, computing resource used, slurm rules, param rules, user email)</span>
 <span class=sd >        """</span>
         <span class=n >out</span> <span class=o >=</span> <span class=p >{</span>
             <span class=s1 >'job_template'</span><span class=p >:</span> <span class=bp >self</span><span class=o >.</span><span class=n >jobTemplate</span><span class=p >[</span><span class=s1 >'dropdown'</span><span class=p >]</span><span class=o >.</span><span class=n >value</span><span class=p >,</span>
@@ -618,6 +722,7 @@
 <div class=viewcode-block  id=UI.unitTimeToSecond ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.UI.UI.unitTimeToSecond">[docs]</a>    <span class=k >def</span> <span class=nf >unitTimeToSecond</span><span class=p >(</span><span class=bp >self</span><span class=p >,</span> <span class=n >unit</span><span class=p >,</span> <span class=n >time</span><span class=p >):</span>
         <span class=sd >"""</span>
 <span class=sd >        Helper function that turns time in a specific unit into seconds</span>
+
 <span class=sd >        Args:</span>
 <span class=sd >            unit (string): The unit of the time being passed (Minutes, Hours, or Days)</span>
 <span class=sd >            time (int): The time in that specific unit</span>
