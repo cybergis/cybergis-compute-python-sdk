@@ -70,13 +70,7 @@ class UI:
             display(self.email['output'])
             display(self.submit['output'])
 
-        # 2. job refresh
-        job_refresh = widgets.Output()
-        with job_refresh:
-            display(self.recently_submitted['output'])
-            display(self.load_more['output'])
-
-        # 3. job status
+        # 2. job status
         job_status = widgets.Output()
         with job_status:
             display(self.resultStatus['output'])
@@ -87,22 +81,28 @@ class UI:
             display(Markdown('## 📋 job logs'))
             display(self.resultLogs['output'])
 
-        # 4. download
+        # 3. download
         download = widgets.Output()
         with download:
             display(self.download['output'])
 
+        # 4. your jobs
+        job_refresh = widgets.Output()
+        with job_refresh:
+            display(self.recently_submitted['output'])
+            display(self.load_more['output'])
+
         # assemble into tabs
         self.tab = widgets.Tab(children=[
             job_config,
-            job_refresh,
             job_status,
-            download
+            download,
+            job_refresh
         ])
         self.tab.set_title(0, 'Job Configuration')
-        self.tab.set_title(1, 'Job Refresh')
-        self.tab.set_title(2, 'Your Job Status')
-        self.tab.set_title(3, 'Download Job Result')
+        self.tab.set_title(1, 'Your Job Status')
+        self.tab.set_title(2, 'Download Job Result')
+        self.tab.set_title(3, 'Your Jobs')
         display(self.tab)
 
     def renderComponents(self):
@@ -440,7 +440,10 @@ class UI:
                 job = self.compute.get_job_by_id(jobs['job'][i]['id'], verbose=False)
                 jobDetails = jobs['job'][i]
                 job._print_job(jobDetails)
-                self.recently_submitted['submit'][jobs['job'][i]['id']] = widgets.Button(description="Restore")
+                if self.refreshing:
+                    self.recently_submitted['submit'][jobs['job'][i]['id']] = widgets.Button(description="🔁 Loading", disabled=True)
+                else:
+                    self.recently_submitted['submit'][jobs['job'][i]['id']] = widgets.Button(description="Restore")
                 display(self.recently_submitted['submit'][jobDetails['id']])
         for i in self.recently_submitted['submit'].keys():
             self.recently_submitted['submit'][i].on_click(self.onJobEntryButtonClick(i))
@@ -453,7 +456,10 @@ class UI:
             self.load_more['output'] = widgets.Output()
             self.load_more['load_more'] = widgets.Button(description="Load More")
         with self.load_more['output']:
-            self.load_more['load_more'] = widgets.Button(description="Load More")
+            if self.refreshing:
+                self.load_more['load_more'] = widgets.Button(description="🔁 Loading", disabled=True)
+            else:
+                self.load_more['load_more'] = widgets.Button(description="Load More")
             display(self.load_more['load_more'])
         self.load_more['load_more'].on_click(self.onLoadMoreClick())
 
@@ -464,18 +470,31 @@ class UI:
             Download the output data to the specified path and display the location.
             """
             if self.downloading:
+
                 self.download['alert_output'].clear_output(wait=True)
+
                 with self.download['alert_output']:
                     display(Markdown('⚠️ download process is running in background...'))
                     return
 
             with self.download['result_output']:
+                self.refreshing = True
+                self.recently_submitted['output'].clear_output()
+                self.load_more['output'].clear_output()
+                self.renderRecentlySubmittedJobs()
+                self.renderLoadMore()
                 self.download['alert_output'].clear_output(wait=True)
                 self.downloading = True
                 self.compute.job.download_result_folder(remotePath=self.download['dropdown'].value)
                 print('please check your data at your root folder under "' + self.globus_filename + '"')
                 self.compute.recentDownloadPath = os.path.join(self.jupyter_globus['container_home_path'], self.globus_filename)
                 self.downloading = False
+                self.refreshing = False
+                self.recently_submitted['output'].clear_output()
+                self.load_more['output'].clear_output()
+                self.renderRecentlySubmittedJobs()
+                self.renderLoadMore()
+
         return on_click
 
     def onSubmitButtonClick(self):
@@ -517,10 +536,12 @@ class UI:
             # submit
             self.compute.job.set(executableFolder='git://' + data['job_template'], dataFolder=dataFolder, resultFolder=resultFolder, printJob=False, param=param, slurm=slurm)
             self.compute.job.submit()
-            self.tab.selected_index = 2
+            self.tab.selected_index = 1
             self.submitted = True
             self.tab.set_title(2, '⏳ Your Job Status')
             self.rerender(['resultStatus', 'resultEvents', 'resultLogs', 'submit'])
+            self.recently_submitted['output'].clear_output()
+            self.load_more['output'].clear_output()
             self.renderRecentlySubmittedJobs()
         return on_click
 
@@ -573,10 +594,11 @@ class UI:
             self.compute.job = job
             self.jupyter_globus = self.compute.get_user_jupyter_globus()
             self.globus_filename = 'globus_download_' + self.compute.job.id
-            self.tab.selected_index = 2
+            self.tab.selected_index = 1
             self.submitted = True
             self.tab.set_title(2, '⏳ Your Job Status')
             self.rerender(['resultStatus', 'resultEvents', 'resultLogs', 'submit'])
+            self.refreshing = False
             self.recently_submitted['output'].clear_output()
             self.load_more['output'].clear_output()
             self.renderRecentlySubmittedJobs()
@@ -598,6 +620,7 @@ class UI:
         self.submitted = False
         self.jobFinished = False
         self.downloading = False
+        self.refreshing = False
         # components
         self.jobTemplate = {'output': None}
         self.description = {'output': None}
