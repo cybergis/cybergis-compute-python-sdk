@@ -2,7 +2,6 @@
 This module exposes CyberGISCompute class which creates a CyberGISCompute
 object that serves as an entry point to the CyberGISX environment from a Python/Jupyter notebook.
 All interactions with the High Performance Computing (HPC) backend are performed using this object.
-
 Example:
         cybergis = CyberGISCompute(url='localhost', port='3030', protocol='HTTP', isJupyter=False)
 """
@@ -42,6 +41,19 @@ class CyberGISCompute:
     job = None
 
     def __init__(self, url="cgjobsup.cigi.illinois.edu", port=443, protocol='HTTPS', suffix="", isJupyter=True):
+        """
+        Initializes instance CyberGISCompute using inputs from the client
+
+        Args:
+            url (str)               : url that needs to be accessed
+            port (str)              : port of the Jupyter or Python interface
+            protocol (str)          : Typically HTTP or HTTPS
+            suffix (str)            : specify version. For e.g v2
+            isJupyter(booleans)     : set to True if you are using Jupyter environment
+
+        Returns:
+            (obj)                   : this CyberGISCompute
+        """
         self.client = Client(url=url, protocol=protocol, port=port, suffix=suffix)
         self.jupyterhubApiToken = None
         self.username = None
@@ -53,7 +65,7 @@ class CyberGISCompute:
         self.job = None
         self.recentDownloadPath = None
 
-    def login(self, manualLogin=True):
+    def login(self, manualLogin=True, verbose=True):
         """
         Authenticates the client's jupyterhubApiToken and gives them access
         to CyberGISCompute features
@@ -61,11 +73,13 @@ class CyberGISCompute:
         Args:
             manualLogin (boolean) : set to True if env variable and file login modes are not available
 
-        Returns :
+        Returns:
+
             None
         """
         if self.jupyterhubApiToken is not None:
-            print('🎯 Logged in as ' + self.username)
+            if verbose:
+                print('🎯 Logged in as ' + self.username)
             return
 
         # login via env variable
@@ -118,7 +132,7 @@ class CyberGISCompute:
         else:
             print('❌ Not logged in. To enable more features, use .login()')
 
-    def create_job(self, maintainer='community_contribution', hpc=None, hpcUsername=None, hpcPassword=None, printJob=True):
+    def create_job(self, maintainer='community_contribution', hpc=None, hpcUsername=None, hpcPassword=None, verbose=True):
         """
         Creates a job object
         Initializes instance CyberGISCompute using inputs from the client
@@ -135,9 +149,9 @@ class CyberGISCompute:
             Job : The new job instance that was initialized
         """
         self.login()
-        return Job(maintainer=maintainer, hpc=hpc, id=None, hpcUsername=hpcUsername, hpcPassword=hpcPassword, client=self.client, isJupyter=self.isJupyter, jupyterhubApiToken=self.jupyterhubApiToken, printJob=printJob)
+        return Job(maintainer=maintainer, hpc=hpc, id=None, hpcUsername=hpcUsername, hpcPassword=hpcPassword, client=self.client, isJupyter=self.isJupyter, jupyterhubApiToken=self.jupyterhubApiToken, printJob=verbose)
 
-    def get_job_by_id(self, id=None):
+    def get_job_by_id(self, id=None, verbose=True):
         """
         Returns Job object with the specified id
 
@@ -147,7 +161,7 @@ class CyberGISCompute:
         Returns
             Job : Job object with the specified id otherwise None
         """
-        self.login()
+        self.login(verbose=False)
         jobs = self.client.request('GET', '/user/job', {"jupyterhubApiToken": self.jupyterhubApiToken})
         token = None
         for job in jobs['job']:
@@ -155,7 +169,7 @@ class CyberGISCompute:
                 token = job['secretToken']
         if (token is None):
             print('❌ job with id ' + id + ' was not found')
-        return Job(secretToken=token, client=self.client, id=id, isJupyter=self.isJupyter, jupyterhubApiToken=self.jupyterhubApiToken)
+        return Job(secretToken=token, client=self.client, id=id, isJupyter=self.isJupyter, jupyterhubApiToken=self.jupyterhubApiToken, printJob=verbose)
 
     def get_slurm_usage(self, raw=False):
         """
@@ -456,13 +470,24 @@ class CyberGISCompute:
             defaultRemoteResultFolder=None):
         """
         Displays the job submission UI
+        Args:
+            defaultJob (str)                      : Stores the default job that shows up on the UI
+            defaultDataFolder (str)               : Stores the default input folder that shows up on the UI
+            defaultRemoteResultFolder (str)       : Stores the default output folder that shows up on the UI
+
+        Returns:
+            None
+        """
+        self.show_ui(defaultJob, defaultDataFolder, defaultRemoteResultFolder)
+
+    def show_ui(self, defaultJob="hello_world", defaultDataFolder="./", defaultRemoteResultFolder=None):
+        """
+        Displays the job submission UI
 
         Args:
-            defaultJob (str) : Stores the default job that shows up on the UI
-            defaultDataFolder (str) : Stores the default input folder
-            that shows up on the UI
-            defaultRemoteResultFolder (str) : Stores the default output
-            folder that shows up on the UI
+            defaultJob (str)                      : Stores the default job that shows up on the UI
+            defaultDataFolder (str)               : Stores the default input folder that shows up on the UI
+            defaultRemoteResultFolder (str)       : Stores the default output folder that shows up on the UI
 
         Returns:
             None
