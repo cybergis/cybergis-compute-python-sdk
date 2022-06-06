@@ -74,7 +74,6 @@ class CyberGISCompute:
             manualLogin (boolean) : set to True if env variable and file login modes are not available
 
         Returns:
-
             None
         """
         if self.jupyterhubApiToken is not None:

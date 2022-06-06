@@ -19,7 +19,6 @@ class Zip(object):
 
     Args:
         None
-
     Attributes:
         in_memory_zip: A BytesIO in-memory file
     """
