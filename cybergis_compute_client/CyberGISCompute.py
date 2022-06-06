@@ -7,9 +7,9 @@ Example:
         cybergis = CyberGISCompute(url='localhost', port='3030', protocol='HTTP', isJupyter=False)
 """
 
-from .Client import *
-from .Job import *
-from .UI import *
+from .Client import Client
+from .Job import Job
+from .UI import UI, tabulate, HTML, json
 import base64
 import os
 from IPython.display import display, Markdown, Javascript
@@ -165,14 +165,26 @@ class CyberGISCompute:
             raw(boolean) : set to True if you want the raw output
 
         Returns
-            JSON : Raw output if raw=True otherwise its printed or displayed directly into the interface
+            JSON : Raw output if raw=True otherwise its printed
+            or displayed directly into the interface
         """
         self.login()
-        usage = self.client.request('GET', '/user/slurm-usage?format={}'.format(not raw), {"jupyterhubApiToken": self.jupyterhubApiToken})
+        usage = self.client.request(
+            'GET', '/user/slurm-usage?format={}'.format(not raw), {
+                "jupyterhubApiToken": self.jupyterhubApiToken})
         if raw:
             return usage
-        display(Markdown("Nodes: {}<br>Allocated CPUs: {}<br>Total CPU Time: {}<br>Memory Utilized: {}<br>Total Allocated Memory: {}<br>Total Walltime: {}".format(
-            usage['nodes'], usage['cpus'], usage['cpuTime'], usage['memory'], usage['memoryUsage'], usage['walltime'])))
+        display(
+            Markdown(
+                "Nodes: {}<br>Allocated CPUs: {}<br>Total CPU Time: "//
+                "{}<br>Memory Utilized: {}<br>Total Allocated Memory: "//
+                "{}<br>Total Walltime: {}".format(usage[
+                    'nodes'], usage[
+                        'cpus'], usage[
+                            'cpuTime'], usage[
+                                'memory'], usage[
+                                    'memoryUsage'], usage[
+                                        'walltime'])))
 
     def list_job(self, raw=False):
         """
@@ -182,17 +194,23 @@ class CyberGISCompute:
             raw (boolean) : set to True if you want the raw output
 
         Returns
-            JSON : Raw output if raw=True otherwise its printed or displayed into the interface
+            JSON : Raw output if raw=True otherwise its printed
+            or displayed into the interface
         """
         self.login()
         if self.jupyterhubApiToken is None:
             print('❌ please login')
 
-        jobs = self.client.request('GET', '/user/job', {"jupyterhubApiToken": self.jupyterhubApiToken})
+        jobs = self.client.request(
+            'GET', '/user/job', {
+                "jupyterhubApiToken": self.jupyterhubApiToken})
         if raw:
             return jobs
 
-        headers = ['id', 'hpc', 'executableFolder', 'dataFolder', 'resultFolder', 'param', 'slurm', 'userId', 'maintainer', 'createdAt']
+        headers = [
+            'id', 'hpc', 'executableFolder', 'dataFolder',
+            'resultFolder', 'param', 'slurm', 'userId',
+            'maintainer', 'createdAt']
         data = []
         for job in jobs['job']:
             data.append([
@@ -212,7 +230,14 @@ class CyberGISCompute:
             if len(data) == 0:
                 print('empty')
                 return
-            display(HTML(tabulate(data, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', '<td style="text-align:left">').replace('<th>', '<th style="text-align:left">')))
+            display(
+                HTML(
+                    tabulate(
+                        data, headers, numalign='left',
+                        stralign='left', colalign=('left', 'left'),
+                        tablefmt='html').replace(
+                            '<td>', '<td style="text-align:left">').replace(
+                                '<th>', '<th style="text-align:left">')))
         else:
             print(tabulate(data, headers, tablefmt="presto"))
 
@@ -222,9 +247,10 @@ class CyberGISCompute:
 
         Args:
             raw (boolean) : set to True if you want the raw output
-        
+
         Returns
-            JSON : Raw output if raw=True otherwise its printed or displayed directly into the interface
+            JSON : Raw output if raw=True otherwise its printed
+            or displayed directly into the interface
         """
         hpc = self.client.request('GET', '/hpc')['hpc']
         if raw:
@@ -245,7 +271,14 @@ class CyberGISCompute:
             if len(data) == 0:
                 print('empty')
                 return
-            display(HTML(tabulate(data, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', '<td style="text-align:left">').replace('<th>', '<th style="text-align:left">')))
+            display(
+                HTML(
+                    tabulate(
+                        data, headers, numalign='left',
+                        stralign='left', colalign=('left', 'left'),
+                        tablefmt='html').replace(
+                            '<td>', '<td style="text-align:left">').replace(
+                                '<th>', '<th style="text-align:left">')))
         else:
             print(tabulate(data, headers, tablefmt="presto"))
 
@@ -255,9 +288,10 @@ class CyberGISCompute:
 
         Args:
             raw (boolean) : set to True if you want the raw output
-        
+
         Returns
-            JSON : Raw output if raw=True otherwise its printed or displayed directly into the interface
+            JSON : Raw output if raw=True otherwise its
+            printed or displayed directly into the interface
         """
         container = self.client.request('GET', '/container')['container']
         if raw:
@@ -277,7 +311,14 @@ class CyberGISCompute:
             if len(data) == 0:
                 print('empty')
                 return
-            display(HTML(tabulate(data, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', '<td style="text-align:left">').replace('<th>', '<th style="text-align:left">')))
+            display(
+                HTML(
+                    tabulate(
+                        data, headers, numalign='left',
+                        stralign='left', colalign=('left', 'left'),
+                        tablefmt='html').replace(
+                            '<td>', '<td style="text-align:left">').replace(
+                                '<th>', '<th style="text-align:left">')))
         else:
             print(tabulate(data, headers, tablefmt="presto"))
 
@@ -287,9 +328,10 @@ class CyberGISCompute:
 
         Args:
             raw (boolean) : set to True if you want the raw output
-        
+
         Returns
-            JSON : Raw output if raw=True otherwise its printed or displayed directly into the interface
+            JSON : Raw output if raw=True otherwise its
+            printed or displayed directly into the interface
         """
         git = self.client.request('GET', '/git')['git']
         if raw:
@@ -311,7 +353,14 @@ class CyberGISCompute:
             if len(data) == 0:
                 print('empty')
                 return
-            display(HTML(tabulate(data, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', '<td style="text-align:left">').replace('<th>', '<th style="text-align:left">')))
+            display(
+                HTML(
+                    tabulate(
+                        data, headers, numalign='left',
+                        stralign='left', colalign=('left', 'left'),
+                        tablefmt='html').replace(
+                            '<td>', '<td style="text-align:left">').replace(
+                                '<th>', '<th style="text-align:left">')))
         else:
             print(tabulate(data, headers, tablefmt="presto"))
 
@@ -321,15 +370,19 @@ class CyberGISCompute:
 
         Args:
             raw (boolean) : set to True if you want the raw output
-        
+
         Returns
-            JSON : Raw output if raw=True otherwise its printed or displayed directly into the interface
+            JSON : Raw output if raw=True otherwise its printed
+            or displayed directly into the interface
         """
         maintainers = self.client.request('GET', '/maintainer')['maintainer']
         if raw:
             return maintainers
 
-        headers = ['maintainer', 'hpc', 'default_hpc', 'job_pool_capacity', 'executable_folder->from_user', 'executable_folder->must_have']
+        headers = [
+            'maintainer', 'hpc', 'default_hpc',
+            'job_pool_capacity', 'executable_folder->from_user',
+            'executable_folder->must_have']
         data = []
 
         for i in maintainers:
@@ -342,8 +395,13 @@ class CyberGISCompute:
             must_have = 'not specified'
             if 'executable_folder' in maintainer:
                 if 'file_config' in maintainer['executable_folder']:
-                    if 'must_have' in maintainer['executable_folder']['file_config']:
-                        must_have = maintainer['executable_folder']['file_config']['must_have']
+                    if 'must_have' in maintainer[
+                        'executable_folder'][
+                            'file_config']:
+                        must_have = maintainer[
+                            'executable_folder'][
+                                'file_config'][
+                                    'must_have']
 
             data.append([
                 i,
@@ -358,19 +416,28 @@ class CyberGISCompute:
             if len(data) == 0:
                 print('empty')
                 return
-            display(HTML(tabulate(data, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', '<td style="text-align:left">').replace('<th>', '<th style="text-align:left">')))
+            display(
+                HTML(
+                    tabulate(
+                        data, headers, numalign='left', stralign='left',
+                        colalign=('left', 'left'), tablefmt='html').replace(
+                            '<td>', '<td style="text-align:left">').replace(
+                                '<th>', '<th style="text-align:left">')))
         else:
             print(tabulate(data, headers, tablefmt="presto"))
 
     # Integrated functions
     def list_info(self, list_maintainer=False, list_container=False):
         """
-        Calls list_git, list_hpc, list_job with options to call list_maintainer and list_container
+        Calls list_git, list_hpc, list_job with options to call
+        list_maintainer and list_container
 
         Args:
-            list_maintainer (boolean) : set to True if you want to call list_maintainer
-            list_container (boolean) : set to True of you want to call list
-        
+            list_maintainer (boolean) : set to True if you want to
+            call list_maintainer
+            list_container (boolean) : set to True of you want to
+            call list
+
         Returns
             None
         """
@@ -390,22 +457,30 @@ class CyberGISCompute:
             print('🤖 Maintainers:')
             self.list_maintainer()
 
-    def create_job_by_ui(self, defaultJob="hello_world", defaultDataFolder="./", defaultRemoteResultFolder=None):
+    def create_job_by_ui(
+        self,
+            defaultJob="hello_world",
+            defaultDataFolder="./",
+            defaultRemoteResultFolder=None):
         """
         Displays the job submission UI
 
         Args:
             defaultJob (str) : Stores the default job that shows up on the UI
-            defaultDataFolder (str) : Stores the default input folder that shows up on the UI
-            defaultRemoteResultFolder (str) : Stores the default output folder that shows up on the UI
-        
+            defaultDataFolder (str) : Stores the default input folder
+            that shows up on the UI
+            defaultRemoteResultFolder (str) : Stores the default output
+            folder that shows up on the UI
+
         Returns:
             None
         """
         self.ui.defaultJobName = defaultJob
         self.ui.defaultDataFolder = defaultDataFolder
-        if defaultRemoteResultFolder is not None:
-            self.ui.defaultRemoteResultFolder = defaultRemoteResultFolder if defaultRemoteResultFolder[0] == '/' else '/' + defaultRemoteResultFolder
+        df = defaultRemoteResultFolder
+        if df is not None:
+            self.ui.defaultRemoteResultFolder = df if df[0] == '/' else '/'
+            + df
         self.ui.render()
 
     def get_latest_created_job(self):
@@ -414,7 +489,7 @@ class CyberGISCompute:
 
         Args:
            None
-       
+
         Returns:
             JOB : Latest Job object instance
         """
@@ -427,7 +502,7 @@ class CyberGISCompute:
 
         Args:
            None
-        
+
         Returns:
             None
         """
@@ -435,9 +510,15 @@ class CyberGISCompute:
         # get jupyter variable
         url = os.getenv('JUPYTER_INSTANCE_URL')
         if url is not None:
-            CyberGISCompute.jupyterhubHost = url.replace('https://', '').replace('http://', '')
+            CyberGISCompute.jupyterhubHost = url.replace(
+                'https://', '').replace(
+                    'http://', '')
         else:
-            display(Javascript('IPython.notebook.kernel.execute(`CyberGISCompute.jupyterhubHost = "${window.location.host}"`);'))
+            display(
+                Javascript(
+                    'IPython.notebook.kernel.execute('
+                    + '`CyberGISCompute.jupyterhubHost'
+                    + '= "${window.location.host}"`);'))
 
     def get_user_jupyter_globus(self):
         """
@@ -445,11 +526,13 @@ class CyberGISCompute:
 
         Args:
            None
-        
+
         Returns:
              JOB : Latest Job object instance
         """
-        return self.client.request('GET', '/user/jupyter-globus', {"jupyterhubApiToken": self.jupyterhubApiToken})
+        return self.client.request(
+            'GET', '/user/jupyter-globus', {
+                "jupyterhubApiToken": self.jupyterhubApiToken})
 
     def is_login(self):
         """
@@ -457,7 +540,7 @@ class CyberGISCompute:
 
         Args:
            None
-        
+
         Returns:
             boolean : jupyterhubAPI existence check
         """

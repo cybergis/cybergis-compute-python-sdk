@@ -18,40 +18,66 @@ class UI:
         jobs (list): Jobs being managed currently
         hpcs (list): HPCs the jobs are being submitted to
         defaultJobName (string): Name that jobs are given by default
-        defaultRemoteResultFolder (string): Default remote location that results are saved to.
+        defaultRemoteResultFolder (string): Default remote location
+        that results are saved to.
         defaultDataFolder (string): Default folder that data will be saved to
         slurm_configs (list): Default configurations for slurm
-        slurm_integer_configs (list): Slurm configurations that can be stored as integers
-        slurm_integer_storage_unit_config (list): Slurm configurations related to storage
-        slurm_integer_time_unit_config (list): Slurm configurations related to time units
-        slurm_integer_none_unit_config (list): Slurm configurations related to units other than time
-        slurm_string_option_configs (list): Slurm configurations for string operations
-        globus_filename (string): Output filename submitted to Globus (set when entered by the user)
-        jupyter_globus (dict): Information about where the output data will be stored (container_home_path, endpoint, root_path)
+        slurm_integer_configs (list): Slurm configurations that can
+        be stored as integers
+        slurm_integer_storage_unit_config (list): Slurm configurations
+        related to storage
+        slurm_integer_time_unit_config (list): Slurm configurations
+        related to time units
+        slurm_integer_none_unit_config (list): Slurm configurations
+        related to units other than time
+        slurm_string_option_configs (list): Slurm configurations
+        for string operations
+        globus_filename (string): Output filename submitted to
+        Globus (set when entered by the user)
+        jupyter_globus (dict): Information about where the output data will be
+        stored (container_home_path, endpoint, root_path)
     """
-    def __init__(self, compute, defaultJobName="hello_world", defaultDataFolder="./", defaultRemoteResultFolder=None):
+    def __init__(
+        self,
+            compute,
+            defaultJobName="hello_world",
+            defaultDataFolder="./",
+            defaultRemoteResultFolder=None):
         self.compute = compute
         self.style = {'description_width': 'auto'}
         self.layout = widgets.Layout(width='60%')
         self.jobs = None
         self.hpcs = None
         self.defaultJobName = defaultJobName
-        if defaultRemoteResultFolder is not None:
-            self.defaultRemoteResultFolder = defaultRemoteResultFolder if defaultRemoteResultFolder[0] == '/' else '/' + defaultRemoteResultFolder
+        df = defaultRemoteResultFolder
+        if df is not None:
+            self.defaultRemoteResultFolder = df if df[
+                0] == '/' else '/' + df
         self.defaultDataFolder = defaultDataFolder
         # slurm configs
-        self.slurm_configs = ['num_of_node', 'num_of_task', 'time', 'cpu_per_task', 'memory_per_cpu', 'memory_per_gpu', 'memory', 'gpus', 'gpus_per_node', 'gpus_per_socket', 'gpus_per_task', 'partition']
-        self.slurm_integer_configs = ['num_of_node', 'num_of_task', 'time', 'cpu_per_task', 'memory_per_cpu', 'memory_per_gpu', 'memory', 'gpus', 'gpus_per_node', 'gpus_per_socket', 'gpus_per_task']
-        self.slurm_integer_storage_unit_config = ['memory_per_cpu', 'memory_per_gpu', 'memory']
+        self.slurm_configs = [
+            'num_of_node', 'num_of_task', 'time',
+            'cpu_per_task', 'memory_per_cpu', 'memory_per_gpu',
+            'memory', 'gpus', 'gpus_per_node', 'gpus_per_socket',
+            'gpus_per_task', 'partition']
+        self.slurm_integer_configs = [
+            'num_of_node', 'num_of_task', 'time', 'cpu_per_task',
+            'memory_per_cpu', 'memory_per_gpu', 'memory', 'gpus',
+            'gpus_per_node', 'gpus_per_socket', 'gpus_per_task']
+        self.slurm_integer_storage_unit_config = [
+            'memory_per_cpu', 'memory_per_gpu', 'memory']
         self.slurm_integer_time_unit_config = ['time']
-        self.slurm_integer_none_unit_config = ['cpu_per_task', 'num_of_node', 'num_of_task', 'gpus', 'gpus_per_node', 'gpus_per_socket', 'gpus_per_task']
+        self.slurm_integer_none_unit_config = [
+            'cpu_per_task', 'num_of_node', 'num_of_task', 'gpus',
+            'gpus_per_node', 'gpus_per_socket', 'gpus_per_task']
         self.slurm_string_option_configs = ['partition']
         self.globus_filename = None
         self.jupyter_globus = None
 
     def render(self):
         """
-        Render main UI by initializing, rendering, and displaying each component
+        Render main UI by initializing, rendering,
+        and displaying each component
         """
         self.init()
         self.renderComponents()
@@ -61,7 +87,11 @@ class UI:
         job_config = widgets.Output()
         with job_config:
             display(Markdown('# Welcome to CyberGIS-Compute'))
-            display(Markdown('A scalable middleware framework for enabling high-performance and data-intensive geospatial research and education on CyberGIS-Jupyter'))
+            display(
+                Markdown(
+                    'A scalable middleware framework for enabling'
+                    + 'high-performance and data-intensive geospatial'
+                    + 'research and education on CyberGIS-Jupyter'))
             display(divider)
             display(self.jobTemplate['output'])
             display(self.description['output'])
@@ -119,29 +149,43 @@ class UI:
     # components
     def renderJobTemplate(self):
         """
-        Display a dropdown of jobs to run. Update jobTemplate when the dropdown changes.
+        Display a dropdown of jobs to run.
+        Update jobTemplate when the dropdown changes.
         """
         if self.jobTemplate['output'] is None:
 
             self.jobTemplate['output'] = widgets.Output()
         # create components
-        self.jobTemplate['dropdown'] = widgets.Dropdown(options=[i for i in self.jobs], value=self.jobName, description='📦 Job Templates:', style=self.style, layout=self.layout)
+        self.jobTemplate['dropdown'] = widgets.Dropdown(
+            options=[i for i in self.jobs], value=self.jobName,
+            description='📦 Job Templates:',
+            style=self.style,
+            layout=self.layout)
         self.jobTemplate['dropdown'].observe(self.onJobDropdownChange())
         with self.jobTemplate['output']:
             display(self.jobTemplate['dropdown'])
 
     def renderDescription(self):
         """
-        Display information about the job (job name, job description, HPC name, HPC description, estimated runtime)
+        Display information about the job (job name, job description,
+        HPC name, HPC description, estimated runtime)
         """
         if self.description['output'] is None:
             self.description['output'] = widgets.Output()
 
-        self.description['job_description'] = Markdown('**' + self.jobName + ' Job Description:** ' + self.job['description'])
-        self.description['computing_resource_description'] = Markdown('**' + self.hpcName + ' HPC Description**: ' + self.hpc['description'])
-        self.description['estimated_runtime'] = Markdown('**Estimated Runtime:** ' + self.job['estimated_runtime'])
+        self.description['job_description'] = Markdown(
+            '**' + self.jobName + ' Job Description:** ' + self.job[
+                'description'])
+        self.description['computing_resource_description'] = Markdown(
+            '**' + self.hpcName + ' HPC Description**: ' + self.hpc[
+                'description'])
+        self.description['estimated_runtime'] = Markdown(
+            '**Estimated Runtime:** ' + self.job['estimated_runtime'])
         with self.description['output']:
-            display(self.description['job_description'], self.description['computing_resource_description'], self.description['estimated_runtime'])
+            display(
+                self.description['job_description'],
+                self.description['computing_resource_description'],
+                self.description['estimated_runtime'])
 
     def renderComputingResource(self):
         """
@@ -150,30 +194,45 @@ class UI:
         if self.computingResource['output'] is None:
             self.computingResource['output'] = widgets.Output()
         # create components
-        self.computingResource['dropdown'] = widgets.Dropdown(options=[i for i in self.job['supported_hpc']], value=self.hpcName, description='🖥 Computing Recourse:', style=self.style, layout=self.layout)
-        self.computingResource['accordion'] = widgets.Accordion(children=(self.computingResource['dropdown'], ), selected_index=None)
-        self.computingResource['accordion'].set_title(0, 'Computing Resource')
-        self.computingResource['dropdown'].observe(self.onComputingResourceDropdownChange())
+        self.computingResource['dropdown'] = widgets.Dropdown(
+            options=[i for i in self.job['supported_hpc']],
+            value=self.hpcName,
+            description='🖥 Computing Recourse:',
+            style=self.style,
+            layout=self.layout)
+        self.computingResource['accordion'] = widgets.Accordion(
+            children=(self.computingResource['dropdown'], ),
+            selected_index=None)
+        self.computingResource['accordion'].set_title(
+            0, 'Computing Resource')
+        self.computingResource['dropdown'].observe(
+            self.onComputingResourceDropdownChange())
         with self.computingResource['output']:
             display(self.computingResource['accordion'])
 
     def renderEmail(self):
         """
-        Displays a checkbox that lets the user recieve an email on job status and input their email.
+        Displays a checkbox that lets the user recieve an email
+        on job status and input their email.
         """
         if self.email['output'] is None:
 
             self.email['output'] = widgets.Output()
         # create components
-        self.email['checkbox'] = widgets.Checkbox(description='receive email on job status? ', value=False, style=self.style)
-        self.email['text'] = widgets.Text(value='example@illinois.edu', style=self.style)
-        self.email['hbox'] = widgets.HBox([self.email['checkbox'], self.email['text']])
+        self.email['checkbox'] = widgets.Checkbox(
+            description='receive email on job status? ',
+            value=False, style=self.style)
+        self.email['text'] = widgets.Text(
+            value='example@illinois.edu', style=self.style)
+        self.email['hbox'] = widgets.HBox(
+            [self.email['checkbox'], self.email['text']])
         with self.email['output']:
             display(self.email['hbox'])
 
     def renderSlurm(self):
         """
-        Configures Slurm input rules (default value, min, m), allows the user to input custom input rules if they want.
+        Configures Slurm input rules (default value, min, m),
+        allows the user to input custom input rules if they want.
         """
         if self.slurm['output'] is None:
             self.slurm['output'] = widgets.Output()
@@ -181,7 +240,9 @@ class UI:
         if self.job['slurm_input_rules'] == {}:
             return
         # create components
-        self.slurm['description'] = widgets.Label(value='All configs are optional. Please refer to Slurm official documentation at 🔗 https://slurm.schedmd.com/sbatch.html')
+        self.slurm['description'] = widgets.Label(
+            value='All configs are optional. Please refer to Slurm official' +
+            'documentation at 🔗 https://slurm.schedmd.com/sbatch.html')
         # settings
         for i in self.slurm_configs:
             if i not in self.job['slurm_input_rules']:
@@ -231,9 +292,10 @@ class UI:
         self.slurm['accordion'] = widgets.Accordion(
             children=(
                 widgets.VBox(
-                    children=(self.slurm['description'],
-                    self.slurm['vbox'])),
-                    ), selected_index=None)
+                    children=(
+                        self.slurm['description'], self.slurm['vbox'])
+                        ),
+                        ), selected_index=None)
         self.slurm['accordion'].set_title(0, 'Slurm Computing Configurations')
         with self.slurm['output']:
             display(self.slurm['accordion'])
