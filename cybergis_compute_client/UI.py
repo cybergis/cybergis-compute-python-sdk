@@ -8,6 +8,7 @@ from IPython.display import Markdown, display, clear_output
 class UI:
     """
     UI class
+
     Attributes:
         compute: Instance of CyberGISCompute
         style (dict): Style of each widget (specifically width)
@@ -85,15 +86,23 @@ class UI:
         with download:
             display(self.download['output'])
 
+        # 4. your jobs
+        job_refresh = widgets.Output()
+        with job_refresh:
+            display(self.recently_submitted['output'])
+            display(self.load_more['output'])
+
         # assemble into tabs
         self.tab = widgets.Tab(children=[
             job_config,
             job_status,
-            download
+            download,
+            job_refresh
         ])
         self.tab.set_title(0, 'Job Configuration')
         self.tab.set_title(1, 'Your Job Status')
         self.tab.set_title(2, 'Download Job Result')
+        self.tab.set_title(3, 'Your Jobs')
         display(self.tab)
 
     def renderComponents(self):
@@ -112,6 +121,8 @@ class UI:
         self.renderResultEvents()
         self.renderResultLogs()
         self.renderDownload()
+        self.renderRecentlySubmittedJobs()
+        self.renderLoadMore()
 
     # components
     def renderJobTemplate(self):
@@ -405,13 +416,52 @@ class UI:
             return
         with self.resultLogs['output']:
             self.compute.job.logs()
-            self.tab.set_title(1, '✅ Your Job Status')
+            self.tab.set_title(0, '✅ Your Job Status')
             self.tab.set_title(2, '✅ Download Job Result')
             display(Markdown('***'))
             display(Markdown('## ✅ your job completed'))
             self.jobFinished = True
             self.rerender(['download'])
         return
+
+    def renderRecentlySubmittedJobs(self):
+        """
+        Display the jobs most recently submitted by the logged in user, allows user to restore these jobs.
+        """
+        if self.recently_submitted['output'] is None:
+            self.recently_submitted['output'] = widgets.Output()
+            jobs = self.compute.client.request('GET', '/user/job', {'jupyterhubApiToken': self.compute.jupyterhubApiToken})
+        with self.recently_submitted['output']:
+            display(Markdown('**Recently Submitted Jobs for ' + self.compute.username.split('@')[0] + '**'))
+            jobs = self.compute.client.request('GET', '/user/job', {'jupyterhubApiToken': self.compute.jupyterhubApiToken})
+            if len(jobs['job']) < self.recently_submitted['job_list_size']:
+                self.recently_submitted['job_list_size'] = len(jobs['job'])
+            for i in range(len(jobs['job']) - 1, len(jobs['job']) - self.recently_submitted['job_list_size'] - 1, -1):
+                job = self.compute.get_job_by_id(jobs['job'][i]['id'], verbose=False)
+                jobDetails = jobs['job'][i]
+                job._print_job(jobDetails)
+                if self.refreshing:
+                    self.recently_submitted['submit'][jobs['job'][i]['id']] = widgets.Button(description="🔁 Loading", disabled=True)
+                else:
+                    self.recently_submitted['submit'][jobs['job'][i]['id']] = widgets.Button(description="Restore")
+                display(self.recently_submitted['submit'][jobDetails['id']])
+        for i in self.recently_submitted['submit'].keys():
+            self.recently_submitted['submit'][i].on_click(self.onJobEntryButtonClick(i))
+
+    def renderLoadMore(self):
+        """
+        Renders a button to load more recently submitted jobs.
+        """
+        if self.load_more['output'] is None:
+            self.load_more['output'] = widgets.Output()
+            self.load_more['load_more'] = widgets.Button(description="Load More")
+        with self.load_more['output']:
+            if self.refreshing:
+                self.load_more['load_more'] = widgets.Button(description="🔁 Loading", disabled=True)
+            else:
+                self.load_more['load_more'] = widgets.Button(description="Load More")
+            display(self.load_more['load_more'])
+        self.load_more['load_more'].on_click(self.onLoadMoreClick())
 
     # events
     def onDownloadButtonClick(self):
@@ -420,18 +470,31 @@ class UI:
             Download the output data to the specified path and display the location.
             """
             if self.downloading:
+
                 self.download['alert_output'].clear_output(wait=True)
+
                 with self.download['alert_output']:
                     display(Markdown('⚠️ download process is running in background...'))
                     return
 
             with self.download['result_output']:
+                self.refreshing = True
+                self.recently_submitted['output'].clear_output()
+                self.load_more['output'].clear_output()
+                self.renderRecentlySubmittedJobs()
+                self.renderLoadMore()
                 self.download['alert_output'].clear_output(wait=True)
                 self.downloading = True
                 self.compute.job.download_result_folder(remotePath=self.download['dropdown'].value)
                 print('please check your data at your root folder under "' + self.globus_filename + '"')
                 self.compute.recentDownloadPath = os.path.join(self.jupyter_globus['container_home_path'], self.globus_filename)
                 self.downloading = False
+                self.refreshing = False
+                self.recently_submitted['output'].clear_output()
+                self.load_more['output'].clear_output()
+                self.renderRecentlySubmittedJobs()
+                self.renderLoadMore()
+
         return on_click
 
     def onSubmitButtonClick(self):
@@ -458,7 +521,7 @@ class UI:
                     dataFolder = 'globus://' + self.jupyter_globus['endpoint'] + ':' + os.path.join(self.jupyter_globus['root_path'], dataFolder.strip('/'))
 
             data = self.get_data()
-            self.compute.job = self.compute.create_job(hpc=data['computing_resource'], printJob=False)
+            self.compute.job = self.compute.create_job(hpc=data['computing_resource'], verbose=False)
             # slurm
             slurm = data['slurm']
             if data['email'] is not None:
@@ -475,8 +538,11 @@ class UI:
             self.compute.job.submit()
             self.tab.selected_index = 1
             self.submitted = True
-            self.tab.set_title(1, '⏳ Your Job Status')
+            self.tab.set_title(2, '⏳ Your Job Status')
             self.rerender(['resultStatus', 'resultEvents', 'resultLogs', 'submit'])
+            self.recently_submitted['output'].clear_output()
+            self.load_more['output'].clear_output()
+            self.renderRecentlySubmittedJobs()
         return on_click
 
     def onJobDropdownChange(self):
@@ -507,6 +573,38 @@ class UI:
                 self.rerender(['description', 'slurm', 'param', 'uploadData'])
         return on_change
 
+    def onLoadMoreClick(self):
+        def on_click(change):
+            """
+            Increase the number of recently submitted jobs being displayed by five and rerender teh recently subsmitted and load more attributes.
+            """
+            self.recently_submitted['job_list_size'] += 5
+            self.recently_submitted['output'].clear_output()
+            self.load_more['output'].clear_output()
+            self.renderRecentlySubmittedJobs()
+            self.renderLoadMore()
+        return on_click
+
+    def onJobEntryButtonClick(self, job_id):
+        def on_click(change):
+            """
+            When the restore job button is pressed, restore the state of the UI to when that job was just submitted so the user can read logs and download data.
+            """
+            job = self.compute.get_job_by_id(job_id, verbose=False)
+            self.compute.job = job
+            self.jupyter_globus = self.compute.get_user_jupyter_globus()
+            self.globus_filename = 'globus_download_' + self.compute.job.id
+            self.tab.selected_index = 1
+            self.submitted = True
+            self.tab.set_title(2, '⏳ Your Job Status')
+            self.rerender(['resultStatus', 'resultEvents', 'resultLogs', 'submit'])
+            self.refreshing = False
+            self.recently_submitted['output'].clear_output()
+            self.load_more['output'].clear_output()
+            self.renderRecentlySubmittedJobs()
+            self.renderLoadMore()
+        return on_click
+
     # helpers
     def init(self):
         """
@@ -522,6 +620,7 @@ class UI:
         self.submitted = False
         self.jobFinished = False
         self.downloading = False
+        self.refreshing = False
         # components
         self.jobTemplate = {'output': None}
         self.description = {'output': None}
@@ -535,6 +634,8 @@ class UI:
         self.resultEvents = {'output': None}
         self.resultLogs = {'output': None}
         self.download = {'output': None, 'alert_output': None, 'result_output': None}
+        self.recently_submitted = {'output': None, 'submit': {}, 'job_list_size': 5, 'load_more': None}
+        self.load_more = {'output': None, 'load_more': None}
         # main
         self.tab = None
         # information
@@ -546,6 +647,7 @@ class UI:
     def rerender(self, components=[]):
         """
         Clears and renders the specified components
+
         Args:
             components (list): components to be rerendered
         """
@@ -561,7 +663,9 @@ class UI:
     def get_data(self):
         """
         Get data about the job submitted (template, computing resource used, slurm rules, param rules, user email)
-        Returns: (dict) Information about the job submitted (template, computing resource used, slurm rules, param rules, user email)
+
+        Returns:
+            (dict) Information about the job submitted (template, computing resource used, slurm rules, param rules, user email)
         """
         out = {
             'job_template': self.jobTemplate['dropdown'].value,
@@ -617,6 +721,7 @@ class UI:
     def unitTimeToSecond(self, unit, time):
         """
         Helper function that turns time in a specific unit into seconds
+
         Args:
             unit (string): The unit of the time being passed (Minutes, Hours, or Days)
             time (int): The time in that specific unit
