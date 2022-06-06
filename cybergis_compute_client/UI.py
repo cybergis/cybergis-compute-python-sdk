@@ -89,9 +89,7 @@ class UI:
             display(Markdown('# Welcome to CyberGIS-Compute'))
             display(
                 Markdown(
-                    'A scalable middleware framework for enabling'
-                    + 'high-performance and data-intensive geospatial'
-                    + 'research and education on CyberGIS-Jupyter'))
+                    'A scalable middleware framework for enabling high-performance and data-intensive geospatial research and education on CyberGIS-Jupyter'))
             display(divider)
             display(self.jobTemplate['output'])
             display(self.description['output'])
@@ -240,9 +238,7 @@ class UI:
         if self.job['slurm_input_rules'] == {}:
             return
         # create components
-        self.slurm['description'] = widgets.Label(
-            value='All configs are optional. Please refer to Slurm official' +
-            'documentation at 🔗 https://slurm.schedmd.com/sbatch.html')
+        self.slurm['description'] = widgets.Label(value='All configs are optional. Please refer to Slurm official documentation at 🔗 https://slurm.schedmd.com/sbatch.html')
         # settings
         for i in self.slurm_configs:
             if i not in self.job['slurm_input_rules']:
@@ -292,10 +288,7 @@ class UI:
         self.slurm['accordion'] = widgets.Accordion(
             children=(
                 widgets.VBox(
-                    children=(
-                        self.slurm['description'], self.slurm['vbox'])
-                        ),
-                        ), selected_index=None)
+                    children=(self.slurm['description'], self.slurm['vbox'])),), selected_index=None)
         self.slurm['accordion'].set_title(0, 'Slurm Computing Configurations')
         with self.slurm['output']:
             display(self.slurm['accordion'])
@@ -519,9 +512,7 @@ class UI:
                 self.downloading = True
                 self.compute.job.download_result_folder(
                     remotePath=self.download['dropdown'].value)
-                print(
-                    'please check your data at your root folder under "'
-                    + self.globus_filename + '"')
+                print('please check your data at your root folder under "' + self.globus_filename + '"')
                 self.compute.recentDownloadPath = os.path.join(
                     self.jupyter_globus['container_home_path'],
                     self.globus_filename)
@@ -576,14 +567,7 @@ class UI:
                 self.jupyter_globus['root_path'], self.globus_filename)
 
             # submit
-            self.compute.job.set(
-                executableFolder='git://'
-                + data['job_template'],
-                dataFolder=dataFolder,
-                resultFolder=resultFolder,
-                printJob=False,
-                param=param,
-                slurm=slurm)
+            self.compute.job.set(executableFolder='git://' + data['job_template'], dataFolder=dataFolder, resultFolder=resultFolder, printJob=False, param=param, slurm=slurm)
             self.compute.job.submit()
             self.tab.selected_index = 1
             self.submitted = True

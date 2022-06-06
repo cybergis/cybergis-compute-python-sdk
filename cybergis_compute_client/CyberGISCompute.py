@@ -7,9 +7,9 @@ Example:
         cybergis = CyberGISCompute(url='localhost', port='3030', protocol='HTTP', isJupyter=False)
 """
 
-from .Client import Client
-from .Job import Job
-from .UI import UI, tabulate, HTML, json
+from .Client import *
+from .Job import *
+from .UI import *
 import base64
 import os
 from IPython.display import display, Markdown, Javascript
@@ -25,7 +25,7 @@ class CyberGISCompute:
         protocol (str) : Typically HTTP or HTTPS
         suffix (str) : specify version. For e.g v2
         isJupyter(booleans) : set to True if you are using Jupyter environment
-    
+
     Attributes:
         client (Client object) : Initialized using url(str), protocol(str), port(str) and suffix(str)
         jupyterhubApiToken (string) : jupyterhub's REST API token that can be used to authenticate the user
@@ -60,7 +60,7 @@ class CyberGISCompute:
 
         Args:
             manualLogin (boolean) : set to True if env variable and file login modes are not available
-        
+
         Returns :
             None
         """
@@ -176,15 +176,7 @@ class CyberGISCompute:
             return usage
         display(
             Markdown(
-                "Nodes: {}<br>Allocated CPUs: {}<br>Total CPU Time: "//
-                "{}<br>Memory Utilized: {}<br>Total Allocated Memory: "//
-                "{}<br>Total Walltime: {}".format(usage[
-                    'nodes'], usage[
-                        'cpus'], usage[
-                            'cpuTime'], usage[
-                                'memory'], usage[
-                                    'memoryUsage'], usage[
-                                        'walltime'])))
+                "Nodes: {}<br>Allocated CPUs: {}<br>Total CPU Time: {}<br>Memory Utilized: {}<br>Total Allocated Memory: {}<br>Total Walltime: {}".format(usage['nodes'], usage['cpus'], usage['cpuTime'], usage['memory'], usage['memoryUsage'], usage['walltime'])))
 
     def list_job(self, raw=False):
         """
@@ -516,9 +508,7 @@ class CyberGISCompute:
         else:
             display(
                 Javascript(
-                    'IPython.notebook.kernel.execute('
-                    + '`CyberGISCompute.jupyterhubHost'
-                    + '= "${window.location.host}"`);'))
+                    'IPython.notebook.kernel.execute(''`CyberGISCompute.jupyterhubHost = "${window.location.host}"`);'))
 
     def get_user_jupyter_globus(self):
         """

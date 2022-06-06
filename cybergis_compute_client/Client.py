@@ -63,9 +63,7 @@ class Client:
             msg = ''
             if 'messages' in data:
                 msg = str(data['messages'])
-            raise Exception(
-                'server ' + self.url + ' responded with error "' +
-                data['error'] + msg + '"')
+            raise Exception('server ' + self.url + ' responded with error "' + data['error'] + msg + '"')
 
         return data
 
@@ -99,9 +97,7 @@ class Client:
                 if 'messages' in data:
                     # TODO: this msg variable isn't used
                     msg = str(data['messages'])  # noqa
-                print(
-                    '❌ server ' + self.url +
-                    ' responded with error "' + data['error'] + '"')
+                print('❌ server ' + self.url + ' responded with error "' + data['error'] + '"')
 
         if 'tar' in contentType:
             localDir += '.tar'
@@ -131,9 +127,7 @@ class Client:
         url = self.protocol.lower() + '://' + path.join(
             self.url.strip('/'), self.suffix.strip('/'),
             uri.strip('/'))
-        data = json.loads(
-                            requests.post(url, data=body, files={'file': file})
-                            .content.decode())
+        data = json.loads(requests.post(url, data=body, files={'file': file}).content.decode())
         if 'error' in data:
             return '❌ server ' + self.url + ' responded with error "'
             + data['error'] + '"'

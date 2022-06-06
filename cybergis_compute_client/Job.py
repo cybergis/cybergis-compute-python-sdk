@@ -78,12 +78,8 @@ class Job:
             hpc = job['hpc']
 
         if (hpcPassword is not None):
-            print(
-                '⚠️ HPC password input detected, change your code' +
-                'to use .get_job_by_id() instead')
-            print(
-                '🙅‍♂️ it\'s not safe to distribute code with' +
-                'login credentials')
+            print('⚠️ HPC password input detected, change your code to use .get_job_by_id() instead')
+            print('🙅‍♂️ it\'s not safe to distribute code with login credentials')
 
         self.id = id
         self.hpc = hpc
@@ -332,10 +328,7 @@ class Job:
         """
         if self.id is None:
             raise Exception('missing job ID, submit/register job first')
-        out = self.client.request(
-            'GET', '/job/' + self.id + '/result-folder-content', {
-                'accessToken': self.JAT.getAccessToken()
-                })
+        out = self.client.request('GET', '/job/' + self.id + '/result-folder-content', {'accessToken': self.JAT.getAccessToken()})
         return out
 
     def download_result_folder(
@@ -377,12 +370,7 @@ class Job:
             while status not in ['SUCCEEDED', 'FAILED']:
                 self._clear()
                 print('⏳ waiting for file to download using Globus')
-                out = self.client.request(
-                    'GET', '/file/result-folder/globus-download', {
-                        "accessToken": self.JAT.getAccessToken(),
-                        "downloadTo": jobStatus['resultFolder'],
-                        "downloadFrom": remotePath
-                        })
+                out = self.client.request('GET', '/file/result-folder/globus-download', {"accessToken": self.JAT.getAccessToken(), "downloadTo": jobStatus['resultFolder'], "downloadFrom": remotePath})
                 status = out['status']
                 if raw:
                     return out
@@ -413,10 +401,7 @@ class Job:
         """
         if self.id is None:
             raise Exception('missing job ID, submit/register job first')
-        return self.client.request(
-            'GET', '/file/' + self.id + '/globus_task_status', {
-                'accessToken': self.JAT.getAccessToken()
-                })
+        return self.client.request('GET', '/file/' + self.id + '/globus_task_status', {'accessToken': self.JAT.getAccessToken()})
 
     # Integrated functions
 

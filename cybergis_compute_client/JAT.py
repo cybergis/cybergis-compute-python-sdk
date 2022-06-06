@@ -54,9 +54,7 @@ class JAT:
         self._checkInit()
         h = hashlib.new(self.algorithm)
         h.update(
-            self.secretToken.encode('utf_8')
-            + self.id.encode('utf_8')
-            + payload.encode('utf_8'))
+            self.secretToken.encode('utf_8') + self.id.encode('utf_8') + payload.encode('utf_8'))
         return h.hexdigest()
 
     def getDate(self):
