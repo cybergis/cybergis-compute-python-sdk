@@ -15,22 +15,21 @@ class Client:
     """
     Client class
     An inteface that handles requests made to different servers
+
+    Args:
+        url (str) : url that needs to be accessed
+        port (str) : port of the Jupyter or Python interface
+        protocol (str) : Typically HTTP or HTTPS
+        suffix (str) : specify version. For e.g v2
+
     Attributes:
-        url (str)                   : url that needs to be accessed
-        port (str)                  : port of the Jupyter or Python interface
-        suffix (str)                : specify version. For e.g v2
+        url (str) : url that needs to be accessed
+        port (str) : port of the Jupyter or Python interface
+        suffix (str) : specify version. For e.g v2
     """
-    def __init__(self, url="cgjobsup.cigi.illinois.edu", port=443, protocol="HTTPS", suffix="v2"):
-        """
-        Initializes instance Client using inputs from the client
-        Args:
-            url (str)               : url that needs to be accessed
-            port (str)              : port of the Jupyter or Python interface
-            protocol (str)          : Typically HTTP or HTTPS
-            suffix (str)            : specify version. For e.g v2
-        Returns:
-            (obj)                   : this Client
-        """
+    def __init__(
+        self, url="cgjobsup.cigi.illinois.edu",
+            port=443, protocol="HTTPS", suffix="v2"):
         self.url = url + ':' + str(port)
         self.protocol = protocol
         self.suffix = suffix
@@ -38,19 +37,24 @@ class Client:
     def request(self, method, uri, body={}):
         """
         Returns data from a request made to the specified uri
+
         Args:
-            methods (str)           : type of request that needs to be made. For e.g "POST"
-            uri (str)               : uri of the server
-            body (str)              : data that needs to be sent
+            methods (str) : type of request that needs to be
+            made. For e.g "POST"
+            uri (str) : uri of the server
+            body (str) : data that needs to be sent
+
         Returns:
-            JSON                    : output thats returned by the server
+            JSON : output thats returned by the server
         """
         if self.protocol == 'HTTP':
             connection = client.HTTPConnection(self.url)
         else:
             connection = client.HTTPSConnection(self.url)
         headers = {'Content-type': 'application/json'}
-        connection.request(method, '/' + path.join(self.suffix.strip('/'), uri.strip('/')), json.dumps(body), headers)
+        connection.request(
+            method, '/' + path.join(self.suffix.strip('/'), uri.strip('/')),
+            json.dumps(body), headers)
         response = connection.getresponse()
         out = response.read().decode()
         data = json.loads(out)
@@ -65,16 +69,19 @@ class Client:
 
     def download(self, uri, body, localDir):
         """
-        Downloads data from a request made to the specified uri onto the specifed path
+        Downloads data from a request made to the specified uri
+        onto the specifed path
+
         Args:
-            uri (str)               : uri of the server
-            body (str)              : data that needs to be dowloaded
-            localDir (str)          : path where the data needs to be downloaded
+            uri (str) : uri of the server
+            body (str) : data that needs to be dowloaded
+            localDir (str) : path where the data needs to be downloaded
 
         Returns:
-            str                     : path where the data is stored
+            str : path where the data is stored
         """
-        url = self.protocol.lower() + '://' + path.join(self.url.strip('/'), self.suffix.strip('/'), uri.strip('/'))
+        url = self.protocol.lower() + '://' + path.join(
+            self.url.strip('/'), self.suffix.strip('/'), uri.strip('/'))
         response = requests.get(url, data=body, stream=True)
         contentType = response.headers['Content-Type']
 
@@ -108,16 +115,20 @@ class Client:
     def upload(self, uri, body, file):
         """
         Uploads data using a request made to the specified uri
+
         Args:
-            uri (str)               : uri of the server
-            body (str)              : data that needs to be uploaded
-            file (str)              : file that needs to be uploaded
+            uri (str) : uri of the server
+            body (str) : data that needs to be uploaded
+            file (str) : file that needs to be uploaded
 
         Returns:
-            JSON                    : output from the upload request to the server
+            JSON : output from the upload request to the server
         """
-        url = self.protocol.lower() + '://' + path.join(self.url.strip('/'), self.suffix.strip('/'), uri.strip('/'))
+        url = self.protocol.lower() + '://' + path.join(
+            self.url.strip('/'), self.suffix.strip('/'),
+            uri.strip('/'))
         data = json.loads(requests.post(url, data=body, files={'file': file}).content.decode())
         if 'error' in data:
-            return '❌ server ' + self.url + ' responded with error "' + data['error'] + '"'
+            return '❌ server ' + self.url + ' responded with error "'
+            + data['error'] + '"'
         return data

@@ -1,5 +1,5 @@
 __copyright__ = """
-Copyright 2021 CyberGIS Center for Advanced Digital and Spatial Studies
+Copyright 2022 CyberGIS Center for Advanced Digital and Spatial Studies
 """
 
 __license__ = """

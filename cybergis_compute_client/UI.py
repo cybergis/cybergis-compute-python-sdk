@@ -9,6 +9,8 @@ class UI:
     """
     UI class
 
+    Args: None
+
     Attributes:
         compute: Instance of CyberGISCompute
         style (dict): Style of each widget (specifically width)
@@ -16,40 +18,66 @@ class UI:
         jobs (list): Jobs being managed currently
         hpcs (list): HPCs the jobs are being submitted to
         defaultJobName (string): Name that jobs are given by default
-        defaultRemoteResultFolder (string): Default remote location that results are saved to.
+        defaultRemoteResultFolder (string): Default remote location
+        that results are saved to.
         defaultDataFolder (string): Default folder that data will be saved to
         slurm_configs (list): Default configurations for slurm
-        slurm_integer_configs (list): Slurm configurations that can be stored as integers
-        slurm_integer_storage_unit_config (list): Slurm configurations related to storage
-        slurm_integer_time_unit_config (list): Slurm configurations related to time units
-        slurm_integer_none_unit_config (list): Slurm configurations related to units other than time
-        slurm_string_option_configs (list): Slurm configurations for string operations
-        globus_filename (string): Output filename submitted to Globus (set when entered by the user)
-        jupyter_globus (dict): Information about where the output data will be stored (container_home_path, endpoint, root_path)
+        slurm_integer_configs (list): Slurm configurations that can
+        be stored as integers
+        slurm_integer_storage_unit_config (list): Slurm configurations
+        related to storage
+        slurm_integer_time_unit_config (list): Slurm configurations
+        related to time units
+        slurm_integer_none_unit_config (list): Slurm configurations
+        related to units other than time
+        slurm_string_option_configs (list): Slurm configurations
+        for string operations
+        globus_filename (string): Output filename submitted to
+        Globus (set when entered by the user)
+        jupyter_globus (dict): Information about where the output data will be
+        stored (container_home_path, endpoint, root_path)
     """
-    def __init__(self, compute, defaultJobName="hello_world", defaultDataFolder="./", defaultRemoteResultFolder=None):
+    def __init__(
+        self,
+            compute,
+            defaultJobName="hello_world",
+            defaultDataFolder="./",
+            defaultRemoteResultFolder=None):
         self.compute = compute
         self.style = {'description_width': 'auto'}
         self.layout = widgets.Layout(width='60%')
         self.jobs = None
         self.hpcs = None
         self.defaultJobName = defaultJobName
-        if defaultRemoteResultFolder is not None:
-            self.defaultRemoteResultFolder = defaultRemoteResultFolder if defaultRemoteResultFolder[0] == '/' else '/' + defaultRemoteResultFolder
+        df = defaultRemoteResultFolder
+        if df is not None:
+            self.defaultRemoteResultFolder = df if df[
+                0] == '/' else '/' + df
         self.defaultDataFolder = defaultDataFolder
         # slurm configs
-        self.slurm_configs = ['num_of_node', 'num_of_task', 'time', 'cpu_per_task', 'memory_per_cpu', 'memory_per_gpu', 'memory', 'gpus', 'gpus_per_node', 'gpus_per_socket', 'gpus_per_task', 'partition']
-        self.slurm_integer_configs = ['num_of_node', 'num_of_task', 'time', 'cpu_per_task', 'memory_per_cpu', 'memory_per_gpu', 'memory', 'gpus', 'gpus_per_node', 'gpus_per_socket', 'gpus_per_task']
-        self.slurm_integer_storage_unit_config = ['memory_per_cpu', 'memory_per_gpu', 'memory']
+        self.slurm_configs = [
+            'num_of_node', 'num_of_task', 'time',
+            'cpu_per_task', 'memory_per_cpu', 'memory_per_gpu',
+            'memory', 'gpus', 'gpus_per_node', 'gpus_per_socket',
+            'gpus_per_task', 'partition']
+        self.slurm_integer_configs = [
+            'num_of_node', 'num_of_task', 'time', 'cpu_per_task',
+            'memory_per_cpu', 'memory_per_gpu', 'memory', 'gpus',
+            'gpus_per_node', 'gpus_per_socket', 'gpus_per_task']
+        self.slurm_integer_storage_unit_config = [
+            'memory_per_cpu', 'memory_per_gpu', 'memory']
         self.slurm_integer_time_unit_config = ['time']
-        self.slurm_integer_none_unit_config = ['cpu_per_task', 'num_of_node', 'num_of_task', 'gpus', 'gpus_per_node', 'gpus_per_socket', 'gpus_per_task']
+        self.slurm_integer_none_unit_config = [
+            'cpu_per_task', 'num_of_node', 'num_of_task', 'gpus',
+            'gpus_per_node', 'gpus_per_socket', 'gpus_per_task']
         self.slurm_string_option_configs = ['partition']
         self.globus_filename = None
         self.jupyter_globus = None
 
     def render(self):
         """
-        Render main UI by initializing, rendering, and displaying each component
+        Render main UI by initializing, rendering,
+        and displaying each component
         """
         self.init()
         self.renderComponents()
@@ -59,7 +87,9 @@ class UI:
         job_config = widgets.Output()
         with job_config:
             display(Markdown('# Welcome to CyberGIS-Compute'))
-            display(Markdown('A scalable middleware framework for enabling high-performance and data-intensive geospatial research and education on CyberGIS-Jupyter'))
+            display(
+                Markdown(
+                    'A scalable middleware framework for enabling high-performance and data-intensive geospatial research and education on CyberGIS-Jupyter'))
             display(divider)
             display(self.jobTemplate['output'])
             display(self.description['output'])
@@ -127,29 +157,43 @@ class UI:
     # components
     def renderJobTemplate(self):
         """
-        Display a dropdown of jobs to run. Update jobTemplate when the dropdown changes.
+        Display a dropdown of jobs to run.
+        Update jobTemplate when the dropdown changes.
         """
         if self.jobTemplate['output'] is None:
 
             self.jobTemplate['output'] = widgets.Output()
         # create components
-        self.jobTemplate['dropdown'] = widgets.Dropdown(options=[i for i in self.jobs], value=self.jobName, description='📦 Job Templates:', style=self.style, layout=self.layout)
+        self.jobTemplate['dropdown'] = widgets.Dropdown(
+            options=[i for i in self.jobs], value=self.jobName,
+            description='📦 Job Templates:',
+            style=self.style,
+            layout=self.layout)
         self.jobTemplate['dropdown'].observe(self.onJobDropdownChange())
         with self.jobTemplate['output']:
             display(self.jobTemplate['dropdown'])
 
     def renderDescription(self):
         """
-        Display information about the job (job name, job description, HPC name, HPC description, estimated runtime)
+        Display information about the job (job name, job description,
+        HPC name, HPC description, estimated runtime)
         """
         if self.description['output'] is None:
             self.description['output'] = widgets.Output()
 
-        self.description['job_description'] = Markdown('**' + self.jobName + ' Job Description:** ' + self.job['description'])
-        self.description['computing_resource_description'] = Markdown('**' + self.hpcName + ' HPC Description**: ' + self.hpc['description'])
-        self.description['estimated_runtime'] = Markdown('**Estimated Runtime:** ' + self.job['estimated_runtime'])
+        self.description['job_description'] = Markdown(
+            '**' + self.jobName + ' Job Description:** ' + self.job[
+                'description'])
+        self.description['computing_resource_description'] = Markdown(
+            '**' + self.hpcName + ' HPC Description**: ' + self.hpc[
+                'description'])
+        self.description['estimated_runtime'] = Markdown(
+            '**Estimated Runtime:** ' + self.job['estimated_runtime'])
         with self.description['output']:
-            display(self.description['job_description'], self.description['computing_resource_description'], self.description['estimated_runtime'])
+            display(
+                self.description['job_description'],
+                self.description['computing_resource_description'],
+                self.description['estimated_runtime'])
 
     def renderComputingResource(self):
         """
@@ -158,30 +202,45 @@ class UI:
         if self.computingResource['output'] is None:
             self.computingResource['output'] = widgets.Output()
         # create components
-        self.computingResource['dropdown'] = widgets.Dropdown(options=[i for i in self.job['supported_hpc']], value=self.hpcName, description='🖥 Computing Recourse:', style=self.style, layout=self.layout)
-        self.computingResource['accordion'] = widgets.Accordion(children=(self.computingResource['dropdown'], ), selected_index=None)
-        self.computingResource['accordion'].set_title(0, 'Computing Resource')
-        self.computingResource['dropdown'].observe(self.onComputingResourceDropdownChange())
+        self.computingResource['dropdown'] = widgets.Dropdown(
+            options=[i for i in self.job['supported_hpc']],
+            value=self.hpcName,
+            description='🖥 Computing Recourse:',
+            style=self.style,
+            layout=self.layout)
+        self.computingResource['accordion'] = widgets.Accordion(
+            children=(self.computingResource['dropdown'], ),
+            selected_index=None)
+        self.computingResource['accordion'].set_title(
+            0, 'Computing Resource')
+        self.computingResource['dropdown'].observe(
+            self.onComputingResourceDropdownChange())
         with self.computingResource['output']:
             display(self.computingResource['accordion'])
 
     def renderEmail(self):
         """
-        Displays a checkbox that lets the user recieve an email on job status and input their email.
+        Displays a checkbox that lets the user recieve an email
+        on job status and input their email.
         """
         if self.email['output'] is None:
 
             self.email['output'] = widgets.Output()
         # create components
-        self.email['checkbox'] = widgets.Checkbox(description='receive email on job status? ', value=False, style=self.style)
-        self.email['text'] = widgets.Text(value='example@illinois.edu', style=self.style)
-        self.email['hbox'] = widgets.HBox([self.email['checkbox'], self.email['text']])
+        self.email['checkbox'] = widgets.Checkbox(
+            description='receive email on job status? ',
+            value=False, style=self.style)
+        self.email['text'] = widgets.Text(
+            value='example@illinois.edu', style=self.style)
+        self.email['hbox'] = widgets.HBox(
+            [self.email['checkbox'], self.email['text']])
         with self.email['output']:
             display(self.email['hbox'])
 
     def renderSlurm(self):
         """
-        Configures Slurm input rules (default value, min, m), allows the user to input custom input rules if they want.
+        Configures Slurm input rules (default value, min, m),
+        allows the user to input custom input rules if they want.
         """
         if self.slurm['output'] is None:
             self.slurm['output'] = widgets.Output()
@@ -236,7 +295,10 @@ class UI:
         self.slurm['vbox'] = widgets.VBox(w)
 
         # settings end
-        self.slurm['accordion'] = widgets.Accordion(children=(widgets.VBox(children=(self.slurm['description'], self.slurm['vbox'])), ), selected_index=None)
+        self.slurm['accordion'] = widgets.Accordion(
+            children=(
+                widgets.VBox(
+                    children=(self.slurm['description'], self.slurm['vbox'])),), selected_index=None)
         self.slurm['accordion'].set_title(0, 'Slurm Computing Configurations')
         with self.slurm['output']:
             display(self.slurm['accordion'])
@@ -251,11 +313,15 @@ class UI:
         if not self.job['require_upload_data']:
             return
         # render all
-        self.uploadData['selector'] = FileChooser(self.defaultDataFolder, select_default=True if self.defaultDataFolder != './' else False)
+        self.uploadData['selector'] = FileChooser(
+            self.defaultDataFolder,
+            select_default=True if self.defaultDataFolder != './' else False)
         self.uploadData['selector'].show_only_dirs = True
-        self.uploadData['selector'].title = 'Job requires upload data. Please select a folder to upload'
+        self.uploadData['selector'].title = 'Job requires upload data.'
+        + 'Please select a folder to upload'
         # settings end
-        self.uploadData['accordion'] = widgets.Accordion(children=(self.uploadData['selector'], ), selected_index=None)
+        self.uploadData['accordion'] = widgets.Accordion(
+            children=(self.uploadData['selector'], ), selected_index=None)
         self.uploadData['accordion'].set_title(0, 'Upload Data')
         with self.uploadData['output']:
             display(self.uploadData['accordion'])
@@ -310,19 +376,23 @@ class UI:
 
             if config['type'] == 'string_input':
                 default_val = config['default_value']
-                self.param[i] = widgets.Text(description=i, value=default_val, style=self.style)
+                self.param[i] = widgets.Text(
+                    description=i, value=default_val, style=self.style)
 
         # render all
-        self.param['vbox'] = widgets.VBox([self.param[i] for i in self.job['param_rules']])
+        self.param['vbox'] = widgets.VBox(
+            [self.param[i] for i in self.job['param_rules']])
         # settings end
-        self.param['accordion'] = widgets.Accordion(children=(self.param['vbox'], ), selected_index=None)
+        self.param['accordion'] = widgets.Accordion(
+            children=(self.param['vbox'], ), selected_index=None)
         self.param['accordion'].set_title(0, 'Input Parameters')
         with self.param['output']:
             display(self.param['accordion'])
 
     def renderSubmit(self):
         """
-        Render submit button. If the job has been submitted, display that, otherwise display the submit button.
+        Render submit button. If the job has been submitted,
+        display that, otherwise display the submit button.
         """
         if self.submit['output'] is None:
             self.submit['output'] = widgets.Output()
@@ -330,7 +400,8 @@ class UI:
             self.submit['alert_output'] = widgets.Output()
         # create components
         if self.submitted:
-            self.submit['button'] = widgets.Button(description="Job Submitted ✅", disabled=True)
+            self.submit['button'] = widgets.Button(
+                description="Job Submitted ✅", disabled=True)
         else:
             self.submit['button'] = widgets.Button(description="Submit Job")
         self.submit['button'].on_click(self.onSubmitButtonClick())
@@ -354,14 +425,20 @@ class UI:
             result_folder_content = self.compute.job.result_folder_content()
             # push default value to front
             try:
-                result_folder_content.insert(0, result_folder_content.pop(result_folder_content.index(self.defaultRemoteResultFolder)))
-            except:
+                result_folder_content.insert(
+                    0, result_folder_content.pop(
+                        result_folder_content.index(
+                            self.defaultRemoteResultFolder)))
+            except Exception:
                 result_folder_content
-            self.download['dropdown'] = widgets.Dropdown(options=result_folder_content, value=result_folder_content[0], description='select file/folder')
+            self.download['dropdown'] = widgets.Dropdown(
+                options=result_folder_content, value=result_folder_content[0],
+                description='select file/folder')
             self.download['button'] = widgets.Button(description="Download")
             self.download['button'].on_click(self.onDownloadButtonClick())
         else:
-            self.download['button'] = widgets.Button(description="Download", disabled=True)
+            self.download['button'] = widgets.Button(
+                description="Download", disabled=True)
 
         with self.download['output']:
             if self.jobFinished:
@@ -407,7 +484,8 @@ class UI:
 
     def renderResultLogs(self):
         """
-        Display when the job is finished and rerender the download section when it is.
+        Display when the job is finished and
+        rerender the download section when it is.
         """
         if self.resultLogs['output'] is None:
             self.resultLogs['output'] = widgets.Output()
@@ -467,14 +545,17 @@ class UI:
     def onDownloadButtonClick(self):
         def on_click(change):
             """
-            Download the output data to the specified path and display the location.
+            Download the output data to the specified path
+            and display the location.
             """
             if self.downloading:
 
                 self.download['alert_output'].clear_output(wait=True)
 
                 with self.download['alert_output']:
-                    display(Markdown('⚠️ download process is running in background...'))
+                    display(
+                        Markdown(
+                            '⚠️ download process is running in background...'))
                     return
 
             with self.download['result_output']:
@@ -485,9 +566,12 @@ class UI:
                 self.renderLoadMore()
                 self.download['alert_output'].clear_output(wait=True)
                 self.downloading = True
-                self.compute.job.download_result_folder(remotePath=self.download['dropdown'].value)
+                self.compute.job.download_result_folder(
+                    remotePath=self.download['dropdown'].value)
                 print('please check your data at your root folder under "' + self.globus_filename + '"')
-                self.compute.recentDownloadPath = os.path.join(self.jupyter_globus['container_home_path'], self.globus_filename)
+                self.compute.recentDownloadPath = os.path.join(
+                    self.jupyter_globus['container_home_path'],
+                    self.globus_filename)
                 self.downloading = False
                 self.refreshing = False
                 self.recently_submitted['output'].clear_output()
@@ -500,7 +584,8 @@ class UI:
     def onSubmitButtonClick(self):
         def on_click(change):
             """
-            Submit the job, then rerender the result status, result events, result logs, and submit button.
+            Submit the job, then rerender the result status,
+            result events, result logs, and submit button.
             """
             if self.submitted:
                 return
@@ -514,11 +599,18 @@ class UI:
                 dataFolder = self.uploadData['selector'].selected
                 if dataFolder is None:
                     with self.submit['alert_output']:
-                        display(Markdown('⚠️ please select a folder before upload...'))
+                        display(
+                            Markdown(
+                                '⚠️ please select a folder before upload...'))
                         return
                 else:
-                    dataFolder = dataFolder.replace(self.jupyter_globus['container_home_path'].strip('/'), '')
-                    dataFolder = 'globus://' + self.jupyter_globus['endpoint'] + ':' + os.path.join(self.jupyter_globus['root_path'], dataFolder.strip('/'))
+                    dataFolder = dataFolder.replace(
+                        self.jupyter_globus['container_home_path'].strip('/'),
+                        '')
+                    dataFolder = 'globus://' + self.jupyter_globus['endpoint']
+                    + ':' + os.path.join(
+                        self.jupyter_globus['root_path'],
+                        dataFolder.strip('/'))
 
             data = self.get_data()
             self.compute.job = self.compute.create_job(hpc=data['computing_resource'], verbose=False)
@@ -531,7 +623,9 @@ class UI:
             param = data['param']
             # download
             self.globus_filename = 'globus_download_' + self.compute.job.id
-            resultFolder = 'globus://' + self.jupyter_globus['endpoint'] + ':' + os.path.join(self.jupyter_globus['root_path'], self.globus_filename)
+            resultFolder = 'globus://' + self.jupyter_globus['endpoint'] + ':'
+            + os.path.join(
+                self.jupyter_globus['root_path'], self.globus_filename)
 
             # submit
             self.compute.job.set(executableFolder='git://' + data['job_template'], dataFolder=dataFolder, resultFolder=resultFolder, printJob=False, param=param, slurm=slurm)
@@ -548,7 +642,10 @@ class UI:
     def onJobDropdownChange(self):
         def on_change(change):
             """
-            If the information in the dropdown is changed, modify the information in jobName, job, hpcName, and hpc to match. Then, rerender the description, computing resources, sulurn, param and upload data.
+            If the information in the dropdown is changed,
+            modify the information in jobName, job, hpcName,
+            and hpc to match. Then, rerender the description,
+            computing resources, sulurn, param and upload data.
             """
             if change['type'] == 'change':
                 if self.submitted:
@@ -557,13 +654,19 @@ class UI:
                 self.job = self.jobs[self.jobName]
                 self.hpcName = self.job['default_hpc']
                 self.hpc = self.hpcs[self.hpcName]
-                self.rerender(['description', 'computingResource', 'slurm', 'param', 'uploadData'])
+                self.rerender(
+                    [
+                        'description', 'computingResource',
+                        'slurm', 'param', 'uploadData'])
         return on_change
 
     def onComputingResourceDropdownChange(self):
         def on_change(change):
             """
-            If the information in the computing resources dropdown is changed, update the hpcName and hpc, then rerender the description, computing resources, sulurn, param and upload data.
+            If the information in the computing resources
+            dropdown is changed, update the hpcName and hpc,
+            then rerender the description, computing resources,
+            sulurn, param and upload data.
             """
             if change['type'] == 'change':
                 if self.submitted:
@@ -608,7 +711,8 @@ class UI:
     # helpers
     def init(self):
         """
-        Initialization helper function that sets default arguments. Runs when the UI is rendered.
+        Initialization helper function that
+        sets default arguments. Runs when the UI is rendered.
         """
         silent = widgets.Output()
         with silent:
@@ -662,10 +766,12 @@ class UI:
     # data
     def get_data(self):
         """
-        Get data about the job submitted (template, computing resource used, slurm rules, param rules, user email)
+        Get data about the job submitted (template, computing resource used,
+        slurm rules, param rules, user email)
 
         Returns:
-            (dict) Information about the job submitted (template, computing resource used, slurm rules, param rules, user email)
+            dict : Information about the job submitted (template,
+            computing resource used, slurm rules, param rules, user email)
         """
         out = {
             'job_template': self.jobTemplate['dropdown'].value,
@@ -676,18 +782,22 @@ class UI:
                 'cpu_per_task': 1
             },
             'param': {},
-            'email': self.email['text'].value if self.email['checkbox'].value else None,
+            'email': self.email['text'].value if self.email[
+                'checkbox'].value else None,
         }
 
         for i in self.slurm_configs:
-            if self.slurm[i] is not None and i in self.job['slurm_input_rules']:
+            if self.slurm[i] is not None and i in self.job[
+                    'slurm_input_rules']:
                 if not self.slurm[i].value:
                     continue  # skip null value
                 config = self.job['slurm_input_rules'][i]
                 if i in self.slurm_integer_storage_unit_config:
-                    out['slurm'][i] = str(self.slurm[i].value) + str(config['unit'])
+                    out['slurm'][i] = str(
+                        self.slurm[i].value) + str(config['unit'])
                 elif i in self.slurm_integer_time_unit_config:
-                    seconds = self.unitTimeToSecond(config['unit'], self.slurm[i].value)
+                    seconds = self.unitTimeToSecond(
+                        config['unit'], self.slurm[i].value)
                     out['slurm'][i] = self.secondsToTime(seconds)
                 else:
                     out['slurm'][i] = self.slurm[i].value
@@ -723,7 +833,8 @@ class UI:
         Helper function that turns time in a specific unit into seconds
 
         Args:
-            unit (string): The unit of the time being passed (Minutes, Hours, or Days)
+            unit (string): The unit of the time being
+            passed (Minutes, Hours, or Days)
             time (int): The time in that specific unit
         """
         if unit == 'Minutes':
