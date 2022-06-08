@@ -18,13 +18,13 @@ class JAT:
 
     Attributes:
         accessTokenCache (dict): All cached access tokens with the date
-        submitted as keys
+            submitted as keys
         id (str): Unique identifier for the job assigned
-        by the client
+            by the client
         secretToken (str): Token to generate JAT signature
-        provided by the client
+            provided by the client
         algorithm (str): Algorithm used to hash
-        the signature
+            the signature
     """
     def __init__(self):
         self.accessTokenCache = {}
@@ -33,6 +33,17 @@ class JAT:
         self.algorithm = None
 
     def init(self, algorithm, id, secretToken):
+        """
+        Alternative constructor.
+
+        Args:
+            algorithm (str): hashlib algorithm to use
+            id (str): unique identifier for job
+            secretToken (str): token to generate JAT signature
+
+        Returns:
+            JAT: Job Access Token with inputs
+        """
         if (algorithm not in hashlib.algorithms_available):
             raise Exception(
                 'encryption algorithm not supported by hashlib library')
@@ -60,9 +71,6 @@ class JAT:
     def getDate(self):
         """
         Returns the current date (year, month, day, hour)
-
-        Args:
-            none
 
         Returns:
             str: The current date

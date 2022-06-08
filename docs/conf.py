@@ -50,6 +50,7 @@ source_suffix = [".rst", ".md"]
 # Autodoc include class
 # https://stackoverflow.com/questions/5599254/how-to-use-sphinxs-autodoc-to-document-a-classs-init-self-method
 autoclass_content = 'both'
+todo_include_todos = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -81,11 +82,11 @@ html_theme_options = {
     'nav_title': project,
 
     # Set you GA account ID to enable tracking
-    # 'google_analytics_account': 'UA-XXXXX',
+    'google_analytics_account': 'G-L30GKBCQYB',
 
     # Specify a base_url used to generate sitemap.xml. If not
     # specified, then no sitemap will be built.
-    # 'base_url': 'https://project.github.io/project',
+    'base_url': 'https://cybergis.github.io/cybergis-compute-python-sdk/',
 
     # Set the color and the accent color
     'color_primary': 'dark-blue',

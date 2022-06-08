@@ -7,9 +7,12 @@ from IPython.display import Markdown, display, clear_output
 
 class UI:
     """
-    UI class
+    UI class.
 
-    Args: None
+    Note:
+        Many UI elements use an internal `on_change`
+        function or `on_click` function. If you click the `[source]`
+        next to the function, it will give that information.
 
     Attributes:
         compute: Instance of CyberGISCompute
@@ -19,23 +22,23 @@ class UI:
         hpcs (list): HPCs the jobs are being submitted to
         defaultJobName (string): Name that jobs are given by default
         defaultRemoteResultFolder (string): Default remote location
-        that results are saved to.
+            that results are saved to.
         defaultDataFolder (string): Default folder that data will be saved to
         slurm_configs (list): Default configurations for slurm
         slurm_integer_configs (list): Slurm configurations that can
-        be stored as integers
+            be stored as integers
         slurm_integer_storage_unit_config (list): Slurm configurations
-        related to storage
+            related to storage
         slurm_integer_time_unit_config (list): Slurm configurations
-        related to time units
+            related to time units
         slurm_integer_none_unit_config (list): Slurm configurations
-        related to units other than time
+            related to units other than time
         slurm_string_option_configs (list): Slurm configurations
-        for string operations
+            for string operations
         globus_filename (string): Output filename submitted to
-        Globus (set when entered by the user)
+            Globus (set when entered by the user)
         jupyter_globus (dict): Information about where the output data will be
-        stored (container_home_path, endpoint, root_path)
+            stored (container_home_path, endpoint, root_path)
     """
     def __init__(
         self,
@@ -834,7 +837,7 @@ class UI:
 
         Args:
             unit (string): The unit of the time being
-            passed (Minutes, Hours, or Days)
+                passed (Minutes, Hours, or Days)
             time (int): The time in that specific unit
         """
         if unit == 'Minutes':

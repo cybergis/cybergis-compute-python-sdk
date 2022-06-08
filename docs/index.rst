@@ -24,6 +24,7 @@ Table of Contents
    :maxdepth: 2
    
    about.rst
+   notebooks/hello_world
    jobs.rst
    external.rst
    help.rst
