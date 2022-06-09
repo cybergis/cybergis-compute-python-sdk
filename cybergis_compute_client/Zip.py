@@ -17,8 +17,6 @@ class Zip(object):
     An interface that creates an in-memory zip object to
     avoid disk access
 
-    Args:
-        None
     Attributes:
         in_memory_zip: A BytesIO in-memory file
     """
@@ -29,13 +27,13 @@ class Zip(object):
 
     def mkdir(self, filedir_in_zip):
         """
-        Creates a directory with the name filedir_in_zip
+        Creates a directory with the name `filedir_in_zip`
 
         Args:
-            fildir_in_zip(str): Name of the zip_directory
+            fildir_in_zip (str): Name of the zip_directory
 
         Returns:
-            obj: this Zip
+            Zip: this Zip
         """
         # Get a handle to the in-memory zip in append mode
         zf = zipfile.ZipFile(
@@ -60,10 +58,10 @@ class Zip(object):
         Args:
             filename_in_zip(str): Name of the zip_file
             file_contents(str): Contents that need to be written
-            to the zip_file
+                to the zip_file
 
         Returns:
-            obj: this Zip
+            Zip: this Zip
         """
         # Get a handle to the in-memory zip in append mode
         zf = zipfile.ZipFile(
@@ -83,9 +81,6 @@ class Zip(object):
         """
         Reads the contents of the in-memory zip.
 
-        Args:
-            None
-
         Returns:
             str: contents of the in-memory zip
         """
@@ -98,9 +93,6 @@ class Zip(object):
 
         Args:
             filename(str): Name of the file that needs to be written
-
-        Returns:
-            None
         """
         f = open(filename, "wb")
         f.write(self.read())

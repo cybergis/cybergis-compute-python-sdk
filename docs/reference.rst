@@ -34,6 +34,7 @@ cybergis_compute_client.JAT module
 .. automodule:: cybergis_compute_client.JAT
     :members:
     :undoc-members:
+    :private-members:
 
 cybergis_compute_client.Job module
 -----------------------------------------

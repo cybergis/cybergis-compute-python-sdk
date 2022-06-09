@@ -10,15 +10,15 @@ Example:
 class GlobusUtil:
     """
     GlobusUtil class
-    An inteface that handles all interactions with Globus Data Transfer Tool
+    An interface that handles all interactions with Globus Data Transfer Tool
 
     Args:
-        compute (CyberGISCompute) : compute instance
-        that was initialized by the user
+        compute (CyberGISCompute): compute instance
+            that was initialized by the user
 
     Attributes:
-        compute (CyberGISCompute) : instance of CyberGISCompute
-        that was initialized earlier
+        compute (CyberGISCompute): instance of CyberGISCompute
+            that was initialized earlier
     """
     def __init__(self, compute):
         self.compute = compute
@@ -28,13 +28,13 @@ class GlobusUtil:
         Sends a download request to Globus API
 
         Args:
-            endpoint (str) : endpoint that needs to be accessed
-            path (str) : path to endpoint
-            hpc (str) : hpc resource where the endpoint is
-            located. For e.g "keeling-community"
+            endpoint (str): endpoint that needs to be accessed
+            path (str): path to endpoint
+            hpc (str): hpc resource where the endpoint is
+                located. For e.g "keeling-community"
 
         Returns:
-            None
+            JSON: output thats returned by the server
         """
         self.compute.login()
         return self.compute.client.request(
@@ -45,13 +45,13 @@ class GlobusUtil:
         Sends an upload request to Globus API
 
         Args:
-        endpoint (str) : endpoint that needs to be accessed
-        path (str) : path to endpoint
-        hpc (str) : hpc resource where the
-        endpoint is located. For e.g "keeling-community"
+            endpoint (str): endpoint that needs to be accessed
+            path (str): path to endpoint
+            hpc (str): hpc resource where the
+            endpoint is located. For e.g "keeling-community"
 
         Returns:
-            None
+            JSON: output thats returned by the server
         """
         self.compute.login()
         return self.compute.client.request(

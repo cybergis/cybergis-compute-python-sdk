@@ -2,6 +2,7 @@
 This module exposes CyberGISCompute class which creates a CyberGISCompute
 object that serves as an entry point to the CyberGISX environment from a Python/Jupyter notebook.
 All interactions with the High Performance Computing (HPC) backend are performed using this object.
+
 Example:
         cybergis = CyberGISCompute(url='localhost', port='3030', protocol='HTTP', isJupyter=False)
 """
@@ -19,21 +20,21 @@ class CyberGISCompute:
     An inteface that handles all interactions with the HPC backend
 
     Args:
-        url (str) : url that needs to be accessed
-        port (str) : port of the Jupyter or Python interface
-        protocol (str) : Typically HTTP or HTTPS
-        suffix (str) : specify version. For e.g v2
-        isJupyter(booleans) : set to True if you are using Jupyter environment
+        url (str): url that needs to be accessed
+        port (str): port of the Jupyter or Python interface
+        protocol (str): Typically HTTP or HTTPS
+        suffix (str): specify version. For e.g v2
+        isJupyter(bool): set to True if you are using Jupyter environment
 
     Attributes:
-        client (Client object) : Initialized using url(str), protocol(str), port(str) and suffix(str)
-        jupyterhubApiToken (string) : jupyterhub's REST API token that can be used to authenticate the user
-        username (string) : username
-        isJupyter (boolean) : set to True if you are working in a jupyter environment else set it to False
-        ui (UI) : Serves as entry point to UI functionality
-        job (Job) : Serves as entry point to access job interactions
-        recentDownloadPath (str) : Gets the most recent download path from globus
-        jupyterhubHost (str) : static variable that stores the path to jupyterhubHost
+        client (Client object): Initialized using url(str), protocol(str), port(str) and suffix(str)
+        jupyterhubApiToken (string): jupyterhub's REST API token that can be used to authenticate the user
+        username (string): username
+        isJupyter (bool): set to True if you are working in a jupyter environment else set it to False
+        ui (UI): Serves as entry point to UI functionality
+        job (Job): Serves as entry point to access job interactions
+        recentDownloadPath (str): Gets the most recent download path from globus
+        jupyterhubHost (str): static variable that stores the path to jupyterhubHost
     """
     # static variable
     jupyterhubHost = None
@@ -45,14 +46,14 @@ class CyberGISCompute:
         Initializes instance CyberGISCompute using inputs from the client
 
         Args:
-            url (str)               : url that needs to be accessed
-            port (str)              : port of the Jupyter or Python interface
-            protocol (str)          : Typically HTTP or HTTPS
-            suffix (str)            : specify version. For e.g v2
-            isJupyter(booleans)     : set to True if you are using Jupyter environment
+            url (str): url that needs to be accessed
+            port (str): port of the Jupyter or Python interface
+            protocol (str): Typically HTTP or HTTPS
+            suffix (str): specify version. For e.g v2
+            isJupyter(bool): set to True if you are using Jupyter environment
 
         Returns:
-            (obj)                   : this CyberGISCompute
+            CyberGISCompute: this CyberGISCompute
         """
         self.client = Client(url=url, protocol=protocol, port=port, suffix=suffix)
         self.jupyterhubApiToken = None
@@ -71,10 +72,10 @@ class CyberGISCompute:
         to CyberGISCompute features
 
         Args:
-            manualLogin (boolean) : set to True if env variable and file login modes are not available
+            manualLogin (bool): set to True if env variable and  file login modes are not available
 
-        Returns:
-            None
+        Todo:
+            Document exceptions/errors raised.
         """
         if self.jupyterhubApiToken is not None:
             if verbose:
@@ -137,15 +138,15 @@ class CyberGISCompute:
         Initializes instance CyberGISCompute using inputs from the client
 
         Args:
-            maintainer (str) : Pre-packaged programs which can be configured and controlled remotely
+            maintainer (str): Pre-packaged programs which can be configured and controlled remotely
             and behave as a bridge between user and HPC backends
-            hpc(str) : HPC backend that is being accessed. For e.g 'keeling_community'
-            hpcUsername (str) : username for HPC backend
-            hpcPassword (str) : password for HPC backend
-            printJob (str) : prints the Job infortmation if set to True
+            hpc(str): HPC backend that is being accessed. For e.g 'keeling_community'
+            hpcUsername (str): username for HPC backend
+            hpcPassword (str): password for HPC backend
+            printJob (str): prints the Job infortmation if set to True
 
         Returns:
-            Job : The new job instance that was initialized
+            Job: The new job instance that was initialized
         """
         self.login()
         return Job(maintainer=maintainer, hpc=hpc, id=None, hpcUsername=hpcUsername, hpcPassword=hpcPassword, client=self.client, isJupyter=self.isJupyter, jupyterhubApiToken=self.jupyterhubApiToken, printJob=verbose)
@@ -155,10 +156,10 @@ class CyberGISCompute:
         Returns Job object with the specified id
 
         Args:
-            id(int) : Job id
+            id (int): Job id
 
-        Returns
-            Job : Job object with the specified id otherwise None
+        Returns:
+            Job: Job object with the specified id otherwise None
         """
         self.login(verbose=False)
         jobs = self.client.request('GET', '/user/job', {"jupyterhubApiToken": self.jupyterhubApiToken})
@@ -175,10 +176,10 @@ class CyberGISCompute:
         Prints slurm usage
 
         Args:
-            raw(boolean) : set to True if you want the raw output
+            raw(bool): set to True if you want the raw output
 
-        Returns
-            JSON : Raw output if raw=True otherwise its printed
+        Returns:
+            JSON: Raw output if raw=True otherwise its printed
             or displayed directly into the interface
         """
         self.login()
@@ -196,10 +197,10 @@ class CyberGISCompute:
         Prints a list of jobs that were submitted
 
         Args:
-            raw (boolean) : set to True if you want the raw output
+            raw (bool): set to True if you want the raw output
 
-        Returns
-            JSON : Raw output if raw=True otherwise its printed
+        Returns:
+            JSON: Raw output if raw=True otherwise its printed
             or displayed into the interface
         """
         self.login()
@@ -251,10 +252,10 @@ class CyberGISCompute:
         Prints a list of hpc resources that the server supports
 
         Args:
-            raw (boolean) : set to True if you want the raw output
+            raw (bool): set to True if you want the raw output
 
-        Returns
-            JSON : Raw output if raw=True otherwise its printed
+        Returns:
+            JSON: Raw output if raw=True otherwise its printed
             or displayed directly into the interface
         """
         hpc = self.client.request('GET', '/hpc')['hpc']
@@ -292,10 +293,10 @@ class CyberGISCompute:
         Prints a list of containers that the server supports
 
         Args:
-            raw (boolean) : set to True if you want the raw output
+            raw (bool): set to True if you want the raw output
 
-        Returns
-            JSON : Raw output if raw=True otherwise its
+        Returns:
+            JSON: Raw output if raw=True otherwise its
             printed or displayed directly into the interface
         """
         container = self.client.request('GET', '/container')['container']
@@ -332,10 +333,10 @@ class CyberGISCompute:
         Prints a list of Git projects that the server supports
 
         Args:
-            raw (boolean) : set to True if you want the raw output
+            raw (bool): set to True if you want the raw output
 
-        Returns
-            JSON : Raw output if raw=True otherwise its
+        Returns:
+            JSON: Raw output if raw=True otherwise its
             printed or displayed directly into the interface
         """
         git = self.client.request('GET', '/git')['git']
@@ -374,10 +375,10 @@ class CyberGISCompute:
         prints a list of maintainers that the server supports
 
         Args:
-            raw (boolean) : set to True if you want the raw output
+            raw (bool): set to True if you want the raw output
 
-        Returns
-            JSON : Raw output if raw=True otherwise its printed
+        Returns:
+            JSON: Raw output if raw=True otherwise its printed
             or displayed directly into the interface
         """
         maintainers = self.client.request('GET', '/maintainer')['maintainer']
@@ -434,17 +435,14 @@ class CyberGISCompute:
     # Integrated functions
     def list_info(self, list_maintainer=False, list_container=False):
         """
-        Calls list_git, list_hpc, list_job with options to call
-        list_maintainer and list_container
+        Calls :meth:`cybergis_compute_client.CyberGISCompute.CyberGISCompute.list_git`, :meth:`cybergis_compute_client.CyberGISCompute.CyberGISCompute.list_hpc`, :meth:`cybergis_compute_client.CyberGISCompute.CyberGISCompute.list_job` with options to call
+        :meth:`cybergis_compute_client.CyberGISCompute.CyberGISCompute.list_maintainer` and :meth:`cybergis_compute_client.CyberGISCompute.CyberGISCompute.list_container`.
 
         Args:
-            list_maintainer (boolean) : set to True if you want to
-            call list_maintainer
-            list_container (boolean) : set to True of you want to
-            call list
-
-        Returns
-            None
+            list_maintainer (bool): set to True if you want to
+                call list_maintainer
+            list_container (bool): set to True of you want to
+                call list
         """
         print('📦 Git repositories:')
         self.list_git()
@@ -468,14 +466,12 @@ class CyberGISCompute:
             defaultDataFolder="./",
             defaultRemoteResultFolder=None):
         """
-        Displays the job submission UI
-        Args:
-            defaultJob (str)                      : Stores the default job that shows up on the UI
-            defaultDataFolder (str)               : Stores the default input folder that shows up on the UI
-            defaultRemoteResultFolder (str)       : Stores the default output folder that shows up on the UI
+        Displays the job submission UI.
 
-        Returns:
-            None
+        Args:
+            defaultJob (str): Stores the default job that shows up on the UI
+            defaultDataFolder (str): Stores the default input folder that shows up on the UI
+            defaultRemoteResultFolder (str): Stores the default output folder that shows up on the UI
         """
         self.show_ui(defaultJob, defaultDataFolder, defaultRemoteResultFolder)
 
@@ -484,9 +480,9 @@ class CyberGISCompute:
         Displays the job submission UI
 
         Args:
-            defaultJob (str)                      : Stores the default job that shows up on the UI
-            defaultDataFolder (str)               : Stores the default input folder that shows up on the UI
-            defaultRemoteResultFolder (str)       : Stores the default output folder that shows up on the UI
+            defaultJob (str): Stores the default job that shows up on the UI
+            defaultDataFolder (str): Stores the default input folder that shows up on the UI
+            defaultRemoteResultFolder (str): Stores the default output folder that shows up on the UI
 
         Returns:
             None
@@ -503,11 +499,8 @@ class CyberGISCompute:
         """
         Return the current job instance
 
-        Args:
-           None
-
         Returns:
-            JOB : Latest Job object instance
+            Job: Latest Job object instance
         """
         return self.job
 
@@ -515,12 +508,6 @@ class CyberGISCompute:
     def enable_jupyter(self):
         """
         Sets up jupyter environment in jupyterhubHost
-
-        Args:
-           None
-
-        Returns:
-            None
         """
         self.isJupyter = True
         # get jupyter variable
@@ -538,11 +525,8 @@ class CyberGISCompute:
         """
         Return the current job instance
 
-        Args:
-           None
-
         Returns:
-             JOB : Latest Job object instance
+             Job: Latest Job object instance
         """
         return self.client.request(
             'GET', '/user/jupyter-globus', {
@@ -552,10 +536,7 @@ class CyberGISCompute:
         """
         Checks whether jupyterhubApi token exists or not
 
-        Args:
-           None
-
         Returns:
-            boolean : jupyterhubAPI existence check
+            bool: jupyterhubAPI existence check
         """
         return self.jupyterhubApiToken is not None

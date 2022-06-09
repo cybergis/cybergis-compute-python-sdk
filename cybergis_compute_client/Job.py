@@ -12,8 +12,6 @@ class Job:
     """
     Job class
 
-    Args:
-        None
 
     Attributes:
         JAT (obj): Job Access Token associated with this job.
@@ -21,7 +19,7 @@ class Job:
         maintainer (obj): Maintainer pool that this job is in
         isJupyter (bool): Whether or not this is running in Jupyter
         jupyterhubApiToken (str): API token needed to send requests
-        using the JupyterHub API
+            using the JupyterHub API
         id (str): Id assigned to this job by the client
         hpc (str): HPC that this job will be submitted to
     """
@@ -91,7 +89,7 @@ class Job:
         Submits this job to the client, and prints the output
 
         Returns:
-            obj: This job
+            Job: This job
         """
         body = {'accessToken': self.JAT.getAccessToken()}
         if (self.jupyterhubApiToken is not None):
@@ -139,8 +137,7 @@ class Job:
         """
         PUT requests information about this job to the client
         so it can be submitted to the hpc. Displays information
-        about this job unless
-        specified otherwise.
+        about this job unless specified otherwise.
 
         Args:
             executableFolder (str): Path of the executable folder
@@ -149,7 +146,7 @@ class Job:
             param (dict): Rules for input data
             env (dict): Enviorment variables required by the appliation
             slurm (dict): Slurm input rules
-            printJob: If the status of the job should be printed
+            printJob (bool): If the status of the job should be printed
         """
         body = {'jupyterhubApiToken': self.jupyterhubApiToken}
 
@@ -323,7 +320,7 @@ class Job:
         Returns:
             dict: Results from running the job
 
-        Throws:
+        Raises:
             Exception: If the id is None
         """
         if self.id is None:
@@ -409,14 +406,18 @@ class Job:
     def downloadResultFolder(self, dir=None):
         """
         Downloads the result folder and returns
-        information about it
+        information about it. Exists for backward compatability.
+        Calls :meth:`cybergis_compute_client.Job.Job.download_result_folder`
 
         Args:
-            (dir): Location to download the files to
+            (str): Location to download the files to
 
         Returns:
             dict: Output from the client when downloading
             the results using globus.
+
+        Todo:
+            * Add deprecation warning.
         """
         return self.download_result_folder(dir)
 

@@ -13,19 +13,18 @@ from os import path
 
 class Client:
     """
-    Client class
     An inteface that handles requests made to different servers
 
     Args:
-        url (str) : url that needs to be accessed
-        port (str) : port of the Jupyter or Python interface
-        protocol (str) : Typically HTTP or HTTPS
-        suffix (str) : specify version. For e.g v2
+        url (str): url that needs to be accessed
+        port (str): port of the Jupyter or Python interface
+        protocol (str): Typically HTTP or HTTPS
+        suffix (str): specify version. For e.g v2
 
     Attributes:
-        url (str) : url that needs to be accessed
-        port (str) : port of the Jupyter or Python interface
-        suffix (str) : specify version. For e.g v2
+        url (str): url that needs to be accessed
+        port (str): port of the Jupyter or Python interface
+        suffix (str): specify version. For e.g v2
     """
     def __init__(
         self, url="cgjobsup.cigi.illinois.edu",
@@ -39,13 +38,13 @@ class Client:
         Returns data from a request made to the specified uri
 
         Args:
-            methods (str) : type of request that needs to be
-            made. For e.g "POST"
-            uri (str) : uri of the server
-            body (str) : data that needs to be sent
+            methods (str): type of request that needs to be
+                made. For e.g "POST"
+            uri (str): uri of the server
+            body (str): data that needs to be sent
 
         Returns:
-            JSON : output thats returned by the server
+            JSON: output thats returned by the server
         """
         if self.protocol == 'HTTP':
             connection = client.HTTPConnection(self.url)
@@ -73,12 +72,12 @@ class Client:
         onto the specifed path
 
         Args:
-            uri (str) : uri of the server
-            body (str) : data that needs to be dowloaded
-            localDir (str) : path where the data needs to be downloaded
+            uri (str): uri of the server
+            body (str): data that needs to be dowloaded
+            localDir (str): path where the data needs to be downloaded
 
         Returns:
-            str : path where the data is stored
+            str: path where the data is stored
         """
         url = self.protocol.lower() + '://' + path.join(
             self.url.strip('/'), self.suffix.strip('/'), uri.strip('/'))
@@ -117,12 +116,12 @@ class Client:
         Uploads data using a request made to the specified uri
 
         Args:
-            uri (str) : uri of the server
-            body (str) : data that needs to be uploaded
-            file (str) : file that needs to be uploaded
+            uri (str): uri of the server
+            body (str): data that needs to be uploaded
+            file (str): file that needs to be uploaded
 
         Returns:
-            JSON : output from the upload request to the server
+            JSON: output from the upload request to the server
         """
         url = self.protocol.lower() + '://' + path.join(
             self.url.strip('/'), self.suffix.strip('/'),
