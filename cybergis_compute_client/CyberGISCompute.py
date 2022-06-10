@@ -183,9 +183,7 @@ class CyberGISCompute:
             or displayed directly into the interface
         """
         self.login()
-        usage = self.client.request(
-            'GET', '/user/slurm-usage?format={}'.format(not raw), {
-                "jupyterhubApiToken": self.jupyterhubApiToken})
+        usage = self.client.request('GET', '/user/slurm-usage?format={}'.format(not raw), {"jupyterhubApiToken": self.jupyterhubApiToken})
         if raw:
             return usage
         display(
@@ -277,14 +275,7 @@ class CyberGISCompute:
             if len(data) == 0:
                 print('empty')
                 return
-            display(
-                HTML(
-                    tabulate(
-                        data, headers, numalign='left',
-                        stralign='left', colalign=('left', 'left'),
-                        tablefmt='html').replace(
-                            '<td>', '<td style="text-align:left">').replace(
-                                '<th>', '<th style="text-align:left">')))
+            display(HTML(tabulate(data, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', '<td style="text-align:left">').replace('<th>', '<th style="text-align:left">')))
         else:
             print(tabulate(data, headers, tablefmt="presto"))
 
@@ -317,14 +308,7 @@ class CyberGISCompute:
             if len(data) == 0:
                 print('empty')
                 return
-            display(
-                HTML(
-                    tabulate(
-                        data, headers, numalign='left',
-                        stralign='left', colalign=('left', 'left'),
-                        tablefmt='html').replace(
-                            '<td>', '<td style="text-align:left">').replace(
-                                '<th>', '<th style="text-align:left">')))
+            display(HTML(tabulate(data, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', '<td style="text-align:left">').replace('<th>', '<th style="text-align:left">')))
         else:
             print(tabulate(data, headers, tablefmt="presto"))
 
@@ -422,13 +406,7 @@ class CyberGISCompute:
             if len(data) == 0:
                 print('empty')
                 return
-            display(
-                HTML(
-                    tabulate(
-                        data, headers, numalign='left', stralign='left',
-                        colalign=('left', 'left'), tablefmt='html').replace(
-                            '<td>', '<td style="text-align:left">').replace(
-                                '<th>', '<th style="text-align:left">')))
+            display(HTML(tabulate(data, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', '<td style="text-align:left">').replace('<th>', '<th style="text-align:left">')))
         else:
             print(tabulate(data, headers, tablefmt="presto"))
 
@@ -491,8 +469,7 @@ class CyberGISCompute:
         self.ui.defaultDataFolder = defaultDataFolder
         df = defaultRemoteResultFolder
         if df is not None:
-            self.ui.defaultRemoteResultFolder = df if df[0] == '/' else '/'
-            + df
+            self.ui.defaultRemoteResultFolder = df if df[0] == '/' else '/' + df
         self.ui.render()
 
     def get_latest_created_job(self):
@@ -517,9 +494,7 @@ class CyberGISCompute:
                 'https://', '').replace(
                     'http://', '')
         else:
-            display(
-                Javascript(
-                    'IPython.notebook.kernel.execute(''`CyberGISCompute.jupyterhubHost = "${window.location.host}"`);'))
+            display(Javascript('IPython.notebook.kernel.execute(''`CyberGISCompute.jupyterhubHost = "${window.location.host}"`);'))
 
     def get_user_jupyter_globus(self):
         """

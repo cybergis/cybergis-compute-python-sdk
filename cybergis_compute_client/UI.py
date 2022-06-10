@@ -40,12 +40,7 @@ class UI:
         jupyter_globus (dict): Information about where the output data will be
             stored (container_home_path, endpoint, root_path)
     """
-    def __init__(
-        self,
-            compute,
-            defaultJobName="hello_world",
-            defaultDataFolder="./",
-            defaultRemoteResultFolder=None):
+    def __init__(self, compute, defaultJobName="hello_world", defaultDataFolder="./", defaultRemoteResultFolder=None):
         self.compute = compute
         self.style = {'description_width': 'auto'}
         self.layout = widgets.Layout(width='60%')
@@ -54,8 +49,7 @@ class UI:
         self.defaultJobName = defaultJobName
         df = defaultRemoteResultFolder
         if df is not None:
-            self.defaultRemoteResultFolder = df if df[
-                0] == '/' else '/' + df
+            self.defaultRemoteResultFolder = df if df[0] == '/' else '/' + df
         self.defaultDataFolder = defaultDataFolder
         # slurm configs
         self.slurm_configs = [
@@ -67,8 +61,7 @@ class UI:
             'num_of_node', 'num_of_task', 'time', 'cpu_per_task',
             'memory_per_cpu', 'memory_per_gpu', 'memory', 'gpus',
             'gpus_per_node', 'gpus_per_socket', 'gpus_per_task']
-        self.slurm_integer_storage_unit_config = [
-            'memory_per_cpu', 'memory_per_gpu', 'memory']
+        self.slurm_integer_storage_unit_config = ['memory_per_cpu', 'memory_per_gpu', 'memory']
         self.slurm_integer_time_unit_config = ['time']
         self.slurm_integer_none_unit_config = [
             'cpu_per_task', 'num_of_node', 'num_of_task', 'gpus',
@@ -90,9 +83,7 @@ class UI:
         job_config = widgets.Output()
         with job_config:
             display(Markdown('# Welcome to CyberGIS-Compute'))
-            display(
-                Markdown(
-                    'A scalable middleware framework for enabling high-performance and data-intensive geospatial research and education on CyberGIS-Jupyter'))
+            display(Markdown('A scalable middleware framework for enabling high-performance and data-intensive geospatial research and education on CyberGIS-Jupyter'))
             display(divider)
             display(self.jobTemplate['output'])
             display(self.description['output'])
@@ -184,12 +175,8 @@ class UI:
         if self.description['output'] is None:
             self.description['output'] = widgets.Output()
 
-        self.description['job_description'] = Markdown(
-            '**' + self.jobName + ' Job Description:** ' + self.job[
-                'description'])
-        self.description['computing_resource_description'] = Markdown(
-            '**' + self.hpcName + ' HPC Description**: ' + self.hpc[
-                'description'])
+        self.description['job_description'] = Markdown('**' + self.jobName + ' Job Description:** ' + self.job['description'])
+        self.description['computing_resource_description'] = Markdown('**' + self.hpcName + ' HPC Description**: ' + self.hpc['description'])
         self.description['estimated_runtime'] = Markdown(
             '**Estimated Runtime:** ' + self.job['estimated_runtime'])
         with self.description['output']:
@@ -227,7 +214,6 @@ class UI:
         on job status and input their email.
         """
         if self.email['output'] is None:
-
             self.email['output'] = widgets.Output()
         # create components
         self.email['checkbox'] = widgets.Checkbox(
@@ -257,9 +243,7 @@ class UI:
             if i not in self.job['slurm_input_rules']:
                 self.slurm[i] = None
                 continue
-
             config = self.job['slurm_input_rules'][i]
-
             if i in self.slurm_integer_configs:
                 default_val = config['default_value']
                 max_val = config['max']
@@ -280,7 +264,6 @@ class UI:
                     description=description,
                     style=self.style, layout=self.layout
                 )
-
             if i in self.slurm_string_option_configs:
                 default_val = config['default_value']
                 options = config['options']
@@ -298,10 +281,7 @@ class UI:
         self.slurm['vbox'] = widgets.VBox(w)
 
         # settings end
-        self.slurm['accordion'] = widgets.Accordion(
-            children=(
-                widgets.VBox(
-                    children=(self.slurm['description'], self.slurm['vbox'])),), selected_index=None)
+        self.slurm['accordion'] = widgets.Accordion(children=(widgets.VBox(children=(self.slurm['description'], self.slurm['vbox'])),), selected_index=None)
         self.slurm['accordion'].set_title(0, 'Slurm Computing Configurations')
         with self.slurm['output']:
             display(self.slurm['accordion'])
@@ -320,11 +300,8 @@ class UI:
             self.defaultDataFolder,
             select_default=True if self.defaultDataFolder != './' else False)
         self.uploadData['selector'].show_only_dirs = True
-        self.uploadData['selector'].title = 'Job requires upload data.'
-        + 'Please select a folder to upload'
-        # settings end
-        self.uploadData['accordion'] = widgets.Accordion(
-            children=(self.uploadData['selector'], ), selected_index=None)
+        self.uploadData['selector'].title = 'Job requires upload data.' + 'Please select a folder to upload'
+        self.uploadData['accordion'] = widgets.Accordion(children=(self.uploadData['selector'], ), selected_index=None)
         self.uploadData['accordion'].set_title(0, 'Upload Data')
         with self.uploadData['output']:
             display(self.uploadData['accordion'])
@@ -366,7 +343,6 @@ class UI:
                     description=description,
                     style=self.style, layout=self.layout
                 )
-
             if config['type'] == 'string_option':
                 default_val = config['default_value']
                 options = config['options']
@@ -376,18 +352,15 @@ class UI:
                     description=i,
                     style=self.style
                 )
-
             if config['type'] == 'string_input':
                 default_val = config['default_value']
                 self.param[i] = widgets.Text(
                     description=i, value=default_val, style=self.style)
 
         # render all
-        self.param['vbox'] = widgets.VBox(
-            [self.param[i] for i in self.job['param_rules']])
+        self.param['vbox'] = widgets.VBox([self.param[i] for i in self.job['param_rules']])
         # settings end
-        self.param['accordion'] = widgets.Accordion(
-            children=(self.param['vbox'], ), selected_index=None)
+        self.param['accordion'] = widgets.Accordion(children=(self.param['vbox'], ), selected_index=None)
         self.param['accordion'].set_title(0, 'Input Parameters')
         with self.param['output']:
             display(self.param['accordion'])
@@ -408,7 +381,6 @@ class UI:
         else:
             self.submit['button'] = widgets.Button(description="Submit Job")
         self.submit['button'].on_click(self.onSubmitButtonClick())
-
         with self.submit['output']:
             display(self.submit['alert_output'])
             display(self.submit['button'])
@@ -477,10 +449,8 @@ class UI:
         """
         if self.resultEvents['output'] is None:
             self.resultEvents['output'] = widgets.Output()
-
         if not self.submitted:
             return
-
         with self.resultEvents['output']:
             self.compute.job.events()
         return
@@ -492,7 +462,6 @@ class UI:
         """
         if self.resultLogs['output'] is None:
             self.resultLogs['output'] = widgets.Output()
-
         if not self.submitted:
             return
         with self.resultLogs['output']:
@@ -552,13 +521,10 @@ class UI:
             and display the location.
             """
             if self.downloading:
-
                 self.download['alert_output'].clear_output(wait=True)
-
                 with self.download['alert_output']:
                     display(
-                        Markdown(
-                            '⚠️ download process is running in background...'))
+                        Markdown('⚠️ download process is running in background...'))
                     return
 
             with self.download['result_output']:
@@ -569,12 +535,9 @@ class UI:
                 self.renderLoadMore()
                 self.download['alert_output'].clear_output(wait=True)
                 self.downloading = True
-                self.compute.job.download_result_folder(
-                    remotePath=self.download['dropdown'].value)
+                self.compute.job.download_result_folder(remotePath=self.download['dropdown'].value)
                 print('please check your data at your root folder under "' + self.globus_filename + '"')
-                self.compute.recentDownloadPath = os.path.join(
-                    self.jupyter_globus['container_home_path'],
-                    self.globus_filename)
+                self.compute.recentDownloadPath = os.path.join(self.jupyter_globus['container_home_path'], self.globus_filename)
                 self.downloading = False
                 self.refreshing = False
                 self.recently_submitted['output'].clear_output()
@@ -602,18 +565,11 @@ class UI:
                 dataFolder = self.uploadData['selector'].selected
                 if dataFolder is None:
                     with self.submit['alert_output']:
-                        display(
-                            Markdown(
-                                '⚠️ please select a folder before upload...'))
+                        display(Markdown('⚠️ please select a folder before upload...'))
                         return
                 else:
-                    dataFolder = dataFolder.replace(
-                        self.jupyter_globus['container_home_path'].strip('/'),
-                        '')
-                    dataFolder = 'globus://' + self.jupyter_globus['endpoint']
-                    + ':' + os.path.join(
-                        self.jupyter_globus['root_path'],
-                        dataFolder.strip('/'))
+                    dataFolder = dataFolder.replace(self.jupyter_globus['container_home_path'].strip('/'), '')
+                    dataFolder = 'globus://' + self.jupyter_globus['endpoint'] + ':' + os.path.join(self.jupyter_globus['root_path'], dataFolder.strip('/'))
 
             data = self.get_data()
             self.compute.job = self.compute.create_job(hpc=data['computing_resource'], verbose=False)
@@ -786,7 +742,6 @@ class UI:
             'email': self.email['text'].value if self.email[
                 'checkbox'].value else None,
         }
-
         for i in self.slurm_configs:
             if self.slurm[i] is not None and i in self.job[
                     'slurm_input_rules']:
@@ -794,11 +749,9 @@ class UI:
                     continue  # skip null value
                 config = self.job['slurm_input_rules'][i]
                 if i in self.slurm_integer_storage_unit_config:
-                    out['slurm'][i] = str(
-                        self.slurm[i].value) + str(config['unit'])
+                    out['slurm'][i] = str(self.slurm[i].value) + str(config['unit'])
                 elif i in self.slurm_integer_time_unit_config:
-                    seconds = self.unitTimeToSecond(
-                        config['unit'], self.slurm[i].value)
+                    seconds = self.unitTimeToSecond(config['unit'], self.slurm[i].value)
                     out['slurm'][i] = self.secondsToTime(seconds)
                 else:
                     out['slurm'][i] = self.slurm[i].value
