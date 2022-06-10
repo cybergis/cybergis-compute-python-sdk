@@ -626,9 +626,7 @@ class UI:
             param = data['param']
             # download
             self.globus_filename = 'globus_download_' + self.compute.job.id
-            resultFolder = 'globus://' + self.jupyter_globus['endpoint'] + ':'
-            + os.path.join(
-                self.jupyter_globus['root_path'], self.globus_filename)
+            resultFolder = 'globus://' + self.jupyter_globus['endpoint'] + ':' + os.path.join(self.jupyter_globus['root_path'], self.globus_filename)
 
             # submit
             self.compute.job.set(executableFolder='git://' + data['job_template'], dataFolder=dataFolder, resultFolder=resultFolder, printJob=False, param=param, slurm=slurm)
