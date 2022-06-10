@@ -28,18 +28,8 @@ class Job:
         'JOB_QUEUED', 'JOB_REGISTERED', 'JOB_INIT',
         'GLOBUS_TRANSFER_INIT_SUCCESS', 'JOB_ENDED', 'JOB_FAILED']
 
-    def __init__(
-        self,
-            maintainer=None,
-            hpc=None,
-            id=None,
-            secretToken=None,
-            hpcUsername=None,
-            hpcPassword=None,
-            client=None,
-            isJupyter=None,
-            jupyterhubApiToken=None,
-            printJob=True):
+    def __init__(self, maintainer=None, hpc=None, id=None, secretToken=None, hpcUsername=None, hpcPassword=None,
+                 client=None, isJupyter=None, jupyterhubApiToken=None, printJob=True):
         self.JAT = JAT()
         self.client = client
         self.maintainer = maintainer
@@ -125,15 +115,8 @@ class Job:
         self.set(executableFolder=response['file'], printJob=True)
         return response
 
-    def set(
-        self,
-            executableFolder=None,
-            dataFolder=None,
-            resultFolder=None,
-            param=None,
-            env=None,
-            slurm=None,
-            printJob=True):
+    def set(self, executableFolder=None, dataFolder=None, resultFolder=None, param=None, env=None,
+            slurm=None, printJob=True):
         """
         PUT requests information about this job to the client
         so it can be submitted to the hpc. Displays information
@@ -273,13 +256,7 @@ class Job:
                 print('🤖 Slurm ID: ' + str(status['slurmId']))
             if len(logs) > 0:
                 if self.isJupyter:
-                    display(
-                        HTML(
-                            tabulate(
-                                logs, headers, numalign='left',
-                                stralign='left', colalign=('left', 'left'),
-                                tablefmt='html').replace(
-                                    '<td>', "<td style='text-align:left'>")))
+                    display(HTML(tabulate(logs, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', "<td style='text-align:left'>")))
                 else:
                     print(tabulate(logs, headers, tablefmt='presto'))
 
@@ -328,8 +305,7 @@ class Job:
         out = self.client.request('GET', '/job/' + self.id + '/result-folder-content', {'accessToken': self.JAT.getAccessToken()})
         return out
 
-    def download_result_folder(
-            self, localPath=None, remotePath=None, raw=False):
+    def download_result_folder(self, localPath=None, remotePath=None, raw=False):
         """
         Downloads the folder with results from the job using Globus
 
@@ -463,13 +439,6 @@ class Job:
         ]]
 
         if self.isJupyter:
-            display(
-                HTML(
-                    tabulate(
-                        data, headers, numalign='left',
-                        stralign='left', colalign=('left', 'left'),
-                        tablefmt='html').replace(
-                            '<td>', '<td style="text-align:left">').replace(
-                                '<th>', '<th style="text-align:left">')))
+            display(HTML(tabulate(data, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', '<td style="text-align:left">').replace('<th>', '<th style="text-align:left">')))
         else:
             print(tabulate(data, headers, tablefmt="presto"))

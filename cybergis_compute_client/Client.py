@@ -79,8 +79,7 @@ class Client:
         Returns:
             str: path where the data is stored
         """
-        url = self.protocol.lower() + '://' + path.join(
-            self.url.strip('/'), self.suffix.strip('/'), uri.strip('/'))
+        url = self.protocol.lower() + '://' + path.join(self.url.strip('/'), self.suffix.strip('/'), uri.strip('/'))
         response = requests.get(url, data=body, stream=True)
         contentType = response.headers['Content-Type']
 
@@ -123,9 +122,7 @@ class Client:
         Returns:
             JSON: output from the upload request to the server
         """
-        url = self.protocol.lower() + '://' + path.join(
-            self.url.strip('/'), self.suffix.strip('/'),
-            uri.strip('/'))
+        url = self.protocol.lower() + '://' + path.join(self.url.strip('/'), self.suffix.strip('/'), uri.strip('/'))
         data = json.loads(requests.post(url, data=body, files={'file': file}).content.decode())
         if 'error' in data:
             return '❌ server ' + self.url + ' responded with error "'
