@@ -29,18 +29,8 @@
         <span class=s1 >'JOB_QUEUED'</span><span class=p >,</span> <span class=s1 >'JOB_REGISTERED'</span><span class=p >,</span> <span class=s1 >'JOB_INIT'</span><span class=p >,</span>
         <span class=s1 >'GLOBUS_TRANSFER_INIT_SUCCESS'</span><span class=p >,</span> <span class=s1 >'JOB_ENDED'</span><span class=p >,</span> <span class=s1 >'JOB_FAILED'</span><span class=p >]</span>
 
-    <span class=k >def</span> <span class=fm >__init__</span><span class=p >(</span>
-        <span class=bp >self</span><span class=p >,</span>
-            <span class=n >maintainer</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span>
-            <span class=n >hpc</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span>
-            <span class=nb >id</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span>
-            <span class=n >secretToken</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span>
-            <span class=n >hpcUsername</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span>
-            <span class=n >hpcPassword</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span>
-            <span class=n >client</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span>
-            <span class=n >isJupyter</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span>
-            <span class=n >jupyterhubApiToken</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span>
-            <span class=n >printJob</span><span class=o >=</span><span class=kc >True</span><span class=p >):</span>
+    <span class=k >def</span> <span class=fm >__init__</span><span class=p >(</span><span class=bp >self</span><span class=p >,</span> <span class=n >maintainer</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span> <span class=n >hpc</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span> <span class=nb >id</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span> <span class=n >secretToken</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span> <span class=n >hpcUsername</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span> <span class=n >hpcPassword</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span>
+                 <span class=n >client</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span> <span class=n >isJupyter</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span> <span class=n >jupyterhubApiToken</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span> <span class=n >printJob</span><span class=o >=</span><span class=kc >True</span><span class=p >):</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >JAT</span> <span class=o >=</span> <span class=n >JAT</span><span class=p >()</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >client</span> <span class=o >=</span> <span class=n >client</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >maintainer</span> <span class=o >=</span> <span class=n >maintainer</span>
@@ -126,15 +116,8 @@
         <span class=bp >self</span><span class=o >.</span><span class=n >set</span><span class=p >(</span><span class=n >executableFolder</span><span class=o >=</span><span class=n >response</span><span class=p >[</span><span class=s1 >'file'</span><span class=p >],</span> <span class=n >printJob</span><span class=o >=</span><span class=kc >True</span><span class=p >)</span>
         <span class=k >return</span> <span class=n >response</span></div>
 
-<div class=viewcode-block  id=Job.set ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.Job.Job.set">[docs]</a>    <span class=k >def</span> <span class=nf >set</span><span class=p >(</span>
-        <span class=bp >self</span><span class=p >,</span>
-            <span class=n >executableFolder</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span>
-            <span class=n >dataFolder</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span>
-            <span class=n >resultFolder</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span>
-            <span class=n >param</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span>
-            <span class=n >env</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span>
-            <span class=n >slurm</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span>
-            <span class=n >printJob</span><span class=o >=</span><span class=kc >True</span><span class=p >):</span>
+<div class=viewcode-block  id=Job.set ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.Job.Job.set">[docs]</a>    <span class=k >def</span> <span class=nf >set</span><span class=p >(</span><span class=bp >self</span><span class=p >,</span> <span class=n >executableFolder</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span> <span class=n >dataFolder</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span> <span class=n >resultFolder</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span> <span class=n >param</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span> <span class=n >env</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span>
+            <span class=n >slurm</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span> <span class=n >printJob</span><span class=o >=</span><span class=kc >True</span><span class=p >):</span>
         <span class=sd >"""</span>
 <span class=sd >        PUT requests information about this job to the client</span>
 <span class=sd >        so it can be submitted to the hpc. Displays information</span>
@@ -274,13 +257,7 @@
                 <span class=nb >print</span><span class=p >(</span><span class=s1 >'🤖 Slurm ID: '</span> <span class=o >+</span> <span class=nb >str</span><span class=p >(</span><span class=n >status</span><span class=p >[</span><span class=s1 >'slurmId'</span><span class=p >]))</span>
             <span class=k >if</span> <span class=nb >len</span><span class=p >(</span><span class=n >logs</span><span class=p >)</span> <span class=o >&gt;</span> <span class=mi >0</span><span class=p >:</span>
                 <span class=k >if</span> <span class=bp >self</span><span class=o >.</span><span class=n >isJupyter</span><span class=p >:</span>
-                    <span class=n >display</span><span class=p >(</span>
-                        <span class=n >HTML</span><span class=p >(</span>
-                            <span class=n >tabulate</span><span class=p >(</span>
-                                <span class=n >logs</span><span class=p >,</span> <span class=n >headers</span><span class=p >,</span> <span class=n >numalign</span><span class=o >=</span><span class=s1 >'left'</span><span class=p >,</span>
-                                <span class=n >stralign</span><span class=o >=</span><span class=s1 >'left'</span><span class=p >,</span> <span class=n >colalign</span><span class=o >=</span><span class=p >(</span><span class=s1 >'left'</span><span class=p >,</span> <span class=s1 >'left'</span><span class=p >),</span>
-                                <span class=n >tablefmt</span><span class=o >=</span><span class=s1 >'html'</span><span class=p >)</span><span class=o >.</span><span class=n >replace</span><span class=p >(</span>
-                                    <span class=s1 >'&lt;td&gt;'</span><span class=p >,</span> <span class=s2 >"&lt;td style='text-align:left'&gt;"</span><span class=p >)))</span>
+                    <span class=n >display</span><span class=p >(</span><span class=n >HTML</span><span class=p >(</span><span class=n >tabulate</span><span class=p >(</span><span class=n >logs</span><span class=p >,</span> <span class=n >headers</span><span class=p >,</span> <span class=n >numalign</span><span class=o >=</span><span class=s1 >'left'</span><span class=p >,</span> <span class=n >stralign</span><span class=o >=</span><span class=s1 >'left'</span><span class=p >,</span> <span class=n >colalign</span><span class=o >=</span><span class=p >(</span><span class=s1 >'left'</span><span class=p >,</span> <span class=s1 >'left'</span><span class=p >),</span> <span class=n >tablefmt</span><span class=o >=</span><span class=s1 >'html'</span><span class=p >)</span><span class=o >.</span><span class=n >replace</span><span class=p >(</span><span class=s1 >'&lt;td&gt;'</span><span class=p >,</span> <span class=s2 >"&lt;td style='text-align:left'&gt;"</span><span class=p >)))</span>
                 <span class=k >else</span><span class=p >:</span>
                     <span class=nb >print</span><span class=p >(</span><span class=n >tabulate</span><span class=p >(</span><span class=n >logs</span><span class=p >,</span> <span class=n >headers</span><span class=p >,</span> <span class=n >tablefmt</span><span class=o >=</span><span class=s1 >'presto'</span><span class=p >))</span>
 
@@ -329,8 +306,7 @@
         <span class=n >out</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >client</span><span class=o >.</span><span class=n >request</span><span class=p >(</span><span class=s1 >'GET'</span><span class=p >,</span> <span class=s1 >'/job/'</span> <span class=o >+</span> <span class=bp >self</span><span class=o >.</span><span class=n >id</span> <span class=o >+</span> <span class=s1 >'/result-folder-content'</span><span class=p >,</span> <span class=p >{</span><span class=s1 >'accessToken'</span><span class=p >:</span> <span class=bp >self</span><span class=o >.</span><span class=n >JAT</span><span class=o >.</span><span class=n >getAccessToken</span><span class=p >()})</span>
         <span class=k >return</span> <span class=n >out</span></div>
 
-<div class=viewcode-block  id=Job.download_result_folder ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.Job.Job.download_result_folder">[docs]</a>    <span class=k >def</span> <span class=nf >download_result_folder</span><span class=p >(</span>
-            <span class=bp >self</span><span class=p >,</span> <span class=n >localPath</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span> <span class=n >remotePath</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span> <span class=n >raw</span><span class=o >=</span><span class=kc >False</span><span class=p >):</span>
+<div class=viewcode-block  id=Job.download_result_folder ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.Job.Job.download_result_folder">[docs]</a>    <span class=k >def</span> <span class=nf >download_result_folder</span><span class=p >(</span><span class=bp >self</span><span class=p >,</span> <span class=n >localPath</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span> <span class=n >remotePath</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span> <span class=n >raw</span><span class=o >=</span><span class=kc >False</span><span class=p >):</span>
         <span class=sd >"""</span>
 <span class=sd >        Downloads the folder with results from the job using Globus</span>
 
@@ -464,14 +440,7 @@
         <span class=p >]]</span>
 
         <span class=k >if</span> <span class=bp >self</span><span class=o >.</span><span class=n >isJupyter</span><span class=p >:</span>
-            <span class=n >display</span><span class=p >(</span>
-                <span class=n >HTML</span><span class=p >(</span>
-                    <span class=n >tabulate</span><span class=p >(</span>
-                        <span class=n >data</span><span class=p >,</span> <span class=n >headers</span><span class=p >,</span> <span class=n >numalign</span><span class=o >=</span><span class=s1 >'left'</span><span class=p >,</span>
-                        <span class=n >stralign</span><span class=o >=</span><span class=s1 >'left'</span><span class=p >,</span> <span class=n >colalign</span><span class=o >=</span><span class=p >(</span><span class=s1 >'left'</span><span class=p >,</span> <span class=s1 >'left'</span><span class=p >),</span>
-                        <span class=n >tablefmt</span><span class=o >=</span><span class=s1 >'html'</span><span class=p >)</span><span class=o >.</span><span class=n >replace</span><span class=p >(</span>
-                            <span class=s1 >'&lt;td&gt;'</span><span class=p >,</span> <span class=s1 >'&lt;td style="text-align:left"&gt;'</span><span class=p >)</span><span class=o >.</span><span class=n >replace</span><span class=p >(</span>
-                                <span class=s1 >'&lt;th&gt;'</span><span class=p >,</span> <span class=s1 >'&lt;th style="text-align:left"&gt;'</span><span class=p >)))</span>
+            <span class=n >display</span><span class=p >(</span><span class=n >HTML</span><span class=p >(</span><span class=n >tabulate</span><span class=p >(</span><span class=n >data</span><span class=p >,</span> <span class=n >headers</span><span class=p >,</span> <span class=n >numalign</span><span class=o >=</span><span class=s1 >'left'</span><span class=p >,</span> <span class=n >stralign</span><span class=o >=</span><span class=s1 >'left'</span><span class=p >,</span> <span class=n >colalign</span><span class=o >=</span><span class=p >(</span><span class=s1 >'left'</span><span class=p >,</span> <span class=s1 >'left'</span><span class=p >),</span> <span class=n >tablefmt</span><span class=o >=</span><span class=s1 >'html'</span><span class=p >)</span><span class=o >.</span><span class=n >replace</span><span class=p >(</span><span class=s1 >'&lt;td&gt;'</span><span class=p >,</span> <span class=s1 >'&lt;td style="text-align:left"&gt;'</span><span class=p >)</span><span class=o >.</span><span class=n >replace</span><span class=p >(</span><span class=s1 >'&lt;th&gt;'</span><span class=p >,</span> <span class=s1 >'&lt;th style="text-align:left"&gt;'</span><span class=p >)))</span>
         <span class=k >else</span><span class=p >:</span>
             <span class=nb >print</span><span class=p >(</span><span class=n >tabulate</span><span class=p >(</span><span class=n >data</span><span class=p >,</span> <span class=n >headers</span><span class=p >,</span> <span class=n >tablefmt</span><span class=o >=</span><span class=s2 >"presto"</span><span class=p >))</span></div>
 </pre></div> </article> </div> </div> </main> </div> <footer class=md-footer > <div class=md-footer-nav > <nav class="md-footer-nav__inner md-grid"> </a> </nav> </div> <div class="md-footer-meta md-typeset"> <div class="md-footer-meta__inner md-grid"> <div class=md-footer-copyright > <div class=md-footer-copyright__highlight > &#169; Copyright 2022, CyberGIS Center. </div> Created using <a href="http://www.sphinx-doc.org/">Sphinx</a> 5.0.1. and <a href="https://github.com/bashtage/sphinx-material/">Material for Sphinx</a> </div> </div> </div> </footer> <script src="../../_static/javascripts/application.js"></script> <script>app.initialize({version: "1.0.4", url: {base: ".."}})</script>
