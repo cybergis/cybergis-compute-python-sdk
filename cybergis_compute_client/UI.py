@@ -93,6 +93,7 @@ class UI:
             display(self.uploadData['output'])
             display(self.email['output'])
             display(self.submit['output'])
+            display(self.submitNew['output'])
 
         # 2. job status
         job_status = widgets.Output()
@@ -147,6 +148,7 @@ class UI:
         self.renderDownload()
         self.renderRecentlySubmittedJobs()
         self.renderLoadMore()
+        self.renderSubmitNew()
 
     # components
     def renderJobTemplate(self):
@@ -385,6 +387,26 @@ class UI:
             display(self.submit['alert_output'])
             display(self.submit['button'])
 
+    def renderSubmitNew(self):
+        """
+        Render submit new button, which allows the user to return the SDK to a pre-submission state so they can submit successive jobs.
+        """
+        if self.submitNew['output'] is None:
+            self.submitNew['output'] = widgets.Output()
+        if self.submitted:
+            self.submitNew['button'] = widgets.Button(description="Submit New Job")
+        else:
+            self.submitNew['button'] = None
+
+        with self.submitNew['output']:
+            if self.submitted:
+                self.submitNew['button'] = widgets.Button(description="Submit New Job")
+                display(self.submitNew['button'])
+            else:
+                self.submitNew['button'] = None
+        if self.submitNew['button'] is not None:
+            self.submitNew['button'].on_click(self.onSubmitNewButtonClick())
+
     def renderDownload(self):
         """
         Creates the components of the download section
@@ -489,7 +511,7 @@ class UI:
             for i in range(len(jobs['job']) - 1, len(jobs['job']) - self.recently_submitted['job_list_size'] - 1, -1):
                 job = self.compute.get_job_by_id(jobs['job'][i]['id'], verbose=False)
                 jobDetails = jobs['job'][i]
-                job._print_job(jobDetails)
+                job._print_job_formatted(jobDetails)
                 if self.refreshing:
                     self.recently_submitted['submit'][jobs['job'][i]['id']] = widgets.Button(description="🔁 Loading", disabled=True)
                 else:
@@ -547,6 +569,14 @@ class UI:
 
         return on_click
 
+    def onSubmitNewButtonClick(self):
+        def on_click(change):
+            self.submitted = False
+            self.rerender(['resultStatus', 'resultEvents', 'resultLogs', 'submit'])
+            self.submitNew['output'].clear_output()
+            self.renderSubmitNew()
+        return on_click
+
     def onSubmitButtonClick(self):
         def on_click(change):
             """
@@ -589,11 +619,13 @@ class UI:
             self.compute.job.submit()
             self.tab.selected_index = 1
             self.submitted = True
-            self.tab.set_title(2, '⏳ Your Job Status')
+            self.tab.set_title(1, '⏳ Your Job Status')
             self.rerender(['resultStatus', 'resultEvents', 'resultLogs', 'submit'])
             self.recently_submitted['output'].clear_output()
             self.load_more['output'].clear_output()
+            self.submitNew['output'].clear_output()
             self.renderRecentlySubmittedJobs()
+            self.renderSubmitNew()
         return on_click
 
     def onJobDropdownChange(self):
@@ -689,6 +721,7 @@ class UI:
         self.slurm = {'output': None}
         self.email = {'output': None}
         self.submit = {'output': None, 'alert_output': None}
+        self.submitNew = {'output': None, 'button': None}
         self.param = {'output': None}
         self.uploadData = {'output': None}
         self.resultStatus = {'output': None}
