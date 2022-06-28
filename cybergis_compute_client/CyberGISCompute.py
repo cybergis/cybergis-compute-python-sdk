@@ -211,18 +211,17 @@ class CyberGISCompute:
         if raw:
             return jobs
 
-        headers = [
-            'id', 'hpc', 'executableFolder', 'dataFolder',
-            'resultFolder', 'param', 'slurm', 'userId',
-            'maintainer', 'createdAt']
+        headers = ['id', 'hpc', 'remoteExecutableFolder', 'remoteDataFolder', 'remoteResultFolder', 'param', 'slurm', 'userId', 'maintainer', 'createdAt']
         data = []
         for job in jobs['job']:
             data.append([
                 job['id'],
                 job['hpc'],
-                job['executableFolder'],
-                job['dataFolder'],
-                job['resultFolder'],
+                job['remoteExecutableFolder']["id"] if ("id" in job['remoteExecutableFolder']) else None,
+                job['remoteDataFolder']["id"] if ("id" in job['remoteDataFolder']) else None,
+                job['remoteResultFolder']["id"] if ("id" in job['remoteResultFolder']) else None,
+                job['remoteDataFolder'],
+                job['remoteResultFolder'],
                 json.dumps(job['param']),
                 json.dumps(job['slurm']),
                 job['userId'],

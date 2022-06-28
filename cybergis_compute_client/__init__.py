@@ -16,7 +16,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from .JAT import * # noqa
 from .Client import * # noqa
 from .Job import * # noqa
 from .Zip import * # noqa
