@@ -197,7 +197,7 @@ class UI:
         self.computingResource['dropdown'] = widgets.Dropdown(
             options=[i for i in self.job['supported_hpc']],
             value=self.hpcName,
-            description='🖥 Computing Recourse:',
+            description='🖥 Computing Resource:',
             style=self.style,
             layout=self.layout)
         self.computingResource['accordion'] = widgets.Accordion(
