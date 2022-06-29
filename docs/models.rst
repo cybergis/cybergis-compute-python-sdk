@@ -17,7 +17,7 @@ Pysal Access
    :scale: 50%
    :align: right
 
-This model uses the Pysal access Python package to calculate accessibility to doctors using a variety of different metrics in Chicago, IL. Those interested should `check out the paper on the package by Saxon et. al. <https://doi.org/10.1007/s42001-021-00126-8>`_
+This model uses the `Pysal access Python package <https://github.com/pysal/access>`_ to calculate accessibility to doctors using a variety of different metrics in Chicago, IL. Those interested should `check out the paper on the package by Saxon et. al. <https://doi.org/10.1007/s42001-021-00126-8>`_
 
 * Github Repository: `cybergis/pysal-access-compute-example <https://github.com/cybergis/pysal-access-compute-example>`_
 * Notebook on CyberGISXHub:
