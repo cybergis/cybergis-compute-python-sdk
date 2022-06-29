@@ -1,10 +1,9 @@
 from cybergis_compute_client.MarkdownTable import MarkdownTable
-from .Zip import Zip
 import time
-import os
 import json
 from os import system, name
 from IPython.display import display, clear_output, Markdown
+
 
 class Job:
     """
@@ -297,7 +296,7 @@ class Job:
         self.client.request('GET', '/folder/' + folderId + '/download/globus-init', {
             "jupyterhubApiToken": self.jupyterhubApiToken(),
             "fromPath": remotePath,
-            "toPath": localPath, 
+            "toPath": localPath,
             "toEndpoint": localEndpoint
         })
 

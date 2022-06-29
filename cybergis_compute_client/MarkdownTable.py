@@ -1,7 +1,8 @@
 class MarkdownTable:
     @staticmethod
     def render(data, headers):
-        if len(headers) == 0: return ''
+        if len(headers) == 0:
+            return ''
         output = '| '
         headerDivider = '| '
         for header in headers:

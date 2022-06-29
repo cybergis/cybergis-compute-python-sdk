@@ -15,6 +15,7 @@ import base64
 import os
 from IPython.display import display, Markdown, Javascript
 
+
 class CyberGISCompute:
     """CyberGISCompute class
     An inteface that handles all interactions with the HPC backend
@@ -452,7 +453,8 @@ class CyberGISCompute:
         Returns:
             None
         """
-        if (jupyterhubApiToken != None): self.jupyterhubApiToken = jupyterhubApiToken
+        if (jupyterhubApiToken is not None):
+            self.jupyterhubApiToken = jupyterhubApiToken
         self.ui.defaultJobName = defaultJob
         self.ui.defaultDataFolder = defaultDataFolder
         df = defaultRemoteResultFolder
