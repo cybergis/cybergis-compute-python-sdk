@@ -1,4 +1,4 @@
-from cybergis_compute_client import MarkdownTable
+from .MarkdownTable import *
 from .Zip import Zip
 import time
 import os
