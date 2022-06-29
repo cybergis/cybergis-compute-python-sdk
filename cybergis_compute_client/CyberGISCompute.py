@@ -10,10 +10,10 @@ Example:
 from .Client import *
 from .Job import *
 from .UI import *
+from .MarkdownTable import *
 import base64
 import os
 from IPython.display import display, Markdown, Javascript
-
 
 class CyberGISCompute:
     """CyberGISCompute class
@@ -78,6 +78,9 @@ class CyberGISCompute:
             Document exceptions/errors raised.
         """
         if self.jupyterhubApiToken is not None:
+            if self.username is None:
+                res = self.client.request('GET', '/user', {"jupyterhubApiToken": self.jupyterhubApiToken})
+                self.username = res['username']
             if verbose:
                 print('🎯 Logged in as ' + self.username)
             return
@@ -87,9 +90,8 @@ class CyberGISCompute:
         if envToken is not None:
             print('💻 Found system token')
             try:
-                token = base64.b64encode((self.jupyterhubHost + '@' + envToken).encode('ascii')).decode('utf-8')
-                res = self.client.request('GET', '/user', {"jupyterhubApiToken": token})
-                self.jupyterhubApiToken = token
+                self.jupyterhubApiToken = base64.b64encode((self.jupyterhubHost + '@' + envToken).encode('ascii')).decode('utf-8')
+                res = self.client.request('GET', '/user', {"jupyterhubApiToken": self.jupyterhubApiToken})
                 self.username = res['username']
                 return self.login()
             except:
@@ -233,16 +235,9 @@ class CyberGISCompute:
             if len(data) == 0:
                 print('empty')
                 return
-            display(
-                HTML(
-                    tabulate(
-                        data, headers, numalign='left',
-                        stralign='left', colalign=('left', 'left'),
-                        tablefmt='html').replace(
-                            '<td>', '<td style="text-align:left">').replace(
-                                '<th>', '<th style="text-align:left">')))
+            display(Markdown(MarkdownTable.render(data, headers)))
         else:
-            print(tabulate(data, headers, tablefmt="presto"))
+            print(MarkdownTable.render(data, headers))
 
     def list_hpc(self, raw=False):
         """
@@ -274,9 +269,9 @@ class CyberGISCompute:
             if len(data) == 0:
                 print('empty')
                 return
-            display(HTML(tabulate(data, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', '<td style="text-align:left">').replace('<th>', '<th style="text-align:left">')))
+            display(Markdown(MarkdownTable.render(data, headers)))
         else:
-            print(tabulate(data, headers, tablefmt="presto"))
+            print(MarkdownTable.render(data, headers))
 
     def list_container(self, raw=False):
         """
@@ -307,9 +302,9 @@ class CyberGISCompute:
             if len(data) == 0:
                 print('empty')
                 return
-            display(HTML(tabulate(data, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', '<td style="text-align:left">').replace('<th>', '<th style="text-align:left">')))
+            display(Markdown(MarkdownTable.render(data, headers)))
         else:
-            print(tabulate(data, headers, tablefmt="presto"))
+            print(MarkdownTable.render(data, headers))
 
     def list_git(self, raw=False):
         """
@@ -342,16 +337,9 @@ class CyberGISCompute:
             if len(data) == 0:
                 print('empty')
                 return
-            display(
-                HTML(
-                    tabulate(
-                        data, headers, numalign='left',
-                        stralign='left', colalign=('left', 'left'),
-                        tablefmt='html').replace(
-                            '<td>', '<td style="text-align:left">').replace(
-                                '<th>', '<th style="text-align:left">')))
+            display(Markdown(MarkdownTable.render(data, headers)))
         else:
-            print(tabulate(data, headers, tablefmt="presto"))
+            print(MarkdownTable.render(data, headers))
 
     def list_maintainer(self, raw=False):
         """
@@ -405,9 +393,9 @@ class CyberGISCompute:
             if len(data) == 0:
                 print('empty')
                 return
-            display(HTML(tabulate(data, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', '<td style="text-align:left">').replace('<th>', '<th style="text-align:left">')))
+            display(Markdown(MarkdownTable.render(data, headers)))
         else:
-            print(tabulate(data, headers, tablefmt="presto"))
+            print(MarkdownTable.render(data, headers))
 
     # Integrated functions
     def list_info(self, list_maintainer=False, list_container=False):
@@ -452,7 +440,7 @@ class CyberGISCompute:
         """
         self.show_ui(defaultJob, defaultDataFolder, defaultRemoteResultFolder)
 
-    def show_ui(self, defaultJob="hello_world", defaultDataFolder="./", defaultRemoteResultFolder=None):
+    def show_ui(self, defaultJob="hello_world", defaultDataFolder="./", defaultRemoteResultFolder=None, jupyterhubApiToken=None):
         """
         Displays the job submission UI
 
@@ -464,6 +452,7 @@ class CyberGISCompute:
         Returns:
             None
         """
+        if (jupyterhubApiToken != None): self.jupyterhubApiToken = jupyterhubApiToken
         self.ui.defaultJobName = defaultJob
         self.ui.defaultDataFolder = defaultDataFolder
         df = defaultRemoteResultFolder

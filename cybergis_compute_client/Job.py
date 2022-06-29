@@ -1,11 +1,10 @@
+from cybergis_compute_client import MarkdownTable
 from .Zip import Zip
 import time
 import os
 import json
 from os import system, name
-from tabulate import tabulate
-from IPython.display import HTML, display, clear_output
-
+from IPython.display import display, clear_output, Markdown
 
 class Job:
     """
@@ -169,9 +168,9 @@ class Job:
                 print('🤖 Slurm ID: ' + str(status['slurmId']))
             if len(events) > 0:
                 if self.isJupyter:
-                    display(HTML(tabulate(events, headers, tablefmt='html')))
+                    display(Markdown(MarkdownTable.render(events, headers)))
                 else:
-                    print(tabulate(events, headers, tablefmt='presto'))
+                    print(MarkdownTable.render(events, headers))
 
             if not isEnd:
                 time.sleep(refreshRateInSeconds)
@@ -222,9 +221,9 @@ class Job:
                 print('🤖 Slurm ID: ' + str(status['slurmId']))
             if len(logs) > 0:
                 if self.isJupyter:
-                    display(HTML(tabulate(logs, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', "<td style='text-align:left'>")))
+                    display(Markdown(MarkdownTable.render(logs, headers)))
                 else:
-                    print(tabulate(logs, headers, tablefmt='presto'))
+                    print(MarkdownTable.render(logs, headers))
 
             if not isEnd:
                 time.sleep(refreshRateInSeconds)
@@ -346,16 +345,16 @@ class Job:
         if job is None:
             return
         headers = [
-            'id', 'slurmId', 'hpc', 'executableFolder', 'dataFolder',
-            'resultFolder', 'param', 'slurm', 'userId', 'maintainer',
+            'id', 'slurmId', 'hpc', 'remoteExecutableFolder', 'remoteDataFolder',
+            'remoteResultFolder', 'param', 'slurm', 'userId', 'maintainer',
             'createdAt']
         data = [[
             job['id'],
             job['slurmId'],
             job['hpc'],
-            job['executableFolder'],
-            job['dataFolder'],
-            job['resultFolder'],
+            job['remoteExecutableFolder'],
+            job['remoteDataFolder'],
+            job['remoteResultFolder'],
             json.dumps(job['param']),
             json.dumps(job['slurm']),
             job['userId'],
@@ -364,6 +363,6 @@ class Job:
         ]]
 
         if self.isJupyter:
-            display(HTML(tabulate(data, headers, numalign='left', stralign='left', colalign=('left', 'left'), tablefmt='html').replace('<td>', '<td style="text-align:left">').replace('<th>', '<th style="text-align:left">')))
+            display(Markdown(MarkdownTable.render(data, headers)))
         else:
-            print(tabulate(data, headers, tablefmt="presto"))
+            print(MarkdownTable.render(data, headers))

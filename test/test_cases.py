@@ -24,21 +24,6 @@ def test_Session_event(mocker):
     # assert expected_failure == actual
     assert expected_pass == actual
 
-def test_GlobusUtil():
-    destination_Name = "summa" 
-    community_Summa_Session = CyberGISCompute(destination_Name)
-    globusutil = GlobusUtil(community_Summa_Session) 
-    # Checks that socket exception is occuring
-    with pytest.raises(Exception) as exc_info:
-         globusutil.download('x','y','z')
-    exception_raised = exc_info.value
-    assert isinstance(exception_raised,socket.gaierror)
-    
-    with pytest.raises(Exception) as exc_info:
-         globusutil.upload('x','y','z')
-    exception_raised = exc_info.value
-    assert isinstance(exception_raised,socket.gaierror)
-
 def test_Zip():
     zip = Zip()
     zip.mkdir('x')

@@ -565,7 +565,7 @@ class UI:
             self.jupyter_globus = self.compute.get_user_jupyter_globus()
             if self.job['require_upload_data']:
                 dataPath = self.uploadData['selector'].selected
-                if localDataFolder is None:
+                if dataPath is None:
                     with self.submit['alert_output']:
                         display(Markdown('⚠️ please select a folder before upload...'))
                         return
