@@ -152,14 +152,11 @@ class Job:
             for o in out:
                 if o['type'] not in self.basicEventTypes and basic:
                     continue
-
-                i = [
+                events.append([
                     o['type'],
                     o['message'],
                     o['createdAt']
-                ]
-
-                events.append(i)
+                ])
                 isEnd = isEnd or o['type'] == 'JOB_ENDED' or o[
                     'type'] == 'JOB_FAILED'
 
