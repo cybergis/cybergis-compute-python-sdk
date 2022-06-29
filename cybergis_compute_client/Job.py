@@ -150,16 +150,13 @@ class Job:
             headers = ['types', 'message', 'time']
             events = []
             for o in out:
-                if o['type'] not in self.basicEventTypes and basic:
-                    continue
-
-                i = [
+                # if o['type'] not in self.basicEventTypes and basic:
+                #     continue
+                events.append([
                     o['type'],
                     o['message'],
                     o['createdAt']
-                ]
-
-                events.append(i)
+                ])
                 isEnd = isEnd or o['type'] == 'JOB_ENDED' or o[
                     'type'] == 'JOB_FAILED'
 
