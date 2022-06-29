@@ -150,8 +150,8 @@ class Job:
             headers = ['types', 'message', 'time']
             events = []
             for o in out:
-                if o['type'] not in self.basicEventTypes and basic:
-                    continue
+                # if o['type'] not in self.basicEventTypes and basic:
+                #     continue
                 events.append([
                     o['type'],
                     o['message'],
