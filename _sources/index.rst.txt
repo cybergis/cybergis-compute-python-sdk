@@ -24,10 +24,13 @@ Table of Contents
    :maxdepth: 2
    
    about.rst
+   usage.rst
    notebooks/hello_world
-   jobs.rst
+   models.rst
+   release-notes.rst
    external.rst
    help.rst
+   model_contribution/index.rst
    reference.rst
    contributing.rst
 
