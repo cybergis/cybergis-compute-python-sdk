@@ -294,7 +294,7 @@ class Job:
         folderId = jobStatus['remoteResultFolder']['id']
 
         # init globus transfer
-        self.client.request('GET', '/folder/' + folderId + '/download/globus-init', {
+        self.client.request('POST', '/folder/' + folderId + '/download/globus-init', {
             "jupyterhubApiToken": self.jupyterhubApiToken,
             "fromPath": remotePath,
             "toPath": localPath, 
