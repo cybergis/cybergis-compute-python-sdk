@@ -295,7 +295,7 @@ class Job:
 
         # init globus transfer
         self.client.request('GET', '/folder/' + folderId + '/download/globus-init', {
-            "jupyterhubApiToken": self.jupyterhubApiToken(),
+            "jupyterhubApiToken": self.jupyterhubApiToken,
             "fromPath": remotePath,
             "toPath": localPath, 
             "toEndpoint": localEndpoint
@@ -306,7 +306,7 @@ class Job:
             self._clear()
             print('⏳ waiting for file to download using Globus')
             out = self.client.request('GET', '/file/' + folderId + '/download/globus-status', {
-                "jupyterhubApiToken": self.jupyterhubApiToken()
+                "jupyterhubApiToken": self.jupyterhubApiToken
             })
             status = out['status']
             if raw:
