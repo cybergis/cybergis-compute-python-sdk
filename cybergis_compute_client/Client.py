@@ -55,7 +55,10 @@ class Client:
             json.dumps(body), headers)
         response = connection.getresponse()
         out = response.read().decode()
-        data = json.loads(out)
+        try:
+            data = json.loads(out)
+        except:
+            raise Exception('cannot decode data: ' + out)
 
         if 'error' in data:
             msg = ''
