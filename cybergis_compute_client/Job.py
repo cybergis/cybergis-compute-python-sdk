@@ -305,8 +305,8 @@ class Job:
 
         status = None
         while status not in ['SUCCEEDED', 'FAILED']:
-            self._clear()
-            print('⏳ waiting for file to download using Globus')
+            # self._clear()
+            # print('⏳ waiting for file to download using Globus')
             out = self.client.request('GET', '/folder/' + folderId + '/download/globus-status', {
                 "jupyterhubApiToken": self.jupyterhubApiToken
             })
