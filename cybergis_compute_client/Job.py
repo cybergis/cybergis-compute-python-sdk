@@ -293,6 +293,8 @@ class Job:
             raise Exception('executable folder is not ready')
         folderId = jobStatus['remoteResultFolder']['id']
 
+        print(localPath, remotePath, localEndpoint)
+
         # init globus transfer
         self.client.request('POST', '/folder/' + folderId + '/download/globus-init', {
             "jupyterhubApiToken": self.jupyterhubApiToken,
