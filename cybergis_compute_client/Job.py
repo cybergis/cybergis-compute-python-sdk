@@ -293,8 +293,6 @@ class Job:
             raise Exception('executable folder is not ready')
         folderId = jobStatus['remoteResultFolder']['id']
 
-        print(localPath, remotePath, localEndpoint)
-
         # init globus transfer
         self.client.request('POST', '/folder/' + folderId + '/download/globus-init', {
             "jupyterhubApiToken": self.jupyterhubApiToken,
@@ -305,8 +303,8 @@ class Job:
 
         status = None
         while status not in ['SUCCEEDED', 'FAILED']:
-            # self._clear()
-            # print('⏳ waiting for file to download using Globus')
+            self._clear()
+            print('⏳ waiting for file to download using Globus')
             out = self.client.request('GET', '/folder/' + folderId + '/download/globus-status', {
                 "jupyterhubApiToken": self.jupyterhubApiToken
             })
