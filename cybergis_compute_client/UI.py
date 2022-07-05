@@ -163,7 +163,7 @@ class UI:
             description='📦 Job Templates:',
             style=self.style,
             layout=self.layout)
-        self.jobTemplate['dropdown'].observe(self.onJobDropdownChange())
+        self.jobTemplate['dropdown'].observe(self.onJobDropdownChange(), names=['value'])
         with self.jobTemplate['output']:
             display(self.jobTemplate['dropdown'])
 
@@ -204,7 +204,7 @@ class UI:
         self.computingResource['accordion'].set_title(
             0, 'Computing Resource')
         self.computingResource['dropdown'].observe(
-            self.onComputingResourceDropdownChange())
+            self.onComputingResourceDropdownChange(), names=['value'])
         with self.computingResource['output']:
             display(self.computingResource['accordion'])
 
