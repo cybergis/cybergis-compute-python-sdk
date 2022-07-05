@@ -12,6 +12,6 @@ class MarkdownTable:
         for row in data:
             rowData = '| '
             for col in row:
-                rowData += str(col) + ' | '
+                rowData += str(col).replace('|', '<code>&#124;</code>') + ' | '
             output += '\n' + rowData
         return output

@@ -165,14 +165,7 @@ class CyberGISCompute:
             Job: Job object with the specified id otherwise None
         """
         self.login(verbose=False)
-        jobs = self.client.request('GET', '/user/job', {"jupyterhubApiToken": self.jupyterhubApiToken})
-        token = None
-        for job in jobs['job']:
-            if (job['id'] == id):
-                token = job['secretToken']
-        if (token is None):
-            print('❌ job with id ' + id + ' was not found')
-        return Job(secretToken=token, client=self.client, id=id, isJupyter=self.isJupyter, jupyterhubApiToken=self.jupyterhubApiToken, printJob=verbose)
+        return Job(client=self.client, id=id, isJupyter=self.isJupyter, jupyterhubApiToken=self.jupyterhubApiToken, printJob=verbose)
 
     def get_slurm_usage(self, raw=False):
         """

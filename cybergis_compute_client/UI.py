@@ -406,7 +406,7 @@ class UI:
                             self.defaultRemoteResultFolder)))
             except Exception:
                 result_folder_content
-            if len(result_folder_content):
+            if len(result_folder_content) == 0:
                 raise Exception('failed to get result folder content')
             self.download['dropdown'] = widgets.Dropdown(
                 options=result_folder_content, value=result_folder_content[0],
