@@ -65,7 +65,7 @@ class Job:
         self.id = id
         self.hpc = hpc
         if printJob:
-            self._print_job(job)
+            self._print_job_formatted(job)
 
     def submit(self):
         """
@@ -77,7 +77,7 @@ class Job:
         body = {'jupyterhubApiToken': self.jupyterhubApiToken}
         job = self.client.request('POST', '/job/' + self.id + '/submit', body)
         print('✅ job submitted')
-        self._print_job(job)
+        self._print_job_formatted(job)
         return self
 
     def set(self, localExecutableFolder=None, localDataFolder=None, localResultFolder=None, param=None, env=None,
@@ -248,7 +248,7 @@ class Job:
 
         if raw:
             return job
-        self._print_job(job)
+        self._print_job_formatted(job)
 
     def result_folder_content(self):
         """
@@ -361,3 +361,55 @@ class Job:
             display(Markdown(MarkdownTable.render(data, headers)))
         else:
             print(MarkdownTable.render(data, headers))
+
+    def _print_job_formatted(self, job):
+        """
+        Displays information about the job formatted in a way that can be read with no horizonal scroll bar
+        """
+
+        headers = [
+            'id', 'slurmId', 'hpc', 'executableFolder', 'dataFolder',
+            'resultFolder', 'param', 'slurm', 'userId', 'maintainer',
+            'createdAt']
+        data = [[
+            job['id'],
+            job['slurmId'],
+            job['hpc'],
+            job['executableFolder'],
+            job['dataFolder'],
+            job['resultFolder'],
+            json.dumps(job['param']),
+            json.dumps(job['slurm']),
+            job['userId'],
+            job['maintainer'],
+            job['createdAt'],
+        ]]
+
+        dataCol1 = [[]]
+        dataCol1[0] = data[0][0:5]
+        dataCol2 = [[]]
+        dataCol2[0] = data[0][6:9]
+
+        headersCol1 = headers[0:5]
+        headersCol2 = headers[6:9]
+
+        if self.isJupyter:
+            display(
+                HTML(
+                    tabulate(
+                        dataCol1, headersCol1, numalign='left',
+                        stralign='left', colalign=('left', 'left'),
+                        tablefmt='html').replace(
+                            '<td>', '<td style="text-align:left">').replace(
+                                '<th>', '<th style="text-align:left">')))
+            display(
+                HTML(
+                    tabulate(
+                        dataCol2, headersCol2, numalign='left',
+                        stralign='left', colalign=('left', 'left'),
+                        tablefmt='html').replace(
+                            '<td>', '<td style="text-align:left">').replace(
+                                '<th>', '<th style="text-align:left">')))
+
+        else:
+            print(tabulate(dataCol1, headersCol1, tablefmt="presto"))

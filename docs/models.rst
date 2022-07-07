@@ -1,13 +1,26 @@
-Job Gallery
-===========
+Model Gallery
+=============
 
 
 Hello World
 -----------
 
-Our simple "Hello World" job is available on Github: `cybergis/cybergis-compute-hello-world <https://github.com/cybergis/cybergis-compute-hello-world>`_
+Our simple "Hello World" model is available on Github: `cybergis/cybergis-compute-hello-world <https://github.com/cybergis/cybergis-compute-hello-world>`_
 
 `You can view the UI for the Hello World notebook here. <notebooks/hello_world.html>`_
+
+
+Pysal Access
+------------
+
+.. image:: _static/img/models/AccessChicago.png
+   :scale: 50%
+   :align: right
+
+This model uses the `Pysal access Python package <https://github.com/pysal/access>`_ to calculate accessibility to doctors using a variety of different metrics in Chicago, IL. Those interested should `check out the paper on the package by Saxon et. al. <https://doi.org/10.1007/s42001-021-00126-8>`_
+
+* Github Repository: `cybergis/pysal-access-compute-example <https://github.com/cybergis/pysal-access-compute-example>`_
+* Notebook on CyberGISXHub:
 
 SUMMA
 -----

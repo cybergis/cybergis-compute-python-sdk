@@ -1,24 +1,13 @@
-Contributing
-============
-
-
-Contributing Jobs
------------------
-
-.. note::
-    We are always looking to expand our gallery of jobs, and are working on a pipeline for new job submissions! Keep an eye out for updates!
-
-.. raw:: html
-
-   <hr>
+Contributing to CyberGIS-Compute
+================================
 
 Contributing to the SDK
 -----------------------
 
 First, consider if the change requires changes to the SDK (this repo), the Core (the server/backend) or both. We welcome contributions, but before you send a pull request, please check that your code meets our standards. Specifically:
 
-Code Quaity
-^^^^^^^^^^^
+Code Quality
+^^^^^^^^^^^^
 
 We recommend using flake8 and you can check the Github workflow (`.github/workflows/PythonQualityCheck.yml`) to see any errors/warning you can safely ignore. Some resources for linting:
 
@@ -61,7 +50,7 @@ There are a variety of ways to install act, and once installed it offers a flexi
     > act
 
 Contributing to the Docs
-^^^^^^^^^^^^^^^^^^^^^^^^
+------------------------
 
 We welcome contributions to the documentation! Please ensure that any contributions are appropriate for this repository and not the many related projects: :doc:`/external`
 
