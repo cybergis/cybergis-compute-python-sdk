@@ -62,7 +62,8 @@ class Client:
 
         if 'error' in data:
             msg = ''
-            if 'messages' in data: msg = str(data['messages'])
+            if 'messages' in data:
+                msg = str(data['messages'])
             raise Exception('server ' + self.url + uri + ' responded with error "' + data['error'] + msg + '"')
 
         return data

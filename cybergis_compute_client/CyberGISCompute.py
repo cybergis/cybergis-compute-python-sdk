@@ -14,6 +14,8 @@ from .MarkdownTable import *
 import base64
 import os
 from IPython.display import display, Markdown, Javascript
+
+
 class CyberGISCompute:
     """CyberGISCompute class
     An inteface that handles all interactions with the HPC backend
