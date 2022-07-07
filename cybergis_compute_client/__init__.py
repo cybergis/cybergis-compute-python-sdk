@@ -16,9 +16,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from .Client import * 
-from .Job import * 
-from .Zip import * 
-from .UI import * 
-from .CyberGISCompute import * 
+from .Client import *
+from .Job import *
+from .Zip import *
+from .UI import *
+from .CyberGISCompute import *
 from .MarkdownTable import *

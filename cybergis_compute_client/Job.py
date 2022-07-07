@@ -1,15 +1,13 @@
 from .MarkdownTable import *
-from .Zip import Zip
 import time
-import os
 import json
 from os import system, name
 from IPython.display import display, clear_output, Markdown
 
+
 class Job:
     """
     Job class
-
 
     Attributes:
         JAT (obj): Job Access Token associated with this job.
@@ -297,7 +295,7 @@ class Job:
         self.client.request('POST', '/folder/' + folderId + '/download/globus-init', {
             "jupyterhubApiToken": self.jupyterhubApiToken,
             "fromPath": remotePath,
-            "toPath": localPath, 
+            "toPath": localPath,
             "toEndpoint": localEndpoint
         })
 
