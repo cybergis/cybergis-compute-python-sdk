@@ -67,19 +67,19 @@ class CyberGISCompute:
         # job
         self.job = None
         self.recentDownloadPath = None
-    
+
     def encrypt_token(self, token):
         self.jupyterhubApiToken = base64.b64encode((self.jupyterhubHost + '@' + token).encode('ascii')).decode('utf-8')
-    
+
     def get_jupyterhubHost(self):
         if self.jupyterhubHost is None:
             print("Please copy the JupyterHub url along with port. E.g http://127.0.0.1:8081")
             self.jupyterhubHost = input('Enter your jupyterhubHost here: ')
-        
+
     def set_username(self):
         res = self.client.request('GET', '/user', {"jupyterhubApiToken": self.jupyterhubApiToken})
         self.username = res['username']
-    
+
     def save_token(self):
         with open('./cybergis_compute_user.json', 'w') as json_file:
             json.dump({"token": self.jupyterhubApiToken}, json_file)
@@ -110,14 +110,14 @@ class CyberGISCompute:
             user = json.load(f)
             token = user['token']
             print('📃 Found "cybergis_compute_user.json"')
-            print('NOTE: if you want to login as another user, please remove this file')                 
+            print('NOTE: if you want to login as another user, please remove this file')
             try:
                 self.jupyterhubApiToken = token
                 self.set_username()
                 self.save_token()
                 return self.login()
             except:
-                envToken=os.getenv('JUPYTERHUB_API_TOKEN')
+                envToken = os.getenv('JUPYTERHUB_API_TOKEN')
                 if envToken is not None:
                     self.get_jupyterhubHost()
                     self.encrypt_token(envToken)
@@ -135,7 +135,7 @@ class CyberGISCompute:
         Todo:
             Document exceptions/errors raised.
         """
-        
+
         # login via env variable
         if self.jupyterhubApiToken is not None:
             if self.username is None:
@@ -143,14 +143,14 @@ class CyberGISCompute:
             if verbose:
                 print('🎯 Logged in as ' + self.username)
             return
-        #manual login
+        # manual login
         if manualLogin:
             return self.login_manual()
         # login via json file
         elif path.exists('./cybergis_compute_user.json'):
             return self.login_json()
         else:
-            envToken=os.getenv('JUPYTERHUB_API_TOKEN')
+            envToken = os.getenv('JUPYTERHUB_API_TOKEN')
             if envToken is not None:
                 self.get_jupyterhubHost()
                 self.encrypt_token(envToken)
