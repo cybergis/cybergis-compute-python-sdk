@@ -1,4 +1,4 @@
-from .MarkdownTable import *
+from .MarkdownTable import *  # noqa
 import time
 import json
 from os import system, name
@@ -367,17 +367,24 @@ class Job:
         Displays information about the job formatted in a way that can be read with no horizonal scroll bar
         """
 
-        headers = [
-            'id', 'slurmId', 'hpc', 'executableFolder', 'dataFolder',
-            'resultFolder', 'param', 'slurm', 'userId', 'maintainer',
+        if job is None:
+            return
+        headersCol1 = [
+            'id', 'slurmId', 'hpc', 'remoteExecutableFolder', 'remoteDataFolder',
+            'remoteResultFolder']
+        headersCol2 = [
+            'param', 'slurm', 'userId', 'maintainer',
             'createdAt']
-        data = [[
+        dataCol1 = [[
             job['id'],
             job['slurmId'],
             job['hpc'],
-            job['executableFolder'],
-            job['dataFolder'],
-            job['resultFolder'],
+            job['remoteExecutableFolder'],
+            job['remoteDataFolder'],
+            job['remoteResultFolder'],
+        ]]
+
+        dataCol2 = [[
             json.dumps(job['param']),
             json.dumps(job['slurm']),
             job['userId'],
@@ -385,31 +392,9 @@ class Job:
             job['createdAt'],
         ]]
 
-        dataCol1 = [[]]
-        dataCol1[0] = data[0][0:5]
-        dataCol2 = [[]]
-        dataCol2[0] = data[0][6:9]
-
-        headersCol1 = headers[0:5]
-        headersCol2 = headers[6:9]
-
         if self.isJupyter:
-            display(
-                HTML(
-                    tabulate(
-                        dataCol1, headersCol1, numalign='left',
-                        stralign='left', colalign=('left', 'left'),
-                        tablefmt='html').replace(
-                            '<td>', '<td style="text-align:left">').replace(
-                                '<th>', '<th style="text-align:left">')))
-            display(
-                HTML(
-                    tabulate(
-                        dataCol2, headersCol2, numalign='left',
-                        stralign='left', colalign=('left', 'left'),
-                        tablefmt='html').replace(
-                            '<td>', '<td style="text-align:left">').replace(
-                                '<th>', '<th style="text-align:left">')))
-
+            display(Markdown(MarkdownTable.render(dataCol1, headersCol1)))
+            display(Markdown(MarkdownTable.render(dataCol2, headersCol2)))
         else:
-            print(tabulate(dataCol1, headersCol1, tablefmt="presto"))
+            print(MarkdownTable.render(dataCol1, headersCol1))
+            print(MarkdownTable.render(dataCol2, headersCol2))
