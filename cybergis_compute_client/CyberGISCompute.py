@@ -69,22 +69,43 @@ class CyberGISCompute:
         self.recentDownloadPath = None
 
     def encrypt_token(self, token):
+        """
+        Encrypts the token using host variable.
+
+        Args:
+            token (str): User/Environment provided token.
+        """
         self.jupyterhubApiToken = base64.b64encode((self.jupyterhubHost + '@' + token).encode('ascii')).decode('utf-8')
 
-    def get_jupyterhubHost(self):
-        if self.jupyterhubHost is None:
+    def get_jupyterhubHost(self, manualHost):
+        """
+        Gets the jupyterhub from the user.
+
+        Args:
+            manualHost (bool): set to True if host needs to be specified.
+        """
+        if (self.jupyterhubHost is None) or (not manualHost):
             print("Please copy the JupyterHub url along with port. E.g http://127.0.0.1:8081")
             self.jupyterhubHost = input('Enter your jupyterhubHost here: ')
 
     def set_username(self):
+        """
+        Authenticates the token and saves the username.
+        """
         res = self.client.request('GET', '/user', {"jupyterhubApiToken": self.jupyterhubApiToken})
         self.username = res['username']
 
     def save_token(self):
+        """
+        Writes token to json file.
+        """
         with open('./cybergis_compute_user.json', 'w') as json_file:
             json.dump({"token": self.jupyterhubApiToken}, json_file)
 
     def login_token(self):
+        """
+        Saves username and token.
+        """
         try:
             self.set_username()
             self.save_token()
@@ -92,12 +113,18 @@ class CyberGISCompute:
         except:
             print('❌ Failed to login via system token')
 
-    def login_manual(self):
+    def login_manual(self, manualHost):
+        """
+        Asks for token and host from user and calls login_token function.
+
+        Args:
+            manualHost (bool): set to True if host needs to be specified.
+        """
         if self.isJupyter:
             print('📢 Please go to Control Panel -> Token, request a new API token')
             token = getpass.getpass('Enter your API token here')
             try:
-                self.get_jupyterhubHost()
+                self.get_jupyterhubHost(manualHost)
                 self.encrypt_token(token)
                 return self.login_token()
             except:
@@ -105,7 +132,13 @@ class CyberGISCompute:
         else:
             print('❌ Enable Jupyter using .enable_jupyter() before you login')
 
-    def login_json(self):
+    def login_json(self, manualHost):
+        """
+        Checks for json file and calls login_token function.
+
+        Args:
+            manualHost (bool): set to True if host needs to be specified.
+        """
         with open(os.path.abspath('cybergis_compute_user.json')) as f:
             user = json.load(f)
             token = user['token']
@@ -119,12 +152,12 @@ class CyberGISCompute:
             except:
                 envToken = os.getenv('JUPYTERHUB_API_TOKEN')
                 if envToken is not None:
-                    self.get_jupyterhubHost()
+                    self.get_jupyterhubHost(manualHost)
                     self.encrypt_token(envToken)
                     return self.login_token()
                 print('❌ Failed to login via token JSON file')
 
-    def login(self, manualLogin=False, verbose=True):
+    def login(self, manualLogin=False, manualHost=False, verbose=True):
         """
         Authenticates the client's jupyterhubApiToken and gives them access
         to CyberGISCompute features
@@ -145,14 +178,14 @@ class CyberGISCompute:
             return
         # manual login
         if manualLogin:
-            return self.login_manual()
+            return self.login_manual(manualHost)
         # login via json file
         elif path.exists('./cybergis_compute_user.json'):
-            return self.login_json()
+            return self.login_json(manualHost)
         else:
             envToken = os.getenv('JUPYTERHUB_API_TOKEN')
             if envToken is not None:
-                self.get_jupyterhubHost()
+                self.get_jupyterhubHost(manualHost)
                 self.encrypt_token(envToken)
                 return self.login_token()
             print('❌ Not logged in. To enable more features, use .login()')
