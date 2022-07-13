@@ -7,13 +7,14 @@ Example:
         cybergis = CyberGISCompute(url='localhost', port='3030', protocol='HTTP', isJupyter=False)
 """
 
-from .Client import *
-from .Job import *
-from .UI import *
-from .MarkdownTable import *
+from .Client import *  # noqa
+from .Job import *  # noqa
+from .UI import *  # noqa
+from .MarkdownTable import *  # noqa
 import base64
 import os
 from IPython.display import display, Markdown, Javascript
+
 
 class CyberGISCompute:
     """CyberGISCompute class
@@ -445,7 +446,8 @@ class CyberGISCompute:
         Returns:
             None
         """
-        if (jupyterhubApiToken != None): self.jupyterhubApiToken = jupyterhubApiToken
+        if (jupyterhubApiToken is not None):
+            self.jupyterhubApiToken = jupyterhubApiToken
         self.ui.defaultJobName = defaultJob
         self.ui.defaultDataFolder = defaultDataFolder
         df = defaultRemoteResultFolder

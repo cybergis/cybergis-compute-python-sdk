@@ -1,15 +1,13 @@
-from .MarkdownTable import *
-from .Zip import Zip
+from .MarkdownTable import *  # noqa
 import time
-import os
 import json
 from os import system, name
 from IPython.display import display, clear_output, Markdown
 
+
 class Job:
     """
     Job class
-
 
     Attributes:
         JAT (obj): Job Access Token associated with this job.
@@ -67,7 +65,7 @@ class Job:
         self.id = id
         self.hpc = hpc
         if printJob:
-            self._print_job(job)
+            self._print_job_formatted(job)
 
     def submit(self):
         """
@@ -79,7 +77,7 @@ class Job:
         body = {'jupyterhubApiToken': self.jupyterhubApiToken}
         job = self.client.request('POST', '/job/' + self.id + '/submit', body)
         print('✅ job submitted')
-        self._print_job(job)
+        self._print_job_formatted(job)
         return self
 
     def set(self, localExecutableFolder=None, localDataFolder=None, localResultFolder=None, param=None, env=None,
@@ -250,7 +248,7 @@ class Job:
 
         if raw:
             return job
-        self._print_job(job)
+        self._print_job_formatted(job)
 
     def result_folder_content(self):
         """
@@ -297,7 +295,7 @@ class Job:
         self.client.request('POST', '/folder/' + folderId + '/download/globus-init', {
             "jupyterhubApiToken": self.jupyterhubApiToken,
             "fromPath": remotePath,
-            "toPath": localPath, 
+            "toPath": localPath,
             "toEndpoint": localEndpoint
         })
 
@@ -363,3 +361,40 @@ class Job:
             display(Markdown(MarkdownTable.render(data, headers)))
         else:
             print(MarkdownTable.render(data, headers))
+
+    def _print_job_formatted(self, job):
+        """
+        Displays information about the job formatted in a way that can be read with no horizonal scroll bar
+        """
+
+        if job is None:
+            return
+        headersCol1 = [
+            'id', 'slurmId', 'hpc', 'remoteExecutableFolder', 'remoteDataFolder',
+            'remoteResultFolder']
+        headersCol2 = [
+            'param', 'slurm', 'userId', 'maintainer',
+            'createdAt']
+        dataCol1 = [[
+            job['id'],
+            job['slurmId'],
+            job['hpc'],
+            job['remoteExecutableFolder'],
+            job['remoteDataFolder'],
+            job['remoteResultFolder'],
+        ]]
+
+        dataCol2 = [[
+            json.dumps(job['param']),
+            json.dumps(job['slurm']),
+            job['userId'],
+            job['maintainer'],
+            job['createdAt'],
+        ]]
+
+        if self.isJupyter:
+            display(Markdown(MarkdownTable.render(dataCol1, headersCol1)))
+            display(Markdown(MarkdownTable.render(dataCol2, headersCol2)))
+        else:
+            print(MarkdownTable.render(dataCol1, headersCol1))
+            print(MarkdownTable.render(dataCol2, headersCol2))
