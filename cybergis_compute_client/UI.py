@@ -39,6 +39,21 @@ def save_config_json(parameter: str, value: str):
     with open('./cybergis_compute_params.json', 'a+') as json_file:
             json.dump({parameter: value}, json_file)
     json_file.close()
+
+def update_config_json(parameter: str, value: str):
+    """
+    Saves paramter to existing json file.
+
+    Args:
+        parameter (str): Parameter to save.
+        value (str): Paramter value to save.
+    """
+    with open('./cybergis_compute_params.json', 'r+') as json_file:
+            json_dict = json.load(json_file)
+            json_dict[parameter] = value
+            json.dump(json_dict, json_file)
+    json_file.close()
+
 class UI:
     """
     UI class.
@@ -286,7 +301,7 @@ class UI:
                         default_val = load_config_json(parameter=i)
                     except:
                         default_val = config['default_value']
-                        save_config_json(parameter=i, value=default_val)
+                        update_config_json(parameter=i, value=default_val)
                 else:
                     default_val = config['default_value']
                     save_config_json(parameter=i, value=default_val)
