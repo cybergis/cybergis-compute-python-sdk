@@ -1,5 +1,6 @@
 import os
 import math
+from xml.dom import NotFoundErr
 import ipywidgets as widgets
 from ipyfilechooser import FileChooser
 import json
@@ -24,7 +25,7 @@ def load_config_json(parameter: str) -> str:
         print('NOTE: if you want to use another parameter, please remove this file')
         return json_dict[parameter]
     else:
-        print(parameter + " parameter not found in json file")
+        raise NotFoundErr(parameter + " not found")
 
 
 def save_config_json(parameter: str, value: str):
@@ -280,7 +281,11 @@ class UI:
             config = self.job['slurm_input_rules'][i]
             if i in self.slurm_integer_configs:
                 if os.path.exists('./cybergis_compute_params.json'):
-                    default_val = load_config_json(parameter=i)
+                    try:
+                        default_val = load_config_json(parameter=i)
+                    except:
+                        default_val = config['default_value']
+                        save_config_json(parameter=i, value=default_val)
                 else:
                     default_val = config['default_value']
                     save_config_json(parameter=i, value=default_val)
@@ -304,7 +309,11 @@ class UI:
                 )
             if i in self.slurm_string_option_configs:
                 if os.path.exists('./cybergis_compute_params.json'):
-                    default_val = load_config_json(parameter=i)
+                    try:
+                        default_val = load_config_json(parameter=i)
+                    except:
+                        default_val = config['default_value']
+                        save_config_json(parameter=i, value=default_val)
                 else:
                     default_val = config['default_value']
                     save_config_json(parameter=i, value=default_val)
@@ -368,7 +377,11 @@ class UI:
 
             if config['type'] == 'integer':
                 if os.path.exists('./cybergis_compute_params.json'):
-                    default_val = load_config_json(parameter=i)
+                    try:
+                        default_val = load_config_json(parameter=i)
+                    except:
+                        default_val = config['default_value']
+                        save_config_json(parameter=i, value=default_val)
                 else:
                     default_val = config['default_value']
                     save_config_json(parameter=i, value=default_val)
@@ -391,7 +404,11 @@ class UI:
                 )
             if config['type'] == 'string_option':
                 if os.path.exists('./cybergis_compute_params.json'):
-                    default_val = load_config_json(parameter=i)
+                    try:
+                        default_val = load_config_json(parameter=i)
+                    except:
+                        default_val = config['default_value']
+                        save_config_json(parameter=i, value=default_val)
                 else:
                     default_val = config['default_value']
                     save_config_json(parameter=i, value=default_val)
@@ -404,7 +421,11 @@ class UI:
                 )
             if config['type'] == 'string_input':
                 if os.path.exists('./cybergis_compute_params.json'):
-                    default_val = load_config_json(parameter=i)
+                    try:
+                        default_val = load_config_json(parameter=i)
+                    except:
+                        default_val = config['default_value']
+                        save_config_json(parameter=i, value=default_val)
                 else:
                     default_val = config['default_value']
                     save_config_json(parameter=i, value=default_val)
