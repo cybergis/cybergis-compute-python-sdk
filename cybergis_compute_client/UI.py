@@ -595,7 +595,9 @@ class UI:
 
             self.compute.login()
             localDataFolder = None
-            self.jupyter_globus = self.compute.get_user_jupyter_globus()
+            data = self.get_data()
+            if data['computing_resource'] != 'local_hpc':
+                self.jupyter_globus = self.compute.get_user_jupyter_globus()
             if self.job['require_upload_data']:
                 dataPath = self.uploadData['selector'].selected
                 if dataPath is None:
@@ -611,7 +613,6 @@ class UI:
                         'path': dataPath
                     }
 
-            data = self.get_data()
             self.compute.job = self.compute.create_job(hpc=data['computing_resource'], verbose=False)
             # slurm
             slurm = data['slurm']
