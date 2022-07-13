@@ -2,10 +2,37 @@ import os
 import math
 import ipywidgets as widgets
 from ipyfilechooser import FileChooser
+import json
+import os
 from IPython.display import Markdown, display, clear_output
-from .MarkdownTable import *  # noqa
+from .MarkdownTable import *  # nqa
 
 
+def load_config_json(parameter: str) -> str:
+    """
+    Loads paramter from json file.
+
+    Args:
+        parameter (str): Parameter to load.
+    
+    Returns:
+        str: Parameter value
+    """
+    print('NOTE: if you want to use another parameter, please remove this file')
+    with open(os.path.abspath('cybergis_compute_user.json')) as f:
+        return json.load(f)[parameter]
+
+
+def save_config_json(parameter: str, value: str):
+    """
+    Saves paramter to json file.
+
+    Args:
+        parameter (str): Parameter to save.
+        value (str): Paramter value to save.
+    """
+    with open('./cybergis_compute_params.json', 'a+') as json_file:
+            json.dump({parameter: value}, json_file)
 class UI:
     """
     UI class.
@@ -70,7 +97,7 @@ class UI:
         self.slurm_string_option_configs = ['partition']
         self.globus_filename = None
         self.jupyter_globus = None
-
+    
     def render(self):
         """
         Render main UI by initializing, rendering,
@@ -248,7 +275,11 @@ class UI:
                 continue
             config = self.job['slurm_input_rules'][i]
             if i in self.slurm_integer_configs:
-                default_val = config['default_value']
+                if os.path.exists('./cybergis_compute_params.json'):
+                    default_val = load_config_json(parameter=i)
+                else:
+                    default_val = config['default_value']
+                    save_config_json(parameter=i, value=default_val)
                 max_val = config['max']
                 min_val = config['min']
                 step_val = config['step']
@@ -268,7 +299,11 @@ class UI:
                     style=self.style, layout=self.layout
                 )
             if i in self.slurm_string_option_configs:
-                default_val = config['default_value']
+                if os.path.exists('./cybergis_compute_params.json'):
+                    default_val = load_config_json(parameter=i)
+                else:
+                    default_val = config['default_value']
+                    save_config_json(parameter=i, value=default_val)
                 options = config['options']
                 self.slurm[i] = widgets.Dropdown(
                     options=options,
@@ -328,7 +363,11 @@ class UI:
             config = self.job['param_rules'][i]
 
             if config['type'] == 'integer':
-                default_val = config['default_value']
+                if os.path.exists('./cybergis_compute_params.json'):
+                    default_val = load_config_json(parameter=i)
+                else:
+                    default_val = config['default_value']
+                    save_config_json(parameter=i, value=default_val)
                 max_val = config['max']
                 min_val = config['min']
                 step_val = config['step']
@@ -347,7 +386,11 @@ class UI:
                     style=self.style, layout=self.layout
                 )
             if config['type'] == 'string_option':
-                default_val = config['default_value']
+                if os.path.exists('./cybergis_compute_params.json'):
+                    default_val = load_config_json(parameter=i)
+                else:
+                    default_val = config['default_value']
+                    save_config_json(parameter=i, value=default_val)
                 options = config['options']
                 self.param[i] = widgets.Dropdown(
                     options=options,
@@ -356,7 +399,11 @@ class UI:
                     style=self.style
                 )
             if config['type'] == 'string_input':
-                default_val = config['default_value']
+                if os.path.exists('./cybergis_compute_params.json'):
+                    default_val = load_config_json(parameter=i)
+                else:
+                    default_val = config['default_value']
+                    save_config_json(parameter=i, value=default_val)
                 self.param[i] = widgets.Text(
                     description=i, value=default_val, style=self.style)
 
