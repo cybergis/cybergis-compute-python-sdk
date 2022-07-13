@@ -38,6 +38,7 @@ def save_config_json(parameter: str, value: str):
     """
     with open('./cybergis_compute_params.json', 'a+') as json_file:
             json.dump({parameter: value}, json_file)
+    json_file.close()
 class UI:
     """
     UI class.
