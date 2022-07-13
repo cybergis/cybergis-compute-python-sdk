@@ -18,9 +18,13 @@ def load_config_json(parameter: str) -> str:
     Returns:
         str: Parameter value
     """
-    print('NOTE: if you want to use another parameter, please remove this file')
-    with open(os.path.abspath('cybergis_compute_user.json')) as f:
-        return json.load(f)[parameter]
+    f = open(os.path.abspath('cybergis_compute_user.json'))
+    json_dict = json.load(f)
+    if parameter in json_dict:
+        print('NOTE: if you want to use another parameter, please remove this file')
+        return json_dict[parameter]
+    else:
+        print(parameter + " parameter not found in json file")
 
 
 def save_config_json(parameter: str, value: str):
