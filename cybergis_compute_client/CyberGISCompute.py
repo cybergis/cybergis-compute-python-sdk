@@ -113,9 +113,6 @@ class CyberGISCompute:
     def login_manual(self):
         """
         Asks for token and host from user and calls login_token function.
-
-        Args:
-            manualHost (bool): set to True if host needs to be specified.
         """
         if self.isJupyter:
             print('📢 Please go to Control Panel -> Token, request a new API token')
@@ -132,9 +129,6 @@ class CyberGISCompute:
     def login_json(self):
         """
         Checks for json file and calls login_token function.
-
-        Args:
-            manualHost (bool): set to True if host needs to be specified.
         """
         with open(os.path.abspath('cybergis_compute_user.json')) as f:
             user = json.load(f)
