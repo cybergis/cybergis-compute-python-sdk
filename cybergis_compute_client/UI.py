@@ -51,9 +51,9 @@ def update_config_json(parameter: str, value: str):
     with open('./cybergis_compute_params.json', 'r+') as json_file:
             json_dict = json.load(json_file)
             json_dict[parameter] = value
+            json_file.seek(0)  # rewind
             json.dump(json_dict, json_file)
-    json_file.close()
-
+            json_file.truncate()       
 class UI:
     """
     UI class.
@@ -329,7 +329,7 @@ class UI:
                         default_val = load_config_json(parameter=i)
                     except:
                         default_val = config['default_value']
-                        save_config_json(parameter=i, value=default_val)
+                        update_config_json(parameter=i, value=default_val)
                 else:
                     default_val = config['default_value']
                     save_config_json(parameter=i, value=default_val)
@@ -397,7 +397,7 @@ class UI:
                         default_val = load_config_json(parameter=i)
                     except:
                         default_val = config['default_value']
-                        save_config_json(parameter=i, value=default_val)
+                        update_config_json(parameter=i, value=default_val)
                 else:
                     default_val = config['default_value']
                     save_config_json(parameter=i, value=default_val)
@@ -424,7 +424,7 @@ class UI:
                         default_val = load_config_json(parameter=i)
                     except:
                         default_val = config['default_value']
-                        save_config_json(parameter=i, value=default_val)
+                        update_config_json(parameter=i, value=default_val)
                 else:
                     default_val = config['default_value']
                     save_config_json(parameter=i, value=default_val)
@@ -441,7 +441,7 @@ class UI:
                         default_val = load_config_json(parameter=i)
                     except:
                         default_val = config['default_value']
-                        save_config_json(parameter=i, value=default_val)
+                        update_config_json(parameter=i, value=default_val)
                 else:
                     default_val = config['default_value']
                     save_config_json(parameter=i, value=default_val)
