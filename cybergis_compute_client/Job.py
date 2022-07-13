@@ -10,7 +10,6 @@ class Job:
     Job class
 
     Attributes:
-        JAT (obj): Job Access Token associated with this job.
         client (obj): Client that this job requests information from
         maintainer (obj): Maintainer pool that this job is in
         isJupyter (bool): Whether or not this is running in Jupyter
