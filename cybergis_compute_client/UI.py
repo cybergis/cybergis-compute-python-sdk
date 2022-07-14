@@ -21,7 +21,6 @@ def load_config_json(parameter: str) -> str:
     """
     f = open('./cybergis_compute_params.json', 'r')
     json_dict = json.load(f)
-    print(json_dict)
     if parameter in json_dict:
         print('Loading up '+parameter)
         print('NOTE: if you want to use another parameter, please remove this file')
@@ -119,6 +118,7 @@ class UI:
         self.slurm_string_option_configs = ['partition']
         self.globus_filename = None
         self.jupyter_globus = None
+        self.savedParam = False
         self.json_dict = {}
     
     def render(self):
@@ -696,7 +696,7 @@ class UI:
     
     def onSaveParametersClick(self):
         def on_click(change):
-            self.savedParam = False
+            self.savedParam = True
             self.submitNew['output'].clear_output()
             save_config_json(self.json_dict)
             self.renderSaveParameters()
