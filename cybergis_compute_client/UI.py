@@ -3,7 +3,7 @@ import math
 import ipywidgets as widgets
 from ipyfilechooser import FileChooser
 from IPython.display import Markdown, display, clear_output
-from .MarkdownTable import *  # noqa
+from .MarkdownTable import *
 
 
 class UI:
@@ -118,17 +118,24 @@ class UI:
             display(self.recently_submitted['output'])
             display(self.load_more['output'])
 
+        # 5. your folders
+        user_folders = widgets.Output()
+        with user_folders:
+            display(self.folders['output'])
+
         # assemble into tabs
         self.tab = widgets.Tab(children=[
             job_config,
             job_status,
             download,
-            job_refresh
+            job_refresh,
+            user_folders
         ])
         self.tab.set_title(0, 'Job Configuration')
         self.tab.set_title(1, 'Your Job Status')
         self.tab.set_title(2, 'Download Job Result')
         self.tab.set_title(3, 'Your Jobs')
+        self.tab.set_title(4, 'Your Folders')
         display(self.tab)
 
     def renderComponents(self):
@@ -150,6 +157,7 @@ class UI:
         self.renderRecentlySubmittedJobs()
         self.renderLoadMore()
         self.renderSubmitNew()
+        self.renderFolders()
 
     # components
     def renderJobTemplate(self):
@@ -499,6 +507,24 @@ class UI:
             self.rerender(['download'])
         return
 
+    def renderFolders(self):
+        """
+        Display a user's folders
+        """
+        folders = self.compute.client.request('GET', '/folder', {'jupyterhubApiToken': self.compute.jupyterhubApiToken})
+        if self.folders['output'] is None:
+            self.folders['output'] = widgets.Output()
+            folders = self.compute.client.request('GET', '/folder', {'jupyterhubApiToken': self.compute.jupyterhubApiToken})
+        with self.folders['output']:
+            display(Markdown("We will do our best to keep this data for 90 days, but cannot guarantee it won’t be deleted sooner."))
+            display(Markdown('<br> **Folders for ' + self.compute.username.split('@')[0] + '**'))
+            for i in folders["folder"]:
+                headers = i.keys()
+                data = [[]]
+                for j in headers:
+                    data[0].append(i[j])
+                display(Markdown(MarkdownTable.render(data, headers)))
+
     def renderRecentlySubmittedJobs(self):
         """
         Display the jobs most recently submitted by the logged in user, allows user to restore these jobs.
@@ -520,6 +546,7 @@ class UI:
                 else:
                     self.recently_submitted['submit'][jobs['job'][i]['id']] = widgets.Button(description="Restore")
                 display(self.recently_submitted['submit'][jobDetails['id']])
+                display(Markdown("<br>"))
         for i in self.recently_submitted['submit'].keys():
             self.recently_submitted['submit'][i].on_click(self.onJobEntryButtonClick(i))
 
@@ -744,6 +771,7 @@ class UI:
         self.download = {'output': None, 'alert_output': None, 'result_output': None}
         self.recently_submitted = {'output': None, 'submit': {}, 'job_list_size': 5, 'load_more': None}
         self.load_more = {'output': None, 'load_more': None}
+        self.folders = {'output': None}
         # main
         self.tab = None
         # information
