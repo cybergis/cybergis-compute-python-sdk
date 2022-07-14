@@ -23,22 +23,22 @@ def load_config_json(parameter: str) -> str:
     json_dict = json.load(f)
     print(json_dict)
     if parameter in json_dict:
+        print('Loading up '+parameter)
         print('NOTE: if you want to use another parameter, please remove this file')
         return json_dict[parameter]
     else:
         raise NotFoundErr(parameter + " not found")
 
 
-def save_config_json(parameter: str, value: str):
+def save_config_json(json_dict: dict):
     """
     Saves paramter to json file.
 
     Args:
-        parameter (str): Parameter to save.
-        value (str): Paramter value to save.
+        json_dict (str): parameter dictionary
     """
     with open('./cybergis_compute_params.json', 'a+') as json_file:
-            json.dump({parameter: value}, json_file)
+            json.dump(json_dict, json_file)
     json_file.close()
 
 def update_config_json(parameter: str, value: str):
@@ -119,6 +119,7 @@ class UI:
         self.slurm_string_option_configs = ['partition']
         self.globus_filename = None
         self.jupyter_globus = None
+        self.json_dict = {}
     
     def render(self):
         """
@@ -199,6 +200,7 @@ class UI:
         self.renderRecentlySubmittedJobs()
         self.renderLoadMore()
         self.renderSubmitNew()
+        self.renderSaveParameters()
 
     # components
     def renderJobTemplate(self):
@@ -306,7 +308,7 @@ class UI:
                         update_config_json(parameter=i, value=default_val)
                 else:
                     default_val = config['default_value']
-                    save_config_json(parameter=i, value=default_val)
+                    self.json_dict[i] = default_val
                 max_val = config['max']
                 min_val = config['min']
                 step_val = config['step']
@@ -334,7 +336,7 @@ class UI:
                         update_config_json(parameter=i, value=default_val)
                 else:
                     default_val = config['default_value']
-                    save_config_json(parameter=i, value=default_val)
+                    self.json_dict[i] = default_val
                 options = config['options']
                 self.slurm[i] = widgets.Dropdown(
                     options=options,
@@ -402,7 +404,7 @@ class UI:
                         update_config_json(parameter=i, value=default_val)
                 else:
                     default_val = config['default_value']
-                    save_config_json(parameter=i, value=default_val)
+                    self.json_dict[i] = default_val
                 max_val = config['max']
                 min_val = config['min']
                 step_val = config['step']
@@ -429,7 +431,7 @@ class UI:
                         update_config_json(parameter=i, value=default_val)
                 else:
                     default_val = config['default_value']
-                    save_config_json(parameter=i, value=default_val)
+                    self.json_dict[i] = default_val
                 options = config['options']
                 self.param[i] = widgets.Dropdown(
                     options=options,
@@ -446,7 +448,7 @@ class UI:
                         update_config_json(parameter=i, value=default_val)
                 else:
                     default_val = config['default_value']
-                    save_config_json(parameter=i, value=default_val)
+                    self.json_dict[i] = default_val
                 self.param[i] = widgets.Text(
                     description=i, value=default_val, style=self.style)
 
@@ -497,6 +499,26 @@ class UI:
                 self.submitNew['button'] = None
         if self.submitNew['button'] is not None:
             self.submitNew['button'].on_click(self.onSubmitNewButtonClick())
+
+    def renderSaveParameters(self):
+        """
+        Render save paramters button, which allows the user to save parameters to json file.
+        """
+        if self.saveParam['output'] is None:
+            self.saveParam['output'] = widgets.Output()
+        if self.savedParam:
+            self.saveParam['button'] = widgets.Button(description="Save Parameters")
+        else:
+            self.saveParam['button'] = None
+
+        with self.saveParam['output']:
+            if self.savedParam:
+                self.saveParam['button'] = widgets.Button(description="Save Parameters")
+                display(self.saveParam['button'])
+            else:
+                self.saveParam['button'] = None
+        if self.saveParam['button'] is not None:
+            self.saveParam['button'].on_click(self.onSaveParametersClick())
 
     def renderDownload(self):
         """
@@ -671,6 +693,14 @@ class UI:
             self.submitNew['output'].clear_output()
             self.renderSubmitNew()
         return on_click
+    
+    def onSaveParametersClick(self):
+        def on_click(change):
+            self.savedParam = False
+            self.submitNew['output'].clear_output()
+            save_config_json(self.json_dict)
+            self.renderSaveParameters()
+        return on_click
 
     def onSubmitButtonClick(self):
         def on_click(change):
@@ -827,6 +857,7 @@ class UI:
         self.email = {'output': None}
         self.submit = {'output': None, 'alert_output': None}
         self.submitNew = {'output': None, 'button': None}
+        self.saveParam = {'output': None, 'button': None}
         self.param = {'output': None}
         self.uploadData = {'output': None}
         self.resultStatus = {'output': None}
