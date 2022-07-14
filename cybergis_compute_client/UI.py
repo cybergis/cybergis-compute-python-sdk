@@ -5,7 +5,7 @@ import ipywidgets as widgets
 from ipyfilechooser import FileChooser
 import json
 from IPython.display import Markdown, display, clear_output
-from .MarkdownTable import *  # nqa
+from .MarkdownTable import *  # noqa
 
 
 def load_config_json(parameter: str) -> str:
