@@ -118,7 +118,6 @@ class UI:
         self.slurm_string_option_configs = ['partition']
         self.globus_filename = None
         self.jupyter_globus = None
-        self.savedParam = False
         self.json_dict = {}
     
     def render(self):
@@ -506,19 +505,11 @@ class UI:
         """
         if self.saveParam['output'] is None:
             self.saveParam['output'] = widgets.Output()
-        if self.savedParam:
-            self.saveParam['button'] = widgets.Button(description="Save Parameters")
-        else:
-            self.saveParam['button'] = None
-
+        
+        self.saveParam['button'] = widgets.Button(description="Save Parameters")
+        self.saveParam['button'].on_click(self.onSaveParametersClick())
         with self.saveParam['output']:
-            if self.savedParam:
-                self.saveParam['button'] = widgets.Button(description="Save Parameters")
-                display(self.saveParam['button'])
-            else:
-                self.saveParam['button'] = None
-        if self.saveParam['button'] is not None:
-            self.saveParam['button'].on_click(self.onSaveParametersClick())
+            display(self.saveParam['button'])
 
     def renderDownload(self):
         """
@@ -696,8 +687,7 @@ class UI:
     
     def onSaveParametersClick(self):
         def on_click(change):
-            self.savedParam = True
-            self.submitNew['output'].clear_output()
+            self.saveParam['output'].clear_output()
             save_config_json(self.json_dict)
             self.renderSaveParameters()
         return on_click
