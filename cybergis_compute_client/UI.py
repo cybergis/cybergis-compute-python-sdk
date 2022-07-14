@@ -4,7 +4,6 @@ from xml.dom import NotFoundErr
 import ipywidgets as widgets
 from ipyfilechooser import FileChooser
 import json
-import os
 from IPython.display import Markdown, display, clear_output
 from .MarkdownTable import *  # nqa
 
@@ -15,14 +14,14 @@ def load_config_json(parameter: str) -> str:
 
     Args:
         parameter (str): Parameter to load.
-    
+
     Returns:
         str: Parameter value
     """
     f = open('./cybergis_compute_params.json', 'r')
     json_dict = json.load(f)
     if parameter in json_dict:
-        print('Loading up '+parameter)
+        print('Loading up ' + parameter)
         print('NOTE: if you want to use another parameter, please remove this parameter')
         return json_dict[parameter]
     else:
@@ -37,8 +36,9 @@ def save_config_json(json_dict: dict):
         json_dict (str): parameter dictionary
     """
     with open('./cybergis_compute_params.json', 'a+') as json_file:
-            json.dump(json_dict, json_file)
+        json.dump(json_dict, json_file)
     json_file.close()
+
 
 def update_config_json(parameter: str, value: str):
     """
@@ -49,11 +49,13 @@ def update_config_json(parameter: str, value: str):
         value (str): Paramter value to save.
     """
     with open('./cybergis_compute_params.json', 'r+') as json_file:
-            json_dict = json.load(json_file)
-            json_dict[parameter] = value
-            json_file.seek(0)  # rewind
-            json.dump(json_dict, json_file)
-            json_file.truncate()
+        json_dict = json.load(json_file)
+        json_dict[parameter] = value
+        json_file.seek(0)  # rewind
+        json.dump(json_dict, json_file)
+        json_file.truncate()
+
+
 class UI:
     """
     UI class.
@@ -119,7 +121,7 @@ class UI:
         self.globus_filename = None
         self.jupyter_globus = None
         self.json_dict = {}
-    
+
     def render(self):
         """
         Render main UI by initializing, rendering,
@@ -506,7 +508,7 @@ class UI:
         """
         if self.saveParam['output'] is None:
             self.saveParam['output'] = widgets.Output()
-        
+
         self.saveParam['button'] = widgets.Button(description="Save Parameters")
         self.saveParam['button'].on_click(self.onSaveParametersClick())
         with self.saveParam['output']:
@@ -685,15 +687,15 @@ class UI:
             self.submitNew['output'].clear_output()
             self.renderSubmitNew()
         return on_click
-    
+
     def onSaveParametersClick(self):
         def on_click(change):
             self.saveParam['output'].clear_output()
             for i in self.json_dict:
-                    if i in self.slurm:
-                        self.json_dict[i] = self.slurm[i].value
-                    if i in self.param:
-                        self.json_dict[i] = self.param[i].value
+                if i in self.slurm:
+                    self.json_dict[i] = self.slurm[i].value
+                if i in self.param:
+                    self.json_dict[i] = self.param[i].value
             save_config_json(self.json_dict)
             self.renderSaveParameters()
         return on_click
