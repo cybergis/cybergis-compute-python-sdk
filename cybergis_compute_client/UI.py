@@ -23,7 +23,7 @@ def load_config_json(parameter: str) -> str:
     json_dict = json.load(f)
     if parameter in json_dict:
         print('Loading up '+parameter)
-        print('NOTE: if you want to use another parameter, please remove this file')
+        print('NOTE: if you want to use another parameter, please remove this parameter')
         return json_dict[parameter]
     else:
         raise NotFoundErr(parameter + " not found")
@@ -53,7 +53,7 @@ def update_config_json(parameter: str, value: str):
             json_dict[parameter] = value
             json_file.seek(0)  # rewind
             json.dump(json_dict, json_file)
-            json_file.truncate()       
+            json_file.truncate()
 class UI:
     """
     UI class.
@@ -689,6 +689,11 @@ class UI:
     def onSaveParametersClick(self):
         def on_click(change):
             self.saveParam['output'].clear_output()
+            for i in self.json_dict:
+                    if i in self.slurm:
+                        self.json_dict[i] = self.slurm[i].value
+                    if i in self.param:
+                        self.json_dict[i] = self.param[i].value
             save_config_json(self.json_dict)
             self.renderSaveParameters()
         return on_click
