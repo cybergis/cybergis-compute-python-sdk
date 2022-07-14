@@ -35,7 +35,7 @@ def save_config_json(json_dict: dict):
     Args:
         json_dict (str): parameter dictionary
     """
-    with open('./cybergis_compute_params.json', 'a+') as json_file:
+    with open('./cybergis_compute_params.json', 'w+') as json_file:
         json.dump(json_dict, json_file)
     json_file.close()
 
