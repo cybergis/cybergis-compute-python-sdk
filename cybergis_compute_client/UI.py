@@ -300,7 +300,7 @@ class UI:
                     try:
                         default_val = load_config_json(parameter=i)
                     except:
-                        print('value not found')
+                        print(i + ' value not found')
                         default_val = config['default_value']
                         update_config_json(parameter=i, value=default_val)
                 else:
