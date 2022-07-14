@@ -144,6 +144,7 @@ class UI:
             display(self.email['output'])
             display(self.submit['output'])
             display(self.submitNew['output'])
+            display(self.saveParam['output'])
 
         # 2. job status
         job_status = widgets.Output()
