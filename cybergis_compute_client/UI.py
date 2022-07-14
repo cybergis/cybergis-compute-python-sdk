@@ -19,8 +19,9 @@ def load_config_json(parameter: str) -> str:
     Returns:
         str: Parameter value
     """
-    f = open(os.path.abspath('cybergis_compute_user.json'))
+    f = open('./cybergis_compute_params.json', 'r')
     json_dict = json.load(f)
+    print(json_dict)
     if parameter in json_dict:
         print('NOTE: if you want to use another parameter, please remove this file')
         return json_dict[parameter]
