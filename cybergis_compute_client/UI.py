@@ -117,7 +117,7 @@ class UI:
         with job_refresh:
             display(self.recently_submitted['output'])
             display(self.load_more['output'])
-
+            
         # 5. your folders
         user_folders = widgets.Output()
         with user_folders:
@@ -519,7 +519,7 @@ class UI:
             display(Markdown("We will do our best to keep this data for 90 days, but cannot guarantee it won’t be deleted sooner."))
             display(Markdown('<br> **Folders for ' + self.compute.username.split('@')[0] + '**'))
             for i in folders["folder"]:
-                headers = i.keys()
+                headers = headers = ['id', 'name', 'hpc', 'userId', 'isWritable', 'createdAt', 'updatedAt', 'deletedAt']
                 data = [[]]
                 for j in headers:
                     data[0].append(i[j])
