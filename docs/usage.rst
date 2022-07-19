@@ -1,15 +1,17 @@
 Using CyberGIS-Compute
 ======================
 
-This page provides a crash course in the basics of *using* CyberGIS-Compute. We will walk through submitting the Hello World job.
+This page provides a crash course in the basics of *using* CyberGIS-Compute. We will walk through submitting the Hello World job. We have a short glossary at the bottom of the page if some of these terms are unfamiliar to you.
 
-#. **Login to CyberGISX** If you don't already have a CyberGISX account, head over to `CyberGISX Hub <https://cybergisxhub.cigi.illinois.edu/>`_ and setup an account. We recommend using your academic email address if possible. 
+#. **Login to CyberGISX** If you don't already have a CyberGISX account, head over to `CyberGISX Hub <https://cybergisxhub.cigi.illinois.edu/>`_ and setup an account. We recommend using your academic email address if possible. CyberGISX is a JupyterHub platform which is designed for geospatial education and research.
 
-   Once you have an account, login to `CyberGISX <https://cybergisx.cigi.illinois.edu/>`_.
+   Once you have an account, login to `CyberGISX <https://cybergisx.cigi.illinois.edu/>`_ or click the "Launch CyberGISX" button in the top-right corner of the `CyberGISX Hub page <https://cybergisxhub.cigi.illinois.edu/>`_ (the button appears when you are logged in).
 
 #. **Open a New Notebook** Once you reach CyberGISX, open a new notebook with the "Python 3" kernel. You can do this by clicking the "Python 3" box under "Notebook" as seen in the screenshot below:
 
     .. figure:: _static/img/user-guide/NewNotebook.png
+
+    A "notebook" is the main document used in Jupyter. It allows you to mix code with text, visuals, and interactive elements. The "kernel" of a notebook is the thing that runs the notebook, in our case we are running code in Python 3.
 
 #. **Connect to Compute** Within CyberGISX, we can connect to CyberGIS-Compute with the following lines of Python code::
 
@@ -37,6 +39,7 @@ This page provides a crash course in the basics of *using* CyberGIS-Compute. We 
    When you run this cell, you should see the following User Interface:
 
    .. figure:: _static/img/user-guide/SDKUI.png
+
 
 
 #. **Submit our Job** On the "Job Configuration" tab, you should see the "Job Templates" dropdown. There, be sure to select "hello_world" from the dropdown. Now, you can submit the job using the "Submit Job" button in the bottom-left.
@@ -80,3 +83,33 @@ This page provides a crash course in the basics of *using* CyberGIS-Compute. We 
 
    Go to the "Your Jobs" tab and click the "Restore" button for the top job. This should reload the UI with the information for the job!
 
+Congratulations on running your first model with CyberGIS-Compute!
+
+.. admonition:: Next Steps
+
+    Now that you have a solid understanding of the basics of CyberGIS-Compute, there are a variety of next steps you can take to learn more!
+
+    * The `cybergis/pysal-access-compute-example <https://github.com/cybergis/pysal-access-compute-example>`_ Github repository has a notebook which walks through two models focused on spatial accessibility and explores a bit about how a model is created in CyberGIS-Compute. The `ContributingAModel.ipynb Jupyter notebook <https://github.com/cybergis/pysal-access-compute-example/blob/main/ContributingAModel.ipynb>`_ in the same repository has futher guidance on how to contribute a model. The notebooks are available on CyberGISX Hub here: `https://cybergisxhub.cigi.illinois.edu/notebook/pysal-access-compute-example/ <https://cybergisxhub.cigi.illinois.edu/notebook/pysal-access-compute-example/>`_
+    * The `About page <about.html>`_ has more detailed information on the creation of CyberGIS-Compute including papers and presentations from conferences discussing it.
+    * The `Developing a Model with CyberGIS-Compute <model_contribution/develop_model.html>`_ page walks through creating a model for CyberGIS-Compute. However, we strongly recommend walking through the IntroToCyberGIS-Compute and ContributingAModel notebooks in the `Pysal Access Compute Example <https://cybergisxhub.cigi.illinois.edu/notebook/pysal-access-compute-example/>`_ first to get some hands-on experience with the anatomy of a model.
+
+
+Glossary
+--------
+
+.. admonition:: Definition
+
+    **CyberGIS:** `CyberGIS <https://en.wikipedia.org/wiki/CyberGIS>`_ is a term coined by `Dr. Shaowen Wang <https://scholar.google.com/citations?user=qcUhJIcAAAAJ>`_ in 2010 to describe the use of HPC and cyberinfrastructure for solving geospatial problems. Whereas GIS has traditionally been performed on individual, personal computers, cyberGIS is focused on solving problems that are more data or computationally intensive. For those hoping to learn more, check out `"A CyberGIS Framework for the Synthesis of Cyberinfrastructure, GIS, and Spatial Analysis" <https://doi.org/10.1080/00045601003791243>`_
+
+
+.. admonition:: Definition
+
+    **CyberGISX:** CyberGISX is a JupyterHub which is hosted and maintained by the `CyberGIS Center <https://cybergis.illinois.edu/>`_. The JupyterHub is focused on education and research in the geospatial sciences.
+
+.. admonition:: Definition
+
+    **High-Performance Computing (HPC):** `High-performance computing (HPC) <https://en.wikipedia.org/wiki/High-performance_computing>`_ uses supercomputing and computer clusters (many computers working together) to tackle computational problems (analysis/modeling/etc.), with an emphasis on solving "big" problems like big data problems, computationally intensive problems, and problems requiring lots of memory. Put another way, HPC resources can help you tackle computational problems that you can't tackle with your own computer! HPC resources are also sometimes refered to as `cyberinfrastructure <https://en.wikipedia.org/wiki/Cyberinfrastructure>`_ which means infrastructure of computers and information systems.
+
+.. admonition:: Definition
+
+    **Jupyter/JupyterHub:** `Jupyter <https://jupyter.org/>`_ describes itself as a "web-based interactive development environment for notebooks, code, and data." Notebooks are the documents created by Jupyter, they are like interactive sets of code which can be mixed with text, visuals, and interactive elements. A JupyterHub is a way to provide Jupyter interfaces to many users.

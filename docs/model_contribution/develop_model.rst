@@ -3,6 +3,15 @@ Developing a Model with CyberGIS-Compute
 
 This section walks you through converting a Jupyter notebook to a model for CyberGIS-Compute. The examples use Python for simplicity, but Compute supports arbitrary software and languages.
 
+.. tip::
+
+    If you haven't already, we highly recommend starting with the notebooks in the Pysal Access Compute Example (specifically `IntroToCyberGIS-Compute.ipynb <https://github.com/cybergis/pysal-access-compute-example/blob/main/IntroToCyberGIS-Compute.ipynb>`_ and `ContributingAModel.ipynb <https://github.com/cybergis/pysal-access-compute-example/blob/main/ContributingAModel.ipynb>`_) which are available:
+
+    * On CyberGISX Hub: `https://cybergisxhub.cigi.illinois.edu/notebook/pysal-access-compute-example/ <https://cybergisxhub.cigi.illinois.edu/notebook/pysal-access-compute-example/>`_
+    * On Github: `https://github.com/cybergis/pysal-access-compute-example <https://github.com/cybergis/pysal-access-compute-example>`_ 
+
+    We recommend these notebooks first to get some hands-on experience with CyberGIS-Compute before diving into making your own model!
+
 What are the stages of your model?
 ----------------------------------
 
@@ -225,7 +234,11 @@ In particular, note the line::
 
     "supported_hpc": ["keeling_community", "expanse_community"],
 
-which is simply specifying a list of supported HPCs: Keeling and Expanse.
+which is simply specifying a list of supported HPCs: Keeling and Expanse. The line::
+
+    "default_hpc": "keeling_community"
+
+specifies that the HPC "keeling_community" should be the default option in the SDK UI's dropdown.
 
 
 Providing Input Data
