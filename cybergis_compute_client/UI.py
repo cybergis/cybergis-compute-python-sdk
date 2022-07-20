@@ -117,7 +117,7 @@ class UI:
         with job_refresh:
             display(self.recently_submitted['output'])
             display(self.load_more['output'])
-            
+
         # 5. your folders
         user_folders = widgets.Output()
         with user_folders:
