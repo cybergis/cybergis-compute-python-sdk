@@ -37,6 +37,25 @@ This model (pysal-access) uses the `Pysal access Python package <https://github.
 * Github Repository: `cybergis/pysal-access-compute-example <https://github.com/cybergis/pysal-access-compute-example>`_
 * Notebook on CyberGISXHub: `Pysal Access Compute Example <https://cybergisxhub.cigi.illinois.edu/notebook/pysal-access-compute-example/>`_
 
+
+
+Remote Sensing Image Fusion Model
+---------------------------------
+
+.. image:: _static/img/models/RemoteSensingDataFusion.png
+   :scale: 25%
+   :align: right
+
+Remote sensing data fusion has been extensively studied to generate high spatial- and temporal- resolution data products by integrating high-spatial-low-temporal resolution (such as Landsat) and high-temporal-low-spatial-resolution images (such as MODIS). In this model, we utilize a robust hybrid deep learning model based on a super-resolution convolutional neural network (SRCNN) and long short-term memory (LSTM) for spatiotemporal data fusion to integrate Landsat images with MODIS. The work uses code from the following paper:
+
+    Fangzheng Lyu, Zijun Yang, Zimo Xiao, Chunyuan Diao, Jinwoo Park, and Shaowen Wang. 2022. CyberGIS for Scalable Remote Sensing Data Fusion. In Practice and Experience in Advanced Research Computing (PEARC '22). Association for Computing Machinery, New York, NY, USA, Article 35, 1-4. https://doi.org/10.1145/3491418.3535145
+
+* Github Repository: `cybergis/data_fusion <https://github.com/cybergis/data_fusion>`_
+* DOI for Paper: `10.1145/3491418.3535145 <https://doi.org/10.1145/3491418.3535145>`_
+* Related Publication: `A Robust Hybrid Deep Learning Model for Spatiotemporal Image Fusion <https://doi.org/10.3390/rs13245005>`_
+
+
+
 SUMMA
 -----
 
