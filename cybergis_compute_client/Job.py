@@ -292,6 +292,7 @@ class Job:
 
         # init globus transfer
         self.client.request('POST', '/folder/' + folderId + '/download/globus-init', {
+            "jobId": self.id,
             "jupyterhubApiToken": self.jupyterhubApiToken,
             "fromPath": remotePath,
             "toPath": localPath,
