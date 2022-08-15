@@ -7,7 +7,6 @@
 <span class=sd >        client = Client()</span>
 <span class=sd >"""</span>
 <span class=kn >import</span> <span class=nn >http.client</span> <span class=k >as</span> <span class=nn >client</span>
-<span class=kn >import</span> <span class=nn >requests</span>
 <span class=kn >import</span> <span class=nn >json</span>
 <span class=kn >from</span> <span class=nn >os</span> <span class=kn >import</span> <span class=n >path</span>
 
@@ -57,76 +56,16 @@
             <span class=n >json</span><span class=o >.</span><span class=n >dumps</span><span class=p >(</span><span class=n >body</span><span class=p >),</span> <span class=n >headers</span><span class=p >)</span>
         <span class=n >response</span> <span class=o >=</span> <span class=n >connection</span><span class=o >.</span><span class=n >getresponse</span><span class=p >()</span>
         <span class=n >out</span> <span class=o >=</span> <span class=n >response</span><span class=o >.</span><span class=n >read</span><span class=p >()</span><span class=o >.</span><span class=n >decode</span><span class=p >()</span>
-        <span class=n >data</span> <span class=o >=</span> <span class=n >json</span><span class=o >.</span><span class=n >loads</span><span class=p >(</span><span class=n >out</span><span class=p >)</span>
+        <span class=k >try</span><span class=p >:</span>
+            <span class=n >data</span> <span class=o >=</span> <span class=n >json</span><span class=o >.</span><span class=n >loads</span><span class=p >(</span><span class=n >out</span><span class=p >)</span>
+        <span class=k >except</span><span class=p >:</span>
+            <span class=k >raise</span> <span class=ne >Exception</span><span class=p >(</span><span class=s1 >'cannot decode data: '</span> <span class=o >+</span> <span class=n >out</span><span class=p >)</span>
 
         <span class=k >if</span> <span class=s1 >'error'</span> <span class=ow >in</span> <span class=n >data</span><span class=p >:</span>
             <span class=n >msg</span> <span class=o >=</span> <span class=s1 >''</span>
             <span class=k >if</span> <span class=s1 >'messages'</span> <span class=ow >in</span> <span class=n >data</span><span class=p >:</span>
                 <span class=n >msg</span> <span class=o >=</span> <span class=nb >str</span><span class=p >(</span><span class=n >data</span><span class=p >[</span><span class=s1 >'messages'</span><span class=p >])</span>
-            <span class=k >raise</span> <span class=ne >Exception</span><span class=p >(</span><span class=s1 >'server '</span> <span class=o >+</span> <span class=bp >self</span><span class=o >.</span><span class=n >url</span> <span class=o >+</span> <span class=s1 >' responded with error "'</span> <span class=o >+</span> <span class=n >data</span><span class=p >[</span><span class=s1 >'error'</span><span class=p >]</span> <span class=o >+</span> <span class=n >msg</span> <span class=o >+</span> <span class=s1 >'"'</span><span class=p >)</span>
+            <span class=k >raise</span> <span class=ne >Exception</span><span class=p >(</span><span class=s1 >'server '</span> <span class=o >+</span> <span class=bp >self</span><span class=o >.</span><span class=n >url</span> <span class=o >+</span> <span class=n >uri</span> <span class=o >+</span> <span class=s1 >' responded with error "'</span> <span class=o >+</span> <span class=n >data</span><span class=p >[</span><span class=s1 >'error'</span><span class=p >]</span> <span class=o >+</span> <span class=n >msg</span> <span class=o >+</span> <span class=s1 >'"'</span><span class=p >)</span>
 
-        <span class=k >return</span> <span class=n >data</span></div>
-
-<div class=viewcode-block  id=Client.download ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.Client.Client.download">[docs]</a>    <span class=k >def</span> <span class=nf >download</span><span class=p >(</span><span class=bp >self</span><span class=p >,</span> <span class=n >uri</span><span class=p >,</span> <span class=n >body</span><span class=p >,</span> <span class=n >localDir</span><span class=p >):</span>
-        <span class=sd >"""</span>
-<span class=sd >        Downloads data from a request made to the specified uri</span>
-<span class=sd >        onto the specifed path</span>
-
-<span class=sd >        Args:</span>
-<span class=sd >            uri (str): uri of the server</span>
-<span class=sd >            body (str): data that needs to be dowloaded</span>
-<span class=sd >            localDir (str): path where the data needs to be downloaded</span>
-
-<span class=sd >        Returns:</span>
-<span class=sd >            str: path where the data is stored</span>
-<span class=sd >        """</span>
-        <span class=n >url</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >protocol</span><span class=o >.</span><span class=n >lower</span><span class=p >()</span> <span class=o >+</span> <span class=s1 >'://'</span> <span class=o >+</span> <span class=n >path</span><span class=o >.</span><span class=n >join</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >url</span><span class=o >.</span><span class=n >strip</span><span class=p >(</span><span class=s1 >'/'</span><span class=p >),</span> <span class=bp >self</span><span class=o >.</span><span class=n >suffix</span><span class=o >.</span><span class=n >strip</span><span class=p >(</span><span class=s1 >'/'</span><span class=p >),</span> <span class=n >uri</span><span class=o >.</span><span class=n >strip</span><span class=p >(</span><span class=s1 >'/'</span><span class=p >))</span>
-        <span class=n >response</span> <span class=o >=</span> <span class=n >requests</span><span class=o >.</span><span class=n >get</span><span class=p >(</span><span class=n >url</span><span class=p >,</span> <span class=n >data</span><span class=o >=</span><span class=n >body</span><span class=p >,</span> <span class=n >stream</span><span class=o >=</span><span class=kc >True</span><span class=p >)</span>
-        <span class=n >contentType</span> <span class=o >=</span> <span class=n >response</span><span class=o >.</span><span class=n >headers</span><span class=p >[</span><span class=s1 >'Content-Type'</span><span class=p >]</span>
-
-        <span class=k >if</span> <span class=n >response</span><span class=o >.</span><span class=n >encoding</span> <span class=ow >is</span> <span class=kc >None</span><span class=p >:</span>
-            <span class=n >response</span><span class=o >.</span><span class=n >encoding</span> <span class=o >=</span> <span class=s1 >'utf-8'</span>
-
-        <span class=k >if</span> <span class=s1 >'json'</span> <span class=ow >in</span> <span class=n >contentType</span><span class=p >:</span>
-            <span class=n >data</span> <span class=o >=</span> <span class=n >json</span><span class=o >.</span><span class=n >loads</span><span class=p >(</span><span class=n >response</span><span class=o >.</span><span class=n >content</span><span class=o >.</span><span class=n >decode</span><span class=p >())</span>
-            <span class=n >localDir</span> <span class=o >+=</span> <span class=s1 >'.json'</span>
-            <span class=c1 ># handel file not found error which is returned as a JSON</span>
-            <span class=k >if</span> <span class=s1 >'error'</span> <span class=ow >in</span> <span class=n >data</span><span class=p >:</span>
-                <span class=n >msg</span> <span class=o >=</span> <span class=s1 >''</span>
-                <span class=k >if</span> <span class=s1 >'messages'</span> <span class=ow >in</span> <span class=n >data</span><span class=p >:</span>
-                    <span class=c1 ># TODO: this msg variable isn't used</span>
-                    <span class=n >msg</span> <span class=o >=</span> <span class=nb >str</span><span class=p >(</span><span class=n >data</span><span class=p >[</span><span class=s1 >'messages'</span><span class=p >])</span>  <span class=c1 ># noqa</span>
-                <span class=nb >print</span><span class=p >(</span><span class=s1 >'❌ server '</span> <span class=o >+</span> <span class=bp >self</span><span class=o >.</span><span class=n >url</span> <span class=o >+</span> <span class=s1 >' responded with error "'</span> <span class=o >+</span> <span class=n >data</span><span class=p >[</span><span class=s1 >'error'</span><span class=p >]</span> <span class=o >+</span> <span class=s1 >'"'</span><span class=p >)</span>
-
-        <span class=k >if</span> <span class=s1 >'tar'</span> <span class=ow >in</span> <span class=n >contentType</span><span class=p >:</span>
-            <span class=n >localDir</span> <span class=o >+=</span> <span class=s1 >'.tar'</span>
-
-        <span class=k >if</span> <span class=s1 >'zip'</span> <span class=ow >in</span> <span class=n >contentType</span><span class=p >:</span>
-            <span class=n >localDir</span> <span class=o >+=</span> <span class=s1 >'.zip'</span>
-
-        <span class=k >with</span> <span class=nb >open</span><span class=p >(</span><span class=n >localDir</span><span class=p >,</span> <span class=s2 >"wb"</span><span class=p >)</span> <span class=k >as</span> <span class=n >f</span><span class=p >:</span>
-            <span class=k >for</span> <span class=n >chunk</span> <span class=ow >in</span> <span class=n >response</span><span class=o >.</span><span class=n >iter_content</span><span class=p >(</span><span class=n >chunk_size</span><span class=o >=</span><span class=mi >8192</span><span class=p >):</span>
-                <span class=n >f</span><span class=o >.</span><span class=n >write</span><span class=p >(</span><span class=n >chunk</span><span class=p >)</span>
-
-        <span class=n >response</span><span class=o >.</span><span class=n >close</span><span class=p >()</span>
-        <span class=k >return</span> <span class=n >localDir</span></div>
-
-<div class=viewcode-block  id=Client.upload ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.Client.Client.upload">[docs]</a>    <span class=k >def</span> <span class=nf >upload</span><span class=p >(</span><span class=bp >self</span><span class=p >,</span> <span class=n >uri</span><span class=p >,</span> <span class=n >body</span><span class=p >,</span> <span class=n >file</span><span class=p >):</span>
-        <span class=sd >"""</span>
-<span class=sd >        Uploads data using a request made to the specified uri</span>
-
-<span class=sd >        Args:</span>
-<span class=sd >            uri (str): uri of the server</span>
-<span class=sd >            body (str): data that needs to be uploaded</span>
-<span class=sd >            file (str): file that needs to be uploaded</span>
-
-<span class=sd >        Returns:</span>
-<span class=sd >            JSON: output from the upload request to the server</span>
-<span class=sd >        """</span>
-        <span class=n >url</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >protocol</span><span class=o >.</span><span class=n >lower</span><span class=p >()</span> <span class=o >+</span> <span class=s1 >'://'</span> <span class=o >+</span> <span class=n >path</span><span class=o >.</span><span class=n >join</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >url</span><span class=o >.</span><span class=n >strip</span><span class=p >(</span><span class=s1 >'/'</span><span class=p >),</span> <span class=bp >self</span><span class=o >.</span><span class=n >suffix</span><span class=o >.</span><span class=n >strip</span><span class=p >(</span><span class=s1 >'/'</span><span class=p >),</span> <span class=n >uri</span><span class=o >.</span><span class=n >strip</span><span class=p >(</span><span class=s1 >'/'</span><span class=p >))</span>
-        <span class=n >data</span> <span class=o >=</span> <span class=n >json</span><span class=o >.</span><span class=n >loads</span><span class=p >(</span><span class=n >requests</span><span class=o >.</span><span class=n >post</span><span class=p >(</span><span class=n >url</span><span class=p >,</span> <span class=n >data</span><span class=o >=</span><span class=n >body</span><span class=p >,</span> <span class=n >files</span><span class=o >=</span><span class=p >{</span><span class=s1 >'file'</span><span class=p >:</span> <span class=n >file</span><span class=p >})</span><span class=o >.</span><span class=n >content</span><span class=o >.</span><span class=n >decode</span><span class=p >())</span>
-        <span class=k >if</span> <span class=s1 >'error'</span> <span class=ow >in</span> <span class=n >data</span><span class=p >:</span>
-            <span class=k >return</span> <span class=s1 >'❌ server '</span> <span class=o >+</span> <span class=bp >self</span><span class=o >.</span><span class=n >url</span> <span class=o >+</span> <span class=s1 >' responded with error "'</span>
-            <span class=o >+</span> <span class=n >data</span><span class=p >[</span><span class=s1 >'error'</span><span class=p >]</span> <span class=o >+</span> <span class=s1 >'"'</span>
         <span class=k >return</span> <span class=n >data</span></div></div>
-</pre></div> </article> </div> </div> </main> </div> <footer class=md-footer > <div class=md-footer-nav > <nav class="md-footer-nav__inner md-grid"> </a> </nav> </div> <div class="md-footer-meta md-typeset"> <div class="md-footer-meta__inner md-grid"> <div class=md-footer-copyright > <div class=md-footer-copyright__highlight > &#169; Copyright 2022, CyberGIS Center. </div> Created using <a href="http://www.sphinx-doc.org/">Sphinx</a> 5.1.0. and <a href="https://github.com/bashtage/sphinx-material/">Material for Sphinx</a> </div> </div> </div> </footer> <script src="../../_static/javascripts/application.js"></script> <script>app.initialize({version: "1.0.4", url: {base: ".."}})</script>
+</pre></div> </article> </div> </div> </main> </div> <footer class=md-footer > <div class=md-footer-nav > <nav class="md-footer-nav__inner md-grid"> </a> </nav> </div> <div class="md-footer-meta md-typeset"> <div class="md-footer-meta__inner md-grid"> <div class=md-footer-copyright > <div class=md-footer-copyright__highlight > &#169; Copyright 2022, CyberGIS Center. </div> Created using <a href="http://www.sphinx-doc.org/">Sphinx</a> 5.1.1. and <a href="https://github.com/bashtage/sphinx-material/">Material for Sphinx</a> </div> </div> </div> </footer> <script src="../../_static/javascripts/application.js"></script> <script>app.initialize({version: "1.0.4", url: {base: ".."}})</script>
