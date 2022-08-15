@@ -7,10 +7,11 @@ Example:
         cybergis = CyberGISCompute(url='localhost', port='3030', protocol='HTTP', isJupyter=False)
 """
 
-from .Client import *  # noqa
-from .Job import *  # noqa
-from .UI import *  # noqa
-from .MarkdownTable import *  # noqa
+from .Client import Client  # noqa
+from .Job import Job  # noqa
+from .UI import UI  # noqa
+from .MarkdownTable import MarkdownTable  # noqa
+import json
 import base64
 import os
 import getpass
@@ -57,7 +58,8 @@ class CyberGISCompute:
         Returns:
             CyberGISCompute: this CyberGISCompute
         """
-        self.client = Client(url=url, protocol=protocol, port=port, suffix=suffix)
+        self.client = Client(url=url, protocol=protocol,
+                             port=port, suffix=suffix)
         self.jupyterhubApiToken = None
         self.username = None
         self.isJupyter = isJupyter
@@ -75,21 +77,24 @@ class CyberGISCompute:
         Args:
             token (str): User/Environment provided token.
         """
-        self.jupyterhubApiToken = base64.b64encode((self.jupyterhubHost + '@' + token).encode('ascii')).decode('utf-8')
+        self.jupyterhubApiToken = base64.b64encode(
+            (self.jupyterhubHost + '@' + token).encode('ascii')).decode('utf-8')
 
     def get_jupyterhubHost(self):
         """
         Gets the jupyterhub host(str) from the user.
         """
         if (self.jupyterhubHost is None):
-            print("Please copy the JupyterHub url along with port. E.g http://127.0.0.1:8081")
+            print(
+                "Please copy the JupyterHub url along with port. E.g http://127.0.0.1:8081")
             self.jupyterhubHost = input('Enter your jupyterhubHost here: ')
 
     def set_username(self):
         """
         Authenticates the token(str) and saves the username(str).
         """
-        res = self.client.request('GET', '/user', {"jupyterhubApiToken": self.jupyterhubApiToken})
+        res = self.client.request(
+            'GET', '/user', {"jupyterhubApiToken": self.jupyterhubApiToken})
         self.username = res['username']
 
     def save_token(self):
@@ -110,6 +115,17 @@ class CyberGISCompute:
         except:
             print('❌ Failed to login via system token')
 
+    def host_token_login(self, token):
+        """
+        Gets the host(str), encrypts the token(str) and calls login.
+
+        Args:
+            token (str): User/Environment provided token.
+        """
+        self.get_jupyterhubHost()
+        self.encrypt_token(token)
+        return self.login_token()
+
     def login_manual(self):
         """
         Asks for token and host from user and calls login_token function.
@@ -118,9 +134,7 @@ class CyberGISCompute:
             print('📢 Please go to Control Panel -> Token, request a new API token')
             token = getpass.getpass('Enter your API token here')
             try:
-                self.get_jupyterhubHost()
-                self.encrypt_token(token)
-                return self.login_token()
+                return self.host_token_login(token)
             except:
                 print('❌ Failed to login via user input')
         else:
@@ -143,9 +157,7 @@ class CyberGISCompute:
             except:
                 envToken = os.getenv('JUPYTERHUB_API_TOKEN')
                 if envToken is not None:
-                    self.get_jupyterhubHost()
-                    self.encrypt_token(envToken)
-                    return self.login_token()
+                    return self.host_token_login(envToken)
                 print('❌ Failed to login via token JSON file')
 
     def login(self, manualLogin=False, manualHost=None, verbose=True):
@@ -173,14 +185,12 @@ class CyberGISCompute:
         if manualLogin:
             return self.login_manual()
         # login via json file
-        elif path.exists('./cybergis_compute_user.json'):
+        elif os.path.exists('./cybergis_compute_user.json'):
             return self.login_json()
         else:
             envToken = os.getenv('JUPYTERHUB_API_TOKEN')
             if envToken is not None:
-                self.get_jupyterhubHost()
-                self.encrypt_token(envToken)
-                return self.login_token()
+                return self.host_token_login(envToken)
             print('❌ Not logged in. To enable more features, use .login()')
 
     def create_job(self, maintainer='community_contribution', hpc=None, hpcUsername=None, hpcPassword=None, verbose=True):
@@ -227,7 +237,8 @@ class CyberGISCompute:
             or displayed directly into the interface
         """
         self.login()
-        usage = self.client.request('GET', '/user/slurm-usage?format={}'.format(not raw), {"jupyterhubApiToken": self.jupyterhubApiToken})
+        usage = self.client.request('GET', '/user/slurm-usage?format={}'.format(
+            not raw), {"jupyterhubApiToken": self.jupyterhubApiToken})
         if raw:
             return usage
         display(
@@ -255,15 +266,19 @@ class CyberGISCompute:
         if raw:
             return jobs
 
-        headers = ['id', 'hpc', 'remoteExecutableFolder', 'remoteDataFolder', 'remoteResultFolder', 'param', 'slurm', 'userId', 'maintainer', 'createdAt']
+        headers = ['id', 'hpc', 'remoteExecutableFolder', 'remoteDataFolder',
+                   'remoteResultFolder', 'param', 'slurm', 'userId', 'maintainer', 'createdAt']
         data = []
         for job in jobs['job']:
             data.append([
                 job['id'],
                 job['hpc'],
-                job['remoteExecutableFolder']["id"] if ("id" in job['remoteExecutableFolder']) else None,
-                job['remoteDataFolder']["id"] if ("id" in job['remoteDataFolder']) else None,
-                job['remoteResultFolder']["id"] if ("id" in job['remoteResultFolder']) else None,
+                job['remoteExecutableFolder']["id"] if (
+                    "id" in job['remoteExecutableFolder']) else None,
+                job['remoteDataFolder']["id"] if (
+                    "id" in job['remoteDataFolder']) else None,
+                job['remoteResultFolder']["id"] if (
+                    "id" in job['remoteResultFolder']) else None,
                 job['remoteDataFolder'],
                 job['remoteResultFolder'],
                 json.dumps(job['param']),
@@ -525,7 +540,8 @@ class CyberGISCompute:
                 'https://', '').replace(
                     'http://', '')
         else:
-            display(Javascript('IPython.notebook.kernel.execute(''`CyberGISCompute.jupyterhubHost = "${window.location.host}"`);'))
+            display(Javascript(
+                'IPython.notebook.kernel.execute(''`CyberGISCompute.jupyterhubHost = "${window.location.host}"`);'))
 
     def get_user_jupyter_globus(self):
         """

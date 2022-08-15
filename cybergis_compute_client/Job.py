@@ -1,4 +1,4 @@
-from .MarkdownTable import *  # noqa
+from .MarkdownTable import MarkdownTable  # noqa
 import time
 import json
 from os import system, name
