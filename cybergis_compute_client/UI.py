@@ -3,6 +3,7 @@ import math
 import ipywidgets as widgets
 from ipyfilechooser import FileChooser
 from IPython.display import Markdown, display, clear_output
+from .MarkdownTable import MarkdownTable  # noqa
 
 
 class UI:
@@ -165,7 +166,7 @@ class UI:
             description='📦 Job Templates:',
             style=self.style,
             layout=self.layout)
-        self.jobTemplate['dropdown'].observe(self.onJobDropdownChange())
+        self.jobTemplate['dropdown'].observe(self.onJobDropdownChange(), names=['value'])
         with self.jobTemplate['output']:
             display(self.jobTemplate['dropdown'])
 
@@ -206,7 +207,7 @@ class UI:
         self.computingResource['accordion'].set_title(
             0, 'Computing Resource')
         self.computingResource['dropdown'].observe(
-            self.onComputingResourceDropdownChange())
+            self.onComputingResourceDropdownChange(), names=['value'])
         with self.computingResource['output']:
             display(self.computingResource['accordion'])
 
@@ -428,6 +429,8 @@ class UI:
                             self.defaultRemoteResultFolder)))
             except Exception:
                 result_folder_content
+            if len(result_folder_content) == 0:
+                raise Exception('failed to get result folder content')
             self.download['dropdown'] = widgets.Dropdown(
                 options=result_folder_content, value=result_folder_content[0],
                 description='select file/folder')
@@ -557,7 +560,9 @@ class UI:
                 self.renderLoadMore()
                 self.download['alert_output'].clear_output(wait=True)
                 self.downloading = True
-                self.compute.job.download_result_folder(remotePath=self.download['dropdown'].value)
+                localEndpoint = self.jupyter_globus['endpoint']
+                localPath = os.path.join(self.jupyter_globus['root_path'], self.globus_filename)
+                self.compute.job.download_result_folder_by_globus(remotePath=self.download['dropdown'].value, localEndpoint=localEndpoint, localPath=localPath)
                 print('please check your data at your root folder under "' + self.globus_filename + '"')
                 self.compute.recentDownloadPath = os.path.join(self.jupyter_globus['container_home_path'], self.globus_filename)
                 self.downloading = False
@@ -589,19 +594,25 @@ class UI:
                 clear_output(wait=True)
 
             self.compute.login()
-            dataFolder = None
-            self.jupyter_globus = self.compute.get_user_jupyter_globus()
+            localDataFolder = None
+            data = self.get_data()
+            if data['computing_resource'] != 'local_hpc':
+                self.jupyter_globus = self.compute.get_user_jupyter_globus()
             if self.job['require_upload_data']:
-                dataFolder = self.uploadData['selector'].selected
-                if dataFolder is None:
+                dataPath = self.uploadData['selector'].selected
+                if dataPath is None:
                     with self.submit['alert_output']:
                         display(Markdown('⚠️ please select a folder before upload...'))
                         return
                 else:
-                    dataFolder = dataFolder.replace(self.jupyter_globus['container_home_path'].strip('/'), '')
-                    dataFolder = 'globus://' + self.jupyter_globus['endpoint'] + ':' + os.path.join(self.jupyter_globus['root_path'], dataFolder.strip('/'))
+                    dataPath = dataPath.replace(self.jupyter_globus['container_home_path'].strip('/'), '')
+                    dataPath = os.path.join(self.jupyter_globus['root_path'], dataPath.strip('/'))
+                    localDataFolder = {
+                        'type': 'globus',
+                        'endpoint': self.jupyter_globus['endpoint'],
+                        'path': dataPath
+                    }
 
-            data = self.get_data()
             self.compute.job = self.compute.create_job(hpc=data['computing_resource'], verbose=False)
             # slurm
             slurm = data['slurm']
@@ -612,10 +623,14 @@ class UI:
             param = data['param']
             # download
             self.globus_filename = 'globus_download_' + self.compute.job.id
-            resultFolder = 'globus://' + self.jupyter_globus['endpoint'] + ':' + os.path.join(self.jupyter_globus['root_path'], self.globus_filename)
+            # executable
+            localExecutableFolder = {
+                'type': 'git',
+                'gitId': data['job_template']
+            }
 
             # submit
-            self.compute.job.set(executableFolder='git://' + data['job_template'], dataFolder=dataFolder, resultFolder=resultFolder, printJob=False, param=param, slurm=slurm)
+            self.compute.job.set(localExecutableFolder=localExecutableFolder, localDataFolder=localDataFolder, printJob=False, param=param, slurm=slurm)
             self.compute.job.submit()
             self.tab.selected_index = 1
             self.submitted = True
