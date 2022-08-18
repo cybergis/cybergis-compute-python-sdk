@@ -369,6 +369,10 @@ class Job:
 
         if job is None:
             return
+        if job['localExecutableFolder'] is None:
+            modelName = "None"
+        else:
+            modelName = job['localExecutableFolder']['gitId']
         headersCol1 = [
             'id', 'slurmId', 'hpc', 'remoteExecutableFolder', 'remoteDataFolder',
             'remoteResultFolder']
@@ -390,7 +394,7 @@ class Job:
             job['userId'],
             job['maintainer'],
             job['createdAt'],
-            job['localExecutableFolder']['gitId']
+            modelName
         ]]
 
         if self.isJupyter:
