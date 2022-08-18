@@ -6,7 +6,6 @@ Example:
         client = Client()
 """
 import http.client as client
-import requests
 import json
 from os import path
 
@@ -56,75 +55,15 @@ class Client:
             json.dumps(body), headers)
         response = connection.getresponse()
         out = response.read().decode()
-        data = json.loads(out)
+        try:
+            data = json.loads(out)
+        except:
+            raise Exception('cannot decode data: ' + out)
 
         if 'error' in data:
             msg = ''
             if 'messages' in data:
                 msg = str(data['messages'])
-            raise Exception('server ' + self.url + ' responded with error "' + data['error'] + msg + '"')
+            raise Exception('server ' + self.url + uri + ' responded with error "' + data['error'] + msg + '"')
 
-        return data
-
-    def download(self, uri, body, localDir):
-        """
-        Downloads data from a request made to the specified uri
-        onto the specifed path
-
-        Args:
-            uri (str): uri of the server
-            body (str): data that needs to be dowloaded
-            localDir (str): path where the data needs to be downloaded
-
-        Returns:
-            str: path where the data is stored
-        """
-        url = self.protocol.lower() + '://' + path.join(self.url.strip('/'), self.suffix.strip('/'), uri.strip('/'))
-        response = requests.get(url, data=body, stream=True)
-        contentType = response.headers['Content-Type']
-
-        if response.encoding is None:
-            response.encoding = 'utf-8'
-
-        if 'json' in contentType:
-            data = json.loads(response.content.decode())
-            localDir += '.json'
-            # handel file not found error which is returned as a JSON
-            if 'error' in data:
-                msg = ''
-                if 'messages' in data:
-                    # TODO: this msg variable isn't used
-                    msg = str(data['messages'])  # noqa
-                print('❌ server ' + self.url + ' responded with error "' + data['error'] + '"')
-
-        if 'tar' in contentType:
-            localDir += '.tar'
-
-        if 'zip' in contentType:
-            localDir += '.zip'
-
-        with open(localDir, "wb") as f:
-            for chunk in response.iter_content(chunk_size=8192):
-                f.write(chunk)
-
-        response.close()
-        return localDir
-
-    def upload(self, uri, body, file):
-        """
-        Uploads data using a request made to the specified uri
-
-        Args:
-            uri (str): uri of the server
-            body (str): data that needs to be uploaded
-            file (str): file that needs to be uploaded
-
-        Returns:
-            JSON: output from the upload request to the server
-        """
-        url = self.protocol.lower() + '://' + path.join(self.url.strip('/'), self.suffix.strip('/'), uri.strip('/'))
-        data = json.loads(requests.post(url, data=body, files={'file': file}).content.decode())
-        if 'error' in data:
-            return '❌ server ' + self.url + ' responded with error "'
-            + data['error'] + '"'
         return data
