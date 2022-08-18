@@ -374,7 +374,7 @@ class Job:
             'remoteResultFolder']
         headersCol2 = [
             'param', 'slurm', 'userId', 'maintainer',
-            'createdAt']
+            'createdAt', 'modelName']
         dataCol1 = [[
             job['id'],
             job['slurmId'],
@@ -390,6 +390,7 @@ class Job:
             job['userId'],
             job['maintainer'],
             job['createdAt'],
+            job['localExecutableFolder']['gitId']
         ]]
 
         if self.isJupyter:
