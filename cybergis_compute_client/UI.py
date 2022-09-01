@@ -514,10 +514,9 @@ class UI:
         folders = self.compute.client.request('GET', '/folder', {'jupyterhubApiToken': self.compute.jupyterhubApiToken})
         if self.folders['output'] is None:
             self.folders['output'] = widgets.Output()
-            folders = self.compute.client.request('GET', '/folder', {'jupyterhubApiToken': self.compute.jupyterhubApiToken})
         with self.folders['output']:
             display(Markdown("We will do our best to keep this data for 90 days, but cannot guarantee it won’t be deleted sooner."))
-            display(Markdown('<br> **Folders for ' + self.compute.username.split('@')[0] + '**'))
+            display(Markdown('<br> **Folders for ' + self.compute.username.split('@', 1)[0] + '**'))
             for i in folders["folder"]:
                 headers = headers = ['id', 'name', 'hpc', 'userId', 'isWritable', 'createdAt', 'updatedAt', 'deletedAt']
                 data = [[]]
@@ -533,7 +532,7 @@ class UI:
             self.recently_submitted['output'] = widgets.Output()
             jobs = self.compute.client.request('GET', '/user/job', {'jupyterhubApiToken': self.compute.jupyterhubApiToken})
         with self.recently_submitted['output']:
-            display(Markdown('**Recently Submitted Jobs for ' + self.compute.username.split('@')[0] + '**'))
+            display(Markdown('**Recently Submitted Jobs for ' + self.compute.username.split('@', 1)[0] + '**'))
             jobs = self.compute.client.request('GET', '/user/job', {'jupyterhubApiToken': self.compute.jupyterhubApiToken})
             if len(jobs['job']) < self.recently_submitted['job_list_size']:
                 self.recently_submitted['job_list_size'] = len(jobs['job'])
