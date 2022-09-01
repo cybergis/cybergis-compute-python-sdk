@@ -1,7 +1,8 @@
 # CyberGIS-Compute Python SDK
+
 ![GitHub](https://img.shields.io/github/license/cybergis/cybergis-compute-python-sdk)
 [![Docs](https://img.shields.io/badge/docs-site-blueviolet)](https://cybergis.github.io/cybergis-compute-python-sdk/reference.html)
-
+[![PyPi Status](https://img.shields.io/pypi/v/cybergis-compute-client)](https://pypi.org/project/cybergis-compute-client/)
 
 [![Docs Deployed](https://github.com/cybergis/cybergis-compute-python-sdk/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/cybergis/cybergis-compute-python-sdk/actions/workflows/pages/pages-build-deployment)
 [![PythonCodeQuality](https://github.com/cybergis/cybergis-compute-python-sdk/workflows/Python%20Code%20Quality/badge.svg)](https://github.com/cybergis/cybergis-compute-python-sdk/actions)
