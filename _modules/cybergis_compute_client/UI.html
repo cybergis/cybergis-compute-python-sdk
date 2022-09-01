@@ -329,7 +329,10 @@
             <span class=n >config</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >job</span><span class=p >[</span><span class=s1 >'param_rules'</span><span class=p >][</span><span class=n >i</span><span class=p >]</span>
 
             <span class=k >if</span> <span class=n >config</span><span class=p >[</span><span class=s1 >'type'</span><span class=p >]</span> <span class=o >==</span> <span class=s1 >'integer'</span><span class=p >:</span>
-                <span class=n >default_val</span> <span class=o >=</span> <span class=n >config</span><span class=p >[</span><span class=s1 >'default_value'</span><span class=p >]</span>
+                <span class=k >if</span> <span class=bp >self</span><span class=o >.</span><span class=n >input_params</span> <span class=ow >is</span> <span class=ow >not</span> <span class=kc >None</span> <span class=ow >and</span> <span class=n >i</span> <span class=ow >in</span> <span class=bp >self</span><span class=o >.</span><span class=n >input_params</span><span class=o >.</span><span class=n >keys</span><span class=p >():</span>
+                    <span class=n >default_val</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >input_params</span><span class=p >[</span><span class=n >i</span><span class=p >]</span>
+                <span class=k >else</span><span class=p >:</span>
+                    <span class=n >default_val</span> <span class=o >=</span> <span class=n >config</span><span class=p >[</span><span class=s1 >'default_value'</span><span class=p >]</span>
                 <span class=n >max_val</span> <span class=o >=</span> <span class=n >config</span><span class=p >[</span><span class=s1 >'max'</span><span class=p >]</span>
                 <span class=n >min_val</span> <span class=o >=</span> <span class=n >config</span><span class=p >[</span><span class=s1 >'min'</span><span class=p >]</span>
                 <span class=n >step_val</span> <span class=o >=</span> <span class=n >config</span><span class=p >[</span><span class=s1 >'step'</span><span class=p >]</span>
@@ -348,7 +351,10 @@
                     <span class=n >style</span><span class=o >=</span><span class=bp >self</span><span class=o >.</span><span class=n >style</span><span class=p >,</span> <span class=n >layout</span><span class=o >=</span><span class=bp >self</span><span class=o >.</span><span class=n >layout</span>
                 <span class=p >)</span>
             <span class=k >if</span> <span class=n >config</span><span class=p >[</span><span class=s1 >'type'</span><span class=p >]</span> <span class=o >==</span> <span class=s1 >'string_option'</span><span class=p >:</span>
-                <span class=n >default_val</span> <span class=o >=</span> <span class=n >config</span><span class=p >[</span><span class=s1 >'default_value'</span><span class=p >]</span>
+                <span class=k >if</span> <span class=bp >self</span><span class=o >.</span><span class=n >input_params</span> <span class=ow >is</span> <span class=ow >not</span> <span class=kc >None</span> <span class=ow >and</span> <span class=n >i</span> <span class=ow >in</span> <span class=bp >self</span><span class=o >.</span><span class=n >input_params</span><span class=o >.</span><span class=n >keys</span><span class=p >()</span> <span class=ow >and</span> <span class=bp >self</span><span class=o >.</span><span class=n >input_params</span><span class=p >[</span><span class=n >i</span><span class=p >]</span> <span class=ow >in</span> <span class=n >config</span><span class=p >[</span><span class=s1 >'options'</span><span class=p >]:</span>
+                    <span class=n >default_val</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >input_params</span><span class=p >[</span><span class=n >i</span><span class=p >]</span>
+                <span class=k >else</span><span class=p >:</span>
+                    <span class=n >default_val</span> <span class=o >=</span> <span class=n >config</span><span class=p >[</span><span class=s1 >'default_value'</span><span class=p >]</span>
                 <span class=n >options</span> <span class=o >=</span> <span class=n >config</span><span class=p >[</span><span class=s1 >'options'</span><span class=p >]</span>
                 <span class=bp >self</span><span class=o >.</span><span class=n >param</span><span class=p >[</span><span class=n >i</span><span class=p >]</span> <span class=o >=</span> <span class=n >widgets</span><span class=o >.</span><span class=n >Dropdown</span><span class=p >(</span>
                     <span class=n >options</span><span class=o >=</span><span class=n >options</span><span class=p >,</span>
@@ -357,7 +363,10 @@
                     <span class=n >style</span><span class=o >=</span><span class=bp >self</span><span class=o >.</span><span class=n >style</span>
                 <span class=p >)</span>
             <span class=k >if</span> <span class=n >config</span><span class=p >[</span><span class=s1 >'type'</span><span class=p >]</span> <span class=o >==</span> <span class=s1 >'string_input'</span><span class=p >:</span>
-                <span class=n >default_val</span> <span class=o >=</span> <span class=n >config</span><span class=p >[</span><span class=s1 >'default_value'</span><span class=p >]</span>
+                <span class=k >if</span> <span class=bp >self</span><span class=o >.</span><span class=n >input_params</span> <span class=ow >is</span> <span class=ow >not</span> <span class=kc >None</span> <span class=ow >and</span> <span class=n >i</span> <span class=ow >in</span> <span class=bp >self</span><span class=o >.</span><span class=n >input_params</span><span class=o >.</span><span class=n >keys</span><span class=p >():</span>
+                    <span class=n >default_val</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >input_params</span><span class=p >[</span><span class=n >i</span><span class=p >]</span>
+                <span class=k >else</span><span class=p >:</span>
+                    <span class=n >default_val</span> <span class=o >=</span> <span class=n >config</span><span class=p >[</span><span class=s1 >'default_value'</span><span class=p >]</span>
                 <span class=bp >self</span><span class=o >.</span><span class=n >param</span><span class=p >[</span><span class=n >i</span><span class=p >]</span> <span class=o >=</span> <span class=n >widgets</span><span class=o >.</span><span class=n >Text</span><span class=p >(</span>
                     <span class=n >description</span><span class=o >=</span><span class=n >i</span><span class=p >,</span> <span class=n >value</span><span class=o >=</span><span class=n >default_val</span><span class=p >,</span> <span class=n >style</span><span class=o >=</span><span class=bp >self</span><span class=o >.</span><span class=n >style</span><span class=p >)</span>
 

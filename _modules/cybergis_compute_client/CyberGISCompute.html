@@ -485,6 +485,7 @@
 
 <div class=viewcode-block  id=CyberGISCompute.create_job_by_ui ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.create_job_by_ui">[docs]</a>    <span class=k >def</span> <span class=nf >create_job_by_ui</span><span class=p >(</span>
         <span class=bp >self</span><span class=p >,</span>
+            <span class=n >input_params</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span>
             <span class=n >defaultJob</span><span class=o >=</span><span class=s2 >"hello_world"</span><span class=p >,</span>
             <span class=n >defaultDataFolder</span><span class=o >=</span><span class=s2 >"./"</span><span class=p >,</span>
             <span class=n >defaultRemoteResultFolder</span><span class=o >=</span><span class=kc >None</span><span class=p >):</span>
@@ -496,9 +497,9 @@
 <span class=sd >            defaultDataFolder (str): Stores the default input folder that shows up on the UI</span>
 <span class=sd >            defaultRemoteResultFolder (str): Stores the default output folder that shows up on the UI</span>
 <span class=sd >        """</span>
-        <span class=bp >self</span><span class=o >.</span><span class=n >show_ui</span><span class=p >(</span><span class=n >defaultJob</span><span class=p >,</span> <span class=n >defaultDataFolder</span><span class=p >,</span> <span class=n >defaultRemoteResultFolder</span><span class=p >)</span></div>
+        <span class=bp >self</span><span class=o >.</span><span class=n >show_ui</span><span class=p >(</span><span class=n >input_params</span><span class=p >,</span> <span class=n >defaultJob</span><span class=p >,</span> <span class=n >defaultDataFolder</span><span class=p >,</span> <span class=n >defaultRemoteResultFolder</span><span class=p >)</span></div>
 
-<div class=viewcode-block  id=CyberGISCompute.show_ui ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.show_ui">[docs]</a>    <span class=k >def</span> <span class=nf >show_ui</span><span class=p >(</span><span class=bp >self</span><span class=p >,</span> <span class=n >defaultJob</span><span class=o >=</span><span class=s2 >"hello_world"</span><span class=p >,</span> <span class=n >defaultDataFolder</span><span class=o >=</span><span class=s2 >"./"</span><span class=p >,</span> <span class=n >defaultRemoteResultFolder</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span> <span class=n >jupyterhubApiToken</span><span class=o >=</span><span class=kc >None</span><span class=p >):</span>
+<div class=viewcode-block  id=CyberGISCompute.show_ui ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.show_ui">[docs]</a>    <span class=k >def</span> <span class=nf >show_ui</span><span class=p >(</span><span class=bp >self</span><span class=p >,</span> <span class=n >input_params</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span> <span class=n >defaultJob</span><span class=o >=</span><span class=s2 >"hello_world"</span><span class=p >,</span> <span class=n >defaultDataFolder</span><span class=o >=</span><span class=s2 >"./"</span><span class=p >,</span> <span class=n >defaultRemoteResultFolder</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span> <span class=n >jupyterhubApiToken</span><span class=o >=</span><span class=kc >None</span><span class=p >):</span>
         <span class=sd >"""</span>
 <span class=sd >        Displays the job submission UI</span>
 
@@ -515,6 +516,7 @@
         <span class=bp >self</span><span class=o >.</span><span class=n >ui</span><span class=o >.</span><span class=n >defaultJobName</span> <span class=o >=</span> <span class=n >defaultJob</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >ui</span><span class=o >.</span><span class=n >defaultDataFolder</span> <span class=o >=</span> <span class=n >defaultDataFolder</span>
         <span class=n >df</span> <span class=o >=</span> <span class=n >defaultRemoteResultFolder</span>
+        <span class=bp >self</span><span class=o >.</span><span class=n >ui</span><span class=o >.</span><span class=n >input_params</span> <span class=o >=</span> <span class=n >input_params</span>
         <span class=k >if</span> <span class=n >df</span> <span class=ow >is</span> <span class=ow >not</span> <span class=kc >None</span><span class=p >:</span>
             <span class=bp >self</span><span class=o >.</span><span class=n >ui</span><span class=o >.</span><span class=n >defaultRemoteResultFolder</span> <span class=o >=</span> <span class=n >df</span> <span class=k >if</span> <span class=n >df</span><span class=p >[</span><span class=mi >0</span><span class=p >]</span> <span class=o >==</span> <span class=s1 >'/'</span> <span class=k >else</span> <span class=s1 >'/'</span> <span class=o >+</span> <span class=n >df</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >ui</span><span class=o >.</span><span class=n >render</span><span class=p >()</span></div>
