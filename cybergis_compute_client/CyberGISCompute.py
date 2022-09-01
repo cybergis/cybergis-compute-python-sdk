@@ -484,6 +484,7 @@ class CyberGISCompute:
 
     def create_job_by_ui(
         self,
+            input_params=None,
             defaultJob="hello_world",
             defaultDataFolder="./",
             defaultRemoteResultFolder=None):
@@ -495,9 +496,9 @@ class CyberGISCompute:
             defaultDataFolder (str): Stores the default input folder that shows up on the UI
             defaultRemoteResultFolder (str): Stores the default output folder that shows up on the UI
         """
-        self.show_ui(defaultJob, defaultDataFolder, defaultRemoteResultFolder)
+        self.show_ui(input_params, defaultJob, defaultDataFolder, defaultRemoteResultFolder)
 
-    def show_ui(self, defaultJob="hello_world", defaultDataFolder="./", defaultRemoteResultFolder=None, jupyterhubApiToken=None):
+    def show_ui(self, input_params=None, defaultJob="hello_world", defaultDataFolder="./", defaultRemoteResultFolder=None, jupyterhubApiToken=None):
         """
         Displays the job submission UI
 
@@ -514,6 +515,7 @@ class CyberGISCompute:
         self.ui.defaultJobName = defaultJob
         self.ui.defaultDataFolder = defaultDataFolder
         df = defaultRemoteResultFolder
+        self.ui.input_params = input_params
         if df is not None:
             self.ui.defaultRemoteResultFolder = df if df[0] == '/' else '/' + df
         self.ui.render()
