@@ -23,14 +23,14 @@ setup(
     long_description_content_type="text/markdown",
 
     # The project's main homepage.
-    # url='https://github.com/pypa/sampleproject',
+    url='https://github.com/cybergis/cybergis-compute-python-sdk',
 
     # Author details
     author='CyberGIS Center',
     author_email='help@cybergis.org',
 
     # Choose your license
-    license='MIT',
+    license='Apache License 2.0',
 
     # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
@@ -39,19 +39,17 @@ setup(
         #   4 - Beta
         #   5 - Production/Stable
         'Development Status :: 4 - Beta',
-
-        # Indicate who your project is intended for
-        'Intended Audience :: Developers',
-        'Topic :: Software Development :: Build Tools',
-
+        "Operating System :: OS Independent",
         # Pick your license as you wish (should match "license" above)
-        'License :: OSI Approved :: MIT License',
-
+        'License :: OSI Approved :: Apache Software License',
+        # Indicate who your project is intended for
+        "Intended Audience :: Science/Research",
+        'Topic :: Software Development :: Build Tools',
+        "Topic :: Scientific/Engineering :: GIS",
+        "Topic :: Scientific/Engineering :: Information Analysis",
         # Specify the Python versions you support here. In particular, ensure
         # that you indicate whether you support Python 2, Python 3 or both.
         'Programming Language :: Python :: 3',
-
-        "Operating System :: OS Independent",
     ],
 
     # What does your project relate to?
