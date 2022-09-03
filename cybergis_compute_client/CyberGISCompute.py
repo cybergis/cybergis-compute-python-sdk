@@ -274,11 +274,11 @@ class CyberGISCompute:
                 job['id'],
                 job['hpc'],
                 job['remoteExecutableFolder']["id"] if (
-                    "id" in job['remoteExecutableFolder']) else None,
+                    job['remoteExecutableFolder'] is not None and "id" in job['remoteExecutableFolder']) else None,
                 job['remoteDataFolder']["id"] if (
-                    "id" in job['remoteDataFolder']) else None,
+                    job['remoteDataFolder'] is not None and "id" in job['remoteDataFolder']) else None,
                 job['remoteResultFolder']["id"] if (
-                    "id" in job['remoteResultFolder']) else None,
+                    job['remoteResultFolder'] is not None and "id" in job['remoteResultFolder']) else None,
                 job['remoteDataFolder'],
                 job['remoteResultFolder'],
                 json.dumps(job['param']),
