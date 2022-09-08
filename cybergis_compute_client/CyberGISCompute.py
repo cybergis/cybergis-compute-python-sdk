@@ -20,9 +20,8 @@ from IPython.display import display, Markdown, Javascript
 
 class ParamAccumulator:
     def __init__(self,
-                 path=str):
-        self.path = path
-        self.param_dict = json.load(open(self.path, 'r'))
+                 params={}):
+        self.params = params
 
 
 class CyberGISCompute:
@@ -220,7 +219,7 @@ class CyberGISCompute:
         return Job(maintainer=maintainer, hpc=hpc, id=None, hpcUsername=hpcUsername, hpcPassword=hpcPassword, client=self.client, isJupyter=self.isJupyter, jupyterhubApiToken=self.jupyterhubApiToken, printJob=verbose)
 
     def run_job_using_params(self,
-                             input_param_paths=[],
+                             input_params=[],
                              maintainer='community_contribution',
                              hpc=None,
                              hpcUsername=None,
@@ -231,11 +230,13 @@ class CyberGISCompute:
                              env=None,
                              slurm=None,
                              verbose=True):
-        for path in input_param_paths:
-            param_acc = ParamAccumulator(path)
+        for params in input_params:
+            param_acc = ParamAccumulator(params)
             job = self.create_job(maintainer, hpc, hpcUsername, hpcPassword, verbose)
-            job.set(localExecutableFolder, localDataFolder, localResultFolder, param_acc.param_dict, env, slurm)
+            job.set(localExecutableFolder, localDataFolder, localResultFolder, param_acc.params, env, slurm)
             job.submit()
+            print("Job submitted with params ", input_params)
+            
 
     def get_job_by_id(self, id=None, verbose=True):
         """
