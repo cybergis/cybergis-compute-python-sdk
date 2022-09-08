@@ -231,13 +231,12 @@ class CyberGISCompute:
                              env=None,
                              slurm=None,
                              verbose=True):
+        self.login()
         for params in input_params:
             param_acc = ParamAccumulator(params)
-            job = self.create_job(maintainer, hpc, hpcUsername, hpcPassword, verbose)
+            job = self.create_job(maintainer, hpc, hpcUsername, hpcPassword)
             job.set(localExecutableFolder, localDataFolder, localResultFolder, param_acc.params, env, slurm)
             job.submit()
-            print("Job submitted with params ", input_params)
-            
 
     def get_job_by_id(self, id=None, verbose=True):
         """
