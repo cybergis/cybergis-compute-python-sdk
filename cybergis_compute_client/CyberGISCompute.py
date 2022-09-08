@@ -221,7 +221,7 @@ class CyberGISCompute:
     def run_job_using_params(self,
                              input_params=[],
                              maintainer='community_contribution',
-                             hpc=None,
+                             hpc="keeling_community",
                              hpcUsername=None,
                              hpcPassword=None,
                              localExecutableFolder={"type": "git",
