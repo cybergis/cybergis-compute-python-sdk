@@ -3,7 +3,7 @@ import math
 import ipywidgets as widgets
 from ipyfilechooser import FileChooser
 from IPython.display import Markdown, display, clear_output
-
+from .MarkdownTable import MarkdownTable  # noqa
 
 class UI:
     """
