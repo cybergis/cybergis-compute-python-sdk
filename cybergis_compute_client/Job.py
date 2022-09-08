@@ -1,4 +1,4 @@
-from .MarkdownTable import *  # noqa
+from .MarkdownTable import MarkdownTable  # noqa
 import time
 import json
 from os import system, name
@@ -292,6 +292,7 @@ class Job:
 
         # init globus transfer
         self.client.request('POST', '/folder/' + folderId + '/download/globus-init', {
+            "jobId": self.id,
             "jupyterhubApiToken": self.jupyterhubApiToken,
             "fromPath": remotePath,
             "toPath": localPath,
@@ -368,12 +369,16 @@ class Job:
 
         if job is None:
             return
+        if job['localExecutableFolder'] is None:
+            modelName = "None"
+        else:
+            modelName = job['localExecutableFolder']['gitId']
         headersCol1 = [
             'id', 'slurmId', 'hpc', 'remoteExecutableFolder', 'remoteDataFolder',
             'remoteResultFolder']
         headersCol2 = [
             'param', 'slurm', 'userId', 'maintainer',
-            'createdAt']
+            'createdAt', 'modelName']
         dataCol1 = [[
             job['id'],
             job['slurmId'],
@@ -389,6 +394,7 @@ class Job:
             job['userId'],
             job['maintainer'],
             job['createdAt'],
+            modelName
         ]]
 
         if self.isJupyter:
