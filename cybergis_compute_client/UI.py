@@ -335,7 +335,10 @@ class UI:
             config = self.job['param_rules'][i]
 
             if config['type'] == 'integer':
-                default_val = config['default_value']
+                if self.input_params is not None and i in self.input_params.keys():
+                    default_val = self.input_params[i]
+                else:
+                    default_val = config['default_value']
                 max_val = config['max']
                 min_val = config['min']
                 step_val = config['step']
@@ -354,7 +357,10 @@ class UI:
                     style=self.style, layout=self.layout
                 )
             if config['type'] == 'string_option':
-                default_val = config['default_value']
+                if self.input_params is not None and i in self.input_params.keys() and self.input_params[i] in config['options']:
+                    default_val = self.input_params[i]
+                else:
+                    default_val = config['default_value']
                 options = config['options']
                 self.param[i] = widgets.Dropdown(
                     options=options,
@@ -363,7 +369,10 @@ class UI:
                     style=self.style
                 )
             if config['type'] == 'string_input':
-                default_val = config['default_value']
+                if self.input_params is not None and i in self.input_params.keys():
+                    default_val = self.input_params[i]
+                else:
+                    default_val = config['default_value']
                 self.param[i] = widgets.Text(
                     description=i, value=default_val, style=self.style)
 
@@ -620,7 +629,9 @@ class UI:
 
             self.compute.login()
             localDataFolder = None
-            self.jupyter_globus = self.compute.get_user_jupyter_globus()
+            data = self.get_data()
+            if data['computing_resource'] != 'local_hpc':
+                self.jupyter_globus = self.compute.get_user_jupyter_globus()
             if self.job['require_upload_data']:
                 dataPath = self.uploadData['selector'].selected
                 if dataPath is None:
@@ -636,7 +647,6 @@ class UI:
                         'path': dataPath
                     }
 
-            data = self.get_data()
             self.compute.job = self.compute.create_job(hpc=data['computing_resource'], verbose=False)
             # slurm
             slurm = data['slurm']

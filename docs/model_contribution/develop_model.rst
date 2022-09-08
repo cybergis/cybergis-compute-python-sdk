@@ -3,6 +3,26 @@ Developing a Model with CyberGIS-Compute
 
 This section walks you through converting a Jupyter notebook to a model for CyberGIS-Compute. The examples use Python for simplicity, but Compute supports arbitrary software and languages.
 
+.. tip::
+
+    If you haven't already, we highly recommend starting with the notebooks in the Pysal Access Compute Example (specifically `IntroToCyberGIS-Compute.ipynb <https://github.com/cybergis/pysal-access-compute-example/blob/main/IntroToCyberGIS-Compute.ipynb>`_ and `ContributingAModel.ipynb <https://github.com/cybergis/pysal-access-compute-example/blob/main/ContributingAModel.ipynb>`_) which are available:
+
+    * On CyberGISX Hub: `https://cybergisxhub.cigi.illinois.edu/notebook/pysal-access-compute-example/ <https://cybergisxhub.cigi.illinois.edu/notebook/pysal-access-compute-example/>`_
+    * On Github: `https://github.com/cybergis/pysal-access-compute-example <https://github.com/cybergis/pysal-access-compute-example>`_ 
+
+    We recommend these notebooks first to get some hands-on experience with CyberGIS-Compute before diving into making your own model!
+
+What are the stages of your model?
+----------------------------------
+
+First, ask yourself, what are the different steps/stages of my model? CyberGIS-Compute offers flexibility by providing a pre processing stage, executation stage, and post-processing stage. Some examples of how you can use those stages are:
+
+* [Pre] Install packages with Pip --> [Main] Run a model in Python (this model!)
+* [Pre] Compile code --> [Main] Run the model --> [Post] Manage/analyze the model outputs
+* [Pre] Download data --> [Main] Analyze the data
+
+It is best to have each stage contained within a single script/line (i.e. ``python my_model.py`` or ``bash run_the_model.sh``) for simplicity.
+
 Notebook to Script/Nbconvert
 ----------------------------
 
@@ -83,6 +103,8 @@ An example manifest from the `Pysal Access Compute Example model <https://github
         },
         "require_upload_data": false
     }
+
+For more information see `Advanced Topic: Manifest Options`_.
 
 Crash Course in SLURM Parameters
 --------------------------------
@@ -212,15 +234,25 @@ In particular, note the line::
 
     "supported_hpc": ["keeling_community", "expanse_community"],
 
-which is simply specifying a list of supported HPCs: Keeling and Expanse.
+which is simply specifying a list of supported HPCs: Keeling and Expanse. The line::
+
+    "default_hpc": "keeling_community"
+
+specifies that the HPC "keeling_community" should be the default option in the SDK UI's dropdown.
 
 
 Providing Input Data
 --------------------
 
-You can make users upload data by setting “require_upload_data” to “true”. If this is selected, the user will be asked to upload data before submitting a job.
+You can make users upload data by setting “require_upload_data” to “true”. If this is selected, the user will be asked to upload data before submitting a job. Model developers can also use this mechanism to provide their data to jobs running with CyberGIS-Compute.
 
 The path can be accessed by the job by accessing the “data_folder” environment variable (in Python, by using ``os.environ[“data_folder”]``). This can be done in the script or in preprocessing/postprocessing. The SUMMA job is an example of a job that requires data upload: `https://github.com/cybergis/cybergis-compute-v2-summa  <https://github.com/cybergis/cybergis-compute-v2-summa>`_
+
+For model contributors who would like to provide all users data, there are a variety of options:
+
+* **Github:** This is the preferred method although Github has data limits. For data larger than the limits, you could try compressing the data, but if that does not work there are other options.
+* **Downloading Public Data:** If your data is hosted publically somewhere, this data can be downloaded by the Compute job (for example as part of the pre_processing_stage). There are a variety of tools for accomplishing this including `wget` in bash and `requests` in Python.
+* **Downloading from Google Drive:** Another option is to host your data on Google Drive. Within CyberGIS-Compute, you can download the data using the Python `gdown package <https://github.com/wkentaro/gdown>`_
 
 
 Installing Packages
@@ -237,6 +269,34 @@ Contributing Your Model
 -----------------------
 
 We are still working on the specific mechanism for having your model added to our deployment of compute.
+
+
+Advanced Topic: Manifest Options
+--------------------------------
+
+The manifest has a variety of options and here we will try to give a more comprehensive overview.
+
+**Metadata:** These describe the model and provide metadata to the user. Examples are:
+
+* **name:** the name of the model.
+* **description:** a short textual description of the model.
+* **estimated_runtime:** a short estimate of the runtime of your model.
+
+**How to Run the Model:** These describe how Compute will run the model. Examples are:
+
+* **container:** The Singularity container in which your job will run.
+* **pre_processing_stage:** The first stage of your model.
+* **execution_stage:** The second and main stage of your model.
+* **post_processing_stage:** The third and final stage of your model.
+* **slurm_input_rules:** The inputs passed to the SLURM job scheduler when running your job. Most common are time and memory, but we support more complex tasks (i.e. MPI, GPU). For more information, see ["Crash Course in SLURM Parameters" in our Model Contribution guide](https://cybergis.github.io/cybergis-compute-python-sdk/model_contribution/develop_model.html#crash-course-in-slurm-parameters).
+* **supported_hpc/default_hpc:** CyberGIS-Compute supports a variety of High Performance Computing (HPC) resources and gives users/model contributors the ability to specify which resources their model runs on. For more information, see ["Supported HPC" in our Model Contribution guide](https://cybergis.github.io/cybergis-compute-python-sdk/model_contribution/develop_model.html#supported-hpc).
+
+**How the User Interacts with Your Model:** CyberGIS-Compute provides the flexibility for users to customize jobs by specifying parameters, tweaking SLURM inputs, and uploading data.
+
+* **param_rules:** This is a section that allows you to define widgets which users will use to pass parameters into the model. For more information, see ["Advanced Topic: Passing Parameters" in our Model Contribution guide](https://cybergis.github.io/cybergis-compute-python-sdk/model_contribution/develop_model.html#advanced-topic-passing-parameters)
+* **slurm_input_rules:** This information populates widgets allowing users to specify their SLURM settings. For more information, see ["Crash Course in SLURM Parameters" in our Model Contribution guide](https://cybergis.github.io/cybergis-compute-python-sdk/model_contribution/develop_model.html#crash-course-in-slurm-parameters).
+* **require_upload_data** This allows you to ask users for input data which can be used in your analysis. For more information, see ["Providing Input Data" in our Model Contribution guide](https://cybergis.github.io/cybergis-compute-python-sdk/model_contribution/develop_model.html#providing-input-data).
+* **default_result_folder_downloadable_path:** This allows you to specify the path within the result folder which will be the default option in the Download Results dropdown.
 
 
 Advanced Topic: Passing Parameters
