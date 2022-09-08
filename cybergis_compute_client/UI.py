@@ -1,59 +1,9 @@
 import os
 import math
-from xml.dom import NotFoundErr
 import ipywidgets as widgets
 from ipyfilechooser import FileChooser
-import json
 from IPython.display import Markdown, display, clear_output
-
-
-def load_config_json(parameter: str) -> str:
-    """
-    Loads paramter from json file.
-
-    Args:
-        parameter (str): Parameter to load.
-
-    Returns:
-        str: Parameter value
-    """
-    f = open('./cybergis_compute_params.json', 'r')
-    json_dict = json.load(f)
-    f.close()
-    if parameter in json_dict:
-        print('Loading up ' + parameter)
-        print('NOTE: if you want to use another parameter, please remove this parameter')
-        return json_dict[parameter]
-    else:
-        raise NotFoundErr(parameter + " not found")
-
-
-def save_config_json(json_dict: dict):
-    """
-    Saves paramter to json file.
-
-    Args:
-        json_dict (str): parameter dictionary
-    """
-    with open('./cybergis_compute_params.json', 'w+') as json_file:
-        json.dump(json_dict, json_file)
-    json_file.close()
-
-
-def update_config_json(parameter: str, value: str):
-    """
-    Saves paramter to existing json file.
-
-    Args:
-        parameter (str): Parameter to save.
-        value (str): Paramter value to save.
-    """
-    with open('./cybergis_compute_params.json', 'r+') as json_file:
-        json_dict = json.load(json_file)
-        json_dict[parameter] = value
-        json_file.seek(0)  # rewind
-        json.dump(json_dict, json_file)
-        json_file.truncate()
+from .MarkdownTable import MarkdownTable  # noqa
 
 
 class UI:
@@ -120,7 +70,6 @@ class UI:
         self.slurm_string_option_configs = ['partition']
         self.globus_filename = None
         self.jupyter_globus = None
-        self.json_dict = {}
 
     def render(self):
         """
@@ -146,7 +95,6 @@ class UI:
             display(self.email['output'])
             display(self.submit['output'])
             display(self.submitNew['output'])
-            display(self.saveParam['output'])
 
         # 2. job status
         job_status = widgets.Output()
@@ -202,7 +150,6 @@ class UI:
         self.renderRecentlySubmittedJobs()
         self.renderLoadMore()
         self.renderSubmitNew()
-        self.renderSaveParameters()
 
     # components
     def renderJobTemplate(self):
@@ -301,16 +248,7 @@ class UI:
                 continue
             config = self.job['slurm_input_rules'][i]
             if i in self.slurm_integer_configs:
-                if os.path.exists('./cybergis_compute_params.json'):
-                    try:
-                        default_val = load_config_json(parameter=i)
-                    except:
-                        print(i + ' value not found')
-                        default_val = config['default_value']
-                        update_config_json(parameter=i, value=default_val)
-                else:
-                    default_val = config['default_value']
-                    self.json_dict[i] = default_val
+                default_val = config['default_value']
                 max_val = config['max']
                 min_val = config['min']
                 step_val = config['step']
@@ -330,15 +268,7 @@ class UI:
                     style=self.style, layout=self.layout
                 )
             if i in self.slurm_string_option_configs:
-                if os.path.exists('./cybergis_compute_params.json'):
-                    try:
-                        default_val = load_config_json(parameter=i)
-                    except:
-                        default_val = config['default_value']
-                        update_config_json(parameter=i, value=default_val)
-                else:
-                    default_val = config['default_value']
-                    self.json_dict[i] = default_val
+                default_val = config['default_value']
                 options = config['options']
                 self.slurm[i] = widgets.Dropdown(
                     options=options,
@@ -398,15 +328,10 @@ class UI:
             config = self.job['param_rules'][i]
 
             if config['type'] == 'integer':
-                if os.path.exists('./cybergis_compute_params.json'):
-                    try:
-                        default_val = load_config_json(parameter=i)
-                    except:
-                        default_val = config['default_value']
-                        update_config_json(parameter=i, value=default_val)
+                if self.input_params is not None and i in self.input_params.keys():
+                    default_val = self.input_params[i]
                 else:
                     default_val = config['default_value']
-                    self.json_dict[i] = default_val
                 max_val = config['max']
                 min_val = config['min']
                 step_val = config['step']
@@ -425,15 +350,10 @@ class UI:
                     style=self.style, layout=self.layout
                 )
             if config['type'] == 'string_option':
-                if os.path.exists('./cybergis_compute_params.json'):
-                    try:
-                        default_val = load_config_json(parameter=i)
-                    except:
-                        default_val = config['default_value']
-                        update_config_json(parameter=i, value=default_val)
+                if self.input_params is not None and i in self.input_params.keys() and self.input_params[i] in config['options']:
+                    default_val = self.input_params[i]
                 else:
                     default_val = config['default_value']
-                    self.json_dict[i] = default_val
                 options = config['options']
                 self.param[i] = widgets.Dropdown(
                     options=options,
@@ -442,15 +362,10 @@ class UI:
                     style=self.style
                 )
             if config['type'] == 'string_input':
-                if os.path.exists('./cybergis_compute_params.json'):
-                    try:
-                        default_val = load_config_json(parameter=i)
-                    except:
-                        default_val = config['default_value']
-                        update_config_json(parameter=i, value=default_val)
+                if self.input_params is not None and i in self.input_params.keys():
+                    default_val = self.input_params[i]
                 else:
                     default_val = config['default_value']
-                    self.json_dict[i] = default_val
                 self.param[i] = widgets.Text(
                     description=i, value=default_val, style=self.style)
 
@@ -501,18 +416,6 @@ class UI:
                 self.submitNew['button'] = None
         if self.submitNew['button'] is not None:
             self.submitNew['button'].on_click(self.onSubmitNewButtonClick())
-
-    def renderSaveParameters(self):
-        """
-        Render save paramters button, which allows the user to save parameters to json file.
-        """
-        if self.saveParam['output'] is None:
-            self.saveParam['output'] = widgets.Output()
-
-        self.saveParam['button'] = widgets.Button(description="Save Parameters")
-        self.saveParam['button'].on_click(self.onSaveParametersClick())
-        with self.saveParam['output']:
-            display(self.saveParam['button'])
 
     def renderDownload(self):
         """
@@ -688,18 +591,6 @@ class UI:
             self.renderSubmitNew()
         return on_click
 
-    def onSaveParametersClick(self):
-        def on_click(change):
-            self.saveParam['output'].clear_output()
-            for i in self.json_dict:
-                if i in self.slurm:
-                    self.json_dict[i] = self.slurm[i].value
-                if i in self.param:
-                    self.json_dict[i] = self.param[i].value
-            save_config_json(self.json_dict)
-            self.renderSaveParameters()
-        return on_click
-
     def onSubmitButtonClick(self):
         def on_click(change):
             """
@@ -855,7 +746,6 @@ class UI:
         self.email = {'output': None}
         self.submit = {'output': None, 'alert_output': None}
         self.submitNew = {'output': None, 'button': None}
-        self.saveParam = {'output': None, 'button': None}
         self.param = {'output': None}
         self.uploadData = {'output': None}
         self.resultStatus = {'output': None}

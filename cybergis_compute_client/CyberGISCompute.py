@@ -18,6 +18,13 @@ import getpass
 from IPython.display import display, Markdown, Javascript
 
 
+class ParamAccumulator:
+    def __init__(self,
+                 path=str):
+        self.path = path
+        self.param_dict = json.load(open(self.path, 'r'))
+
+
 class CyberGISCompute:
     """CyberGISCompute class
     An inteface that handles all interactions with the HPC backend
@@ -211,6 +218,24 @@ class CyberGISCompute:
         """
         self.login()
         return Job(maintainer=maintainer, hpc=hpc, id=None, hpcUsername=hpcUsername, hpcPassword=hpcPassword, client=self.client, isJupyter=self.isJupyter, jupyterhubApiToken=self.jupyterhubApiToken, printJob=verbose)
+
+    def run_job_using_params(self,
+                             input_param_paths=[],
+                             maintainer='community_contribution',
+                             hpc=None,
+                             hpcUsername=None,
+                             hpcPassword=None,
+                             localExecutableFolder=None,
+                             localDataFolder=None,
+                             localResultFolder=None,
+                             env=None,
+                             slurm=None,
+                             verbose=True):
+        for path in input_param_paths:
+            param_acc = ParamAccumulator(path)
+            job = self.create_job(maintainer, hpc, hpcUsername, hpcPassword, verbose)
+            job.set(localExecutableFolder, localDataFolder, localResultFolder, param_acc.param_dict, env, slurm)
+            job.submit()
 
     def get_job_by_id(self, id=None, verbose=True):
         """
