@@ -271,23 +271,22 @@
                    <span class=s1 >'remoteResultFolder'</span><span class=p >,</span> <span class=s1 >'param'</span><span class=p >,</span> <span class=s1 >'slurm'</span><span class=p >,</span> <span class=s1 >'userId'</span><span class=p >,</span> <span class=s1 >'maintainer'</span><span class=p >,</span> <span class=s1 >'createdAt'</span><span class=p >]</span>
         <span class=n >data</span> <span class=o >=</span> <span class=p >[]</span>
         <span class=k >for</span> <span class=n >job</span> <span class=ow >in</span> <span class=n >jobs</span><span class=p >[</span><span class=s1 >'job'</span><span class=p >]:</span>
-            <span class=n >data</span><span class=o >.</span><span class=n >append</span><span class=p >([</span>
+            <span class=n >to_append</span> <span class=o >=</span> <span class=p >[</span>
                 <span class=n >job</span><span class=p >[</span><span class=s1 >'id'</span><span class=p >],</span>
                 <span class=n >job</span><span class=p >[</span><span class=s1 >'hpc'</span><span class=p >],</span>
                 <span class=n >job</span><span class=p >[</span><span class=s1 >'remoteExecutableFolder'</span><span class=p >][</span><span class=s2 >"id"</span><span class=p >]</span> <span class=k >if</span> <span class=p >(</span>
-                    <span class=s2 >"id"</span> <span class=ow >in</span> <span class=n >job</span><span class=p >[</span><span class=s1 >'remoteExecutableFolder'</span><span class=p >])</span> <span class=k >else</span> <span class=kc >None</span><span class=p >,</span>
+                    <span class=n >job</span><span class=p >[</span><span class=s1 >'remoteExecutableFolder'</span><span class=p >]</span> <span class=ow >is</span> <span class=ow >not</span> <span class=kc >None</span> <span class=ow >and</span> <span class=s2 >"id"</span> <span class=ow >in</span> <span class=n >job</span><span class=p >[</span><span class=s1 >'remoteExecutableFolder'</span><span class=p >])</span> <span class=k >else</span> <span class=kc >None</span><span class=p >,</span>
                 <span class=n >job</span><span class=p >[</span><span class=s1 >'remoteDataFolder'</span><span class=p >][</span><span class=s2 >"id"</span><span class=p >]</span> <span class=k >if</span> <span class=p >(</span>
-                    <span class=s2 >"id"</span> <span class=ow >in</span> <span class=n >job</span><span class=p >[</span><span class=s1 >'remoteDataFolder'</span><span class=p >])</span> <span class=k >else</span> <span class=kc >None</span><span class=p >,</span>
+                    <span class=n >job</span><span class=p >[</span><span class=s1 >'remoteDataFolder'</span><span class=p >]</span> <span class=ow >is</span> <span class=ow >not</span> <span class=kc >None</span> <span class=ow >and</span> <span class=s2 >"id"</span> <span class=ow >in</span> <span class=n >job</span><span class=p >[</span><span class=s1 >'remoteDataFolder'</span><span class=p >])</span> <span class=k >else</span> <span class=kc >None</span><span class=p >,</span>
                 <span class=n >job</span><span class=p >[</span><span class=s1 >'remoteResultFolder'</span><span class=p >][</span><span class=s2 >"id"</span><span class=p >]</span> <span class=k >if</span> <span class=p >(</span>
-                    <span class=s2 >"id"</span> <span class=ow >in</span> <span class=n >job</span><span class=p >[</span><span class=s1 >'remoteResultFolder'</span><span class=p >])</span> <span class=k >else</span> <span class=kc >None</span><span class=p >,</span>
-                <span class=n >job</span><span class=p >[</span><span class=s1 >'remoteDataFolder'</span><span class=p >],</span>
-                <span class=n >job</span><span class=p >[</span><span class=s1 >'remoteResultFolder'</span><span class=p >],</span>
+                    <span class=n >job</span><span class=p >[</span><span class=s1 >'remoteResultFolder'</span><span class=p >]</span> <span class=ow >is</span> <span class=ow >not</span> <span class=kc >None</span> <span class=ow >and</span> <span class=s2 >"id"</span> <span class=ow >in</span> <span class=n >job</span><span class=p >[</span><span class=s1 >'remoteResultFolder'</span><span class=p >])</span> <span class=k >else</span> <span class=kc >None</span><span class=p >,</span>
                 <span class=n >json</span><span class=o >.</span><span class=n >dumps</span><span class=p >(</span><span class=n >job</span><span class=p >[</span><span class=s1 >'param'</span><span class=p >]),</span>
                 <span class=n >json</span><span class=o >.</span><span class=n >dumps</span><span class=p >(</span><span class=n >job</span><span class=p >[</span><span class=s1 >'slurm'</span><span class=p >]),</span>
                 <span class=n >job</span><span class=p >[</span><span class=s1 >'userId'</span><span class=p >],</span>
                 <span class=n >job</span><span class=p >[</span><span class=s1 >'maintainer'</span><span class=p >],</span>
-                <span class=n >job</span><span class=p >[</span><span class=s1 >'createdAt'</span><span class=p >],</span>
-            <span class=p >])</span>
+                <span class=n >job</span><span class=p >[</span><span class=s1 >'createdAt'</span><span class=p >]</span>
+            <span class=p >]</span>
+            <span class=n >data</span><span class=o >.</span><span class=n >append</span><span class=p >(</span><span class=n >to_append</span><span class=p >)</span>
 
         <span class=k >if</span> <span class=bp >self</span><span class=o >.</span><span class=n >isJupyter</span><span class=p >:</span>
             <span class=k >if</span> <span class=nb >len</span><span class=p >(</span><span class=n >data</span><span class=p >)</span> <span class=o >==</span> <span class=mi >0</span><span class=p >:</span>
