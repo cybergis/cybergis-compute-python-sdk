@@ -231,7 +231,6 @@ class CyberGISCompute:
                              env=None,
                              slurm=None,
                              verbose=True):
-        self.login()
         for params in input_params:
             param_acc = ParamAccumulator(params)
             job = self.create_job(maintainer, hpc, hpcUsername, hpcPassword)
