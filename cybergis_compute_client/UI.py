@@ -586,7 +586,8 @@ class UI:
     def onSubmitNewButtonClick(self):
         def on_click(change):
             self.submitted = False
-            self.rerender(['resultStatus', 'resultEvents', 'resultLogs', 'submit'])
+            self.jobFinished = False
+            self.rerender(['resultStatus', 'resultEvents', 'resultLogs', 'submit', 'download'])
             self.submitNew['output'].clear_output()
             self.renderSubmitNew()
         return on_click
@@ -713,7 +714,7 @@ class UI:
             self.tab.selected_index = 1
             self.submitted = True
             self.tab.set_title(2, '⏳ Your Job Status')
-            self.rerender(['resultStatus', 'resultEvents', 'resultLogs', 'submit'])
+            self.rerender(['resultStatus', 'resultEvents', 'resultLogs', 'submit', 'submitNew'])
             self.refreshing = False
             self.recently_submitted['output'].clear_output()
             self.load_more['output'].clear_output()
