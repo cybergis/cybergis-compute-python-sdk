@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Having a problem with CyberGIS-Compute?
+    url: https://cybergis.github.io/cybergis-compute-python-sdk/help.html
+    about: Check out our page on "Getting Help."
+  - name: Having a problem with CyberGISX/CyberGIS-Jupyter?
+    url: https://cybergisxhub.cigi.illinois.edu/
+    about: Their website has a "Knowledge Base" and "Frequently Asked Questions" under "Get Started". You can also submit a "Problem Report" under "Contact."
+  - name: Having a problem with the server? Check out the CyberGIS-Compute Core page.
+    url: https://github.com/cybergis/cybergis-compute-core
+    about: The CyberGIS-Compute Core provides the functionality for running jobs, check out their docs or open an issue.

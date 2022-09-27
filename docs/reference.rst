@@ -20,28 +20,20 @@ cybergis_compute_client.CyberGISCompute module
 .. automodule:: cybergis_compute_client.CyberGISCompute
     :members:
 
-
-cybergis_compute_client.GlobusUtil module
------------------------------------------
-
-.. automodule:: cybergis_compute_client.GlobusUtil
-    :members:
-    :undoc-members:
-
-cybergis_compute_client.JAT module
------------------------------------------
-
-.. automodule:: cybergis_compute_client.JAT
-    :members:
-    :undoc-members:
-    :private-members:
-
 cybergis_compute_client.Job module
 -----------------------------------------
 
 .. automodule:: cybergis_compute_client.Job
     :members:
     :undoc-members:
+
+cybergis_compute_client.MarkdownTable module
+--------------------------------------------
+
+.. automodule:: cybergis_compute_client.MarkdownTable
+    :members:
+    :undoc-members:
+    :private-members:
 
 cybergis_compute_client.UI module
 ---------------------------------

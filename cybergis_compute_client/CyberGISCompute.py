@@ -270,23 +270,22 @@ class CyberGISCompute:
                    'remoteResultFolder', 'param', 'slurm', 'userId', 'maintainer', 'createdAt']
         data = []
         for job in jobs['job']:
-            data.append([
+            to_append = [
                 job['id'],
                 job['hpc'],
                 job['remoteExecutableFolder']["id"] if (
-                    "id" in job['remoteExecutableFolder']) else None,
+                    job['remoteExecutableFolder'] is not None and "id" in job['remoteExecutableFolder']) else None,
                 job['remoteDataFolder']["id"] if (
-                    "id" in job['remoteDataFolder']) else None,
+                    job['remoteDataFolder'] is not None and "id" in job['remoteDataFolder']) else None,
                 job['remoteResultFolder']["id"] if (
-                    "id" in job['remoteResultFolder']) else None,
-                job['remoteDataFolder'],
-                job['remoteResultFolder'],
+                    job['remoteResultFolder'] is not None and "id" in job['remoteResultFolder']) else None,
                 json.dumps(job['param']),
                 json.dumps(job['slurm']),
                 job['userId'],
                 job['maintainer'],
-                job['createdAt'],
-            ])
+                job['createdAt']
+            ]
+            data.append(to_append)
 
         if self.isJupyter:
             if len(data) == 0:
