@@ -383,7 +383,7 @@ class CyberGISCompute:
         for i in hosts:
             data.append([
                 i,
-                hosts[i]['comment'],
+                hosts[i],
             ])
 
         if self.isJupyter:
