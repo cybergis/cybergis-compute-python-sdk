@@ -362,6 +362,38 @@ class CyberGISCompute:
         else:
             print(MarkdownTable.render(data, headers))
 
+    def list_jupyter_host(self, raw=False):
+        """
+        Prints a list of jupyter hosts that the server supports
+
+        Args:
+            raw (bool): set to True if you want the raw output
+
+        Returns:
+            JSON: Raw output if raw=True otherwise its
+            printed or displayed directly into the interface
+        """
+        hosts = self.client.request('GET', '/whitelist')['whitelist']
+        if raw:
+            return hosts
+
+        headers = ['jupyter_host', 'description']
+        data = []
+
+        for i in hosts:
+            data.append([
+                i,
+                hosts[i]['comment'],
+            ])
+
+        if self.isJupyter:
+            if len(data) == 0:
+                print('empty')
+                return
+            display(Markdown(MarkdownTable.render(data, headers)))
+        else:
+            print(MarkdownTable.render(data, headers))
+
     def list_git(self, raw=False):
         """
         Prints a list of Git projects that the server supports
