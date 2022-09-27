@@ -373,26 +373,29 @@ class CyberGISCompute:
             JSON: Raw output if raw=True otherwise its
             printed or displayed directly into the interface
         """
-        hosts = self.client.request('GET', '/whitelist')['whitelist']
-        if raw:
-            return hosts
+        try:
+            hosts = self.client.request('GET', '/whitelist')['whitelist']
+            if raw:
+                return hosts
 
-        headers = ['jupyter_host', 'description']
-        data = []
+            headers = ['jupyter_host', 'description']
+            data = []
 
-        for i in hosts:
-            data.append([
-                i,
-                hosts[i],
-            ])
+            for i in hosts:
+                data.append([
+                    i,
+                    hosts[i],
+                ])
 
-        if self.isJupyter:
-            if len(data) == 0:
-                print('empty')
-                return
-            display(Markdown(MarkdownTable.render(data, headers)))
-        else:
-            print(MarkdownTable.render(data, headers))
+            if self.isJupyter:
+                if len(data) == 0:
+                    print('empty')
+                    return
+                display(Markdown(MarkdownTable.render(data, headers)))
+            else:
+                print(MarkdownTable.render(data, headers))
+        except:
+            print("The server " + self.client.url + " doesn't have this route")
 
     def list_git(self, raw=False):
         """
