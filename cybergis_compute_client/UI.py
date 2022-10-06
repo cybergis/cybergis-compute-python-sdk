@@ -133,7 +133,7 @@ class UI:
         self.tab.set_title(1, 'Your Job Status')
         self.tab.set_title(2, 'Download Job Result')
         self.tab.set_title(3, 'Your Jobs')
-        self.tab.set_title(4, 'Your Folders')
+        self.tab.set_title(4, 'Past Results')
         display(self.tab)
 
     def renderComponents(self):
@@ -529,7 +529,7 @@ class UI:
                 for j in headers:
                     data[0].append(i[j])
                 display(Markdown(MarkdownTable.render(data, headers)))
-                self.folders['button'][i['id']] = widgets.Button(description="Download")
+                self.folders['button'][i['id']] = widgets.Button(description="Download Results")
                 display(self.folders['button'][i['id']])
         for i in self.folders['button'].keys():
             self.folders['button'][i].on_click(self.onFolderDownloadButtonClick(i))
@@ -746,6 +746,19 @@ class UI:
             self.renderRecentlySubmittedJobs()
             self.renderLoadMore()
             self.refreshing = False
+        return on_click
+
+    def onFolderDownloadButtonClick(self, folder):
+        def on_click(change):
+            jupyter_globus = self.compute.get_user_jupyter_globus()
+            localEndpoint = jupyter_globus['endpoint']
+            localPath = os.path.join(jupyter_globus['root_path'], "globus_download_" + folder)
+            self.compute.client.request('POST', '/folder/' + folder + '/download/globus-init', {
+                "jupyterhubApiToken": self.compute.jupyterhubApiToken,
+                "fromPath": '/',
+                "toPath": localPath,
+                "toEndpoint": localEndpoint
+            })
         return on_click
 
     def onFolderDownloadButtonClick(self, folder):

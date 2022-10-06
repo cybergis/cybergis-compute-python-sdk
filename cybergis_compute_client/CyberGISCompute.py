@@ -270,23 +270,22 @@ class CyberGISCompute:
                    'remoteResultFolder', 'param', 'slurm', 'userId', 'maintainer', 'createdAt']
         data = []
         for job in jobs['job']:
-            data.append([
+            to_append = [
                 job['id'],
                 job['hpc'],
                 job['remoteExecutableFolder']["id"] if (
-                    "id" in job['remoteExecutableFolder']) else None,
+                    job['remoteExecutableFolder'] is not None and "id" in job['remoteExecutableFolder']) else None,
                 job['remoteDataFolder']["id"] if (
-                    "id" in job['remoteDataFolder']) else None,
+                    job['remoteDataFolder'] is not None and "id" in job['remoteDataFolder']) else None,
                 job['remoteResultFolder']["id"] if (
-                    "id" in job['remoteResultFolder']) else None,
-                job['remoteDataFolder'],
-                job['remoteResultFolder'],
+                    job['remoteResultFolder'] is not None and "id" in job['remoteResultFolder']) else None,
                 json.dumps(job['param']),
                 json.dumps(job['slurm']),
                 job['userId'],
                 job['maintainer'],
-                job['createdAt'],
-            ])
+                job['createdAt']
+            ]
+            data.append(to_append)
 
         if self.isJupyter:
             if len(data) == 0:
@@ -362,6 +361,41 @@ class CyberGISCompute:
             display(Markdown(MarkdownTable.render(data, headers)))
         else:
             print(MarkdownTable.render(data, headers))
+
+    def list_jupyter_host(self, raw=False):
+        """
+        Prints a list of jupyter hosts that the server supports
+
+        Args:
+            raw (bool): set to True if you want the raw output
+
+        Returns:
+            JSON: Raw output if raw=True otherwise its
+            printed or displayed directly into the interface
+        """
+        try:
+            hosts = self.client.request('GET', '/whitelist')['whitelist']
+            if raw:
+                return hosts
+
+            headers = ['jupyter_host', 'description']
+            data = []
+
+            for i in hosts:
+                data.append([
+                    i,
+                    hosts[i],
+                ])
+
+            if self.isJupyter:
+                if len(data) == 0:
+                    print('empty')
+                    return
+                display(Markdown(MarkdownTable.render(data, headers)))
+            else:
+                print(MarkdownTable.render(data, headers))
+        except:
+            print("The server " + self.client.url + " doesn't have this route")
 
     def list_git(self, raw=False):
         """
