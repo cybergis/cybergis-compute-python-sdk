@@ -748,7 +748,7 @@ class UI:
             self.renderRecentlySubmittedJobs()
             self.renderLoadMore()
         return on_click
-    
+
     def onFolderDownloadButtonClick(self, folder):
         def on_click(change):
             jupyter_globus = self.compute.get_user_jupyter_globus()
@@ -759,7 +759,7 @@ class UI:
                 "fromPath": '/',
                 "toPath": localPath,
                 "toEndpoint": localEndpoint
-                })
+            })
         return on_click
 
     # helpers
