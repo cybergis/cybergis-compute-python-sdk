@@ -752,7 +752,6 @@ class UI:
     def onFolderDownloadButtonClick(self, folder):
         def on_click(change):
             jupyter_globus = self.compute.get_user_jupyter_globus()
-            remotePath = "/"
             localEndpoint = jupyter_globus['endpoint']
             localPath = os.path.join(jupyter_globus['root_path'], "globus_download_" + folder)
             self.compute.client.request('POST', '/folder/' + folder + '/download/globus-init', {
@@ -762,7 +761,6 @@ class UI:
             "toEndpoint": localEndpoint
             })
         return on_click
-                
 
     # helpers
     def init(self):
