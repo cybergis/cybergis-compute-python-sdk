@@ -9,12 +9,10 @@ from .MarkdownTable import MarkdownTable  # noqa
 class UI:
     """
     UI class.
-
     Note:
         Many UI elements use an internal `on_change`
         function or `on_click` function. If you click the `[source]`
         next to the function, it will give that information.
-
     Attributes:
         compute: Instance of CyberGISCompute
         style (dict): Style of each widget (specifically width)
@@ -118,17 +116,24 @@ class UI:
             display(self.recently_submitted['output'])
             display(self.load_more['output'])
 
+        # 5. your folders
+        user_folders = widgets.Output()
+        with user_folders:
+            display(self.folders['output'])
+
         # assemble into tabs
         self.tab = widgets.Tab(children=[
             job_config,
             job_status,
             download,
-            job_refresh
+            job_refresh,
+            user_folders
         ])
         self.tab.set_title(0, 'Job Configuration')
         self.tab.set_title(1, 'Your Job Status')
         self.tab.set_title(2, 'Download Job Result')
         self.tab.set_title(3, 'Your Jobs')
+        self.tab.set_title(4, 'Past Results')
         display(self.tab)
 
     def renderComponents(self):
@@ -150,6 +155,7 @@ class UI:
         self.renderRecentlySubmittedJobs()
         self.renderLoadMore()
         self.renderSubmitNew()
+        self.renderFolders()
 
     # components
     def renderJobTemplate(self):
@@ -500,13 +506,33 @@ class UI:
             return
         with self.resultLogs['output']:
             self.compute.job.logs()
-            self.tab.set_title(0, '✅ Your Job Status')
             self.tab.set_title(2, '✅ Download Job Result')
             display(Markdown('***'))
             display(Markdown('## ✅ your job completed'))
             self.jobFinished = True
             self.rerender(['download'])
         return
+
+    def renderFolders(self):
+        """
+        Display a user's folders
+        """
+        folders = self.compute.client.request('GET', '/folder', {'jupyterhubApiToken': self.compute.jupyterhubApiToken})
+        if self.folders['output'] is None:
+            self.folders['output'] = widgets.Output()
+        with self.folders['output']:
+            display(Markdown("We will do our best to keep this data for 90 days, but cannot guarantee it won’t be deleted sooner."))
+            display(Markdown('<br> **Folders for ' + self.compute.username.split('@', 1)[0] + '**'))
+            for i in folders["folder"]:
+                headers = ['id', 'name', 'hpc', 'userId', 'isWritable', 'createdAt', 'updatedAt', 'deletedAt']
+                data = [[]]
+                for j in headers:
+                    data[0].append(i[j])
+                display(Markdown(MarkdownTable.render(data, headers)))
+                self.folders['button'][i['id']] = widgets.Button(description="Download Results")
+                display(self.folders['button'][i['id']])
+        for i in self.folders['button'].keys():
+            self.folders['button'][i].on_click(self.onFolderDownloadButtonClick(i))
 
     def renderRecentlySubmittedJobs(self):
         """
@@ -516,7 +542,7 @@ class UI:
             self.recently_submitted['output'] = widgets.Output()
             jobs = self.compute.client.request('GET', '/user/job', {'jupyterhubApiToken': self.compute.jupyterhubApiToken})
         with self.recently_submitted['output']:
-            display(Markdown('**Recently Submitted Jobs for ' + self.compute.username.split('@')[0] + '**'))
+            display(Markdown('**Recently Submitted Jobs for ' + self.compute.username.split('@', 1)[0] + '**'))
             jobs = self.compute.client.request('GET', '/user/job', {'jupyterhubApiToken': self.compute.jupyterhubApiToken})
             if len(jobs['job']) < self.recently_submitted['job_list_size']:
                 self.recently_submitted['job_list_size'] = len(jobs['job'])
@@ -529,6 +555,7 @@ class UI:
                 else:
                     self.recently_submitted['submit'][jobs['job'][i]['id']] = widgets.Button(description="Restore")
                 display(self.recently_submitted['submit'][jobDetails['id']])
+                display(Markdown("<br>"))
         for i in self.recently_submitted['submit'].keys():
             self.recently_submitted['submit'][i].on_click(self.onJobEntryButtonClick(i))
 
@@ -588,6 +615,7 @@ class UI:
             self.submitted = False
             self.rerender(['resultStatus', 'resultEvents', 'resultLogs', 'submit'])
             self.submitNew['output'].clear_output()
+            self.tab.set_title(2, 'Download Job Result')
             self.renderSubmitNew()
         return on_click
 
@@ -712,13 +740,25 @@ class UI:
             self.globus_filename = 'globus_download_' + self.compute.job.id
             self.tab.selected_index = 1
             self.submitted = True
-            self.tab.set_title(2, '⏳ Your Job Status')
-            self.rerender(['resultStatus', 'resultEvents', 'resultLogs', 'submit'])
-            self.refreshing = False
+            self.rerender(['resultStatus', 'resultEvents', 'resultLogs', 'submit', 'submitNew'])
             self.recently_submitted['output'].clear_output()
             self.load_more['output'].clear_output()
             self.renderRecentlySubmittedJobs()
             self.renderLoadMore()
+            self.refreshing = False
+        return on_click
+
+    def onFolderDownloadButtonClick(self, folder):
+        def on_click(change):
+            jupyter_globus = self.compute.get_user_jupyter_globus()
+            localEndpoint = jupyter_globus['endpoint']
+            localPath = os.path.join(jupyter_globus['root_path'], "globus_download_" + folder)
+            self.compute.client.request('POST', '/folder/' + folder + '/download/globus-init', {
+                "jupyterhubApiToken": self.compute.jupyterhubApiToken,
+                "fromPath": '/',
+                "toPath": localPath,
+                "toEndpoint": localEndpoint
+            })
         return on_click
 
     # helpers
@@ -754,6 +794,7 @@ class UI:
         self.download = {'output': None, 'alert_output': None, 'result_output': None}
         self.recently_submitted = {'output': None, 'submit': {}, 'job_list_size': 5, 'load_more': None}
         self.load_more = {'output': None, 'load_more': None}
+        self.folders = {'output': None, 'button': {}}
         # main
         self.tab = None
         # information
@@ -765,7 +806,6 @@ class UI:
     def rerender(self, components=[]):
         """
         Clears and renders the specified components
-
         Args:
             components (list): components to be rerendered
         """
@@ -782,7 +822,6 @@ class UI:
         """
         Get data about the job submitted (template, computing resource used,
         slurm rules, param rules, user email)
-
         Returns:
             dict : Information about the job submitted (template,
             computing resource used, slurm rules, param rules, user email)
@@ -842,7 +881,6 @@ class UI:
     def unitTimeToSecond(self, unit, time):
         """
         Helper function that turns time in a specific unit into seconds
-
         Args:
             unit (string): The unit of the time being
                 passed (Minutes, Hours, or Days)
