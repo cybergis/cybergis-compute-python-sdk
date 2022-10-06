@@ -506,7 +506,6 @@ class UI:
             return
         with self.resultLogs['output']:
             self.compute.job.logs()
-            self.tab.set_title(0, '✅ Your Job Status')
             self.tab.set_title(2, '✅ Download Job Result')
             display(Markdown('***'))
             display(Markdown('## ✅ your job completed'))
@@ -616,6 +615,7 @@ class UI:
             self.submitted = False
             self.rerender(['resultStatus', 'resultEvents', 'resultLogs', 'submit'])
             self.submitNew['output'].clear_output()
+            self.tab.set_title(2, 'Download Job Result')
             self.renderSubmitNew()
         return on_click
 
@@ -740,13 +740,12 @@ class UI:
             self.globus_filename = 'globus_download_' + self.compute.job.id
             self.tab.selected_index = 1
             self.submitted = True
-            self.tab.set_title(2, '⏳ Your Job Status')
-            self.rerender(['resultStatus', 'resultEvents', 'resultLogs', 'submit'])
-            self.refreshing = False
+            self.rerender(['resultStatus', 'resultEvents', 'resultLogs', 'submit', 'submitNew'])
             self.recently_submitted['output'].clear_output()
             self.load_more['output'].clear_output()
             self.renderRecentlySubmittedJobs()
             self.renderLoadMore()
+            self.refreshing = False
         return on_click
 
     def onFolderDownloadButtonClick(self, folder):
