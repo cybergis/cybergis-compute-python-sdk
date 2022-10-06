@@ -9,12 +9,10 @@ from .MarkdownTable import MarkdownTable  # noqa
 class UI:
     """
     UI class.
-
     Note:
         Many UI elements use an internal `on_change`
         function or `on_click` function. If you click the `[source]`
         next to the function, it will give that information.
-
     Attributes:
         compute: Instance of CyberGISCompute
         style (dict): Style of each widget (specifically width)
@@ -527,11 +525,15 @@ class UI:
             display(Markdown("We will do our best to keep this data for 90 days, but cannot guarantee it won’t be deleted sooner."))
             display(Markdown('<br> **Folders for ' + self.compute.username.split('@', 1)[0] + '**'))
             for i in folders["folder"]:
-                headers = headers = ['id', 'name', 'hpc', 'userId', 'isWritable', 'createdAt', 'updatedAt', 'deletedAt']
+                headers = ['id', 'name', 'hpc', 'userId', 'isWritable', 'createdAt', 'updatedAt', 'deletedAt']
                 data = [[]]
                 for j in headers:
                     data[0].append(i[j])
                 display(Markdown(MarkdownTable.render(data, headers)))
+                self.folders['button'][i['id']] = widgets.Button(description="Download")
+                display(self.folders['button'][i['id']])
+        for i in self.folders['button'].keys():
+            self.folders['button'][i].on_click(self.onFolderDownloadButtonClick(i))
 
     def renderRecentlySubmittedJobs(self):
         """
@@ -746,6 +748,21 @@ class UI:
             self.renderRecentlySubmittedJobs()
             self.renderLoadMore()
         return on_click
+    
+    def onFolderDownloadButtonClick(self, folder):
+        def on_click(change):
+            jupyter_globus = self.compute.get_user_jupyter_globus()
+            remotePath = "/"
+            localEndpoint = jupyter_globus['endpoint']
+            localPath = os.path.join(jupyter_globus['root_path'], "globus_download_" + folder)
+            self.compute.client.request('POST', '/folder/' + folder + '/download/globus-init', {
+            "jupyterhubApiToken": self.compute.jupyterhubApiToken,
+            "fromPath": '/',
+            "toPath": localPath,
+            "toEndpoint": localEndpoint
+            })
+        return on_click
+                
 
     # helpers
     def init(self):
@@ -780,7 +797,7 @@ class UI:
         self.download = {'output': None, 'alert_output': None, 'result_output': None}
         self.recently_submitted = {'output': None, 'submit': {}, 'job_list_size': 5, 'load_more': None}
         self.load_more = {'output': None, 'load_more': None}
-        self.folders = {'output': None}
+        self.folders = {'output': None, 'button': {}}
         # main
         self.tab = None
         # information
@@ -792,7 +809,6 @@ class UI:
     def rerender(self, components=[]):
         """
         Clears and renders the specified components
-
         Args:
             components (list): components to be rerendered
         """
@@ -809,7 +825,6 @@ class UI:
         """
         Get data about the job submitted (template, computing resource used,
         slurm rules, param rules, user email)
-
         Returns:
             dict : Information about the job submitted (template,
             computing resource used, slurm rules, param rules, user email)
@@ -869,7 +884,6 @@ class UI:
     def unitTimeToSecond(self, unit, time):
         """
         Helper function that turns time in a specific unit into seconds
-
         Args:
             unit (string): The unit of the time being
                 passed (Minutes, Hours, or Days)
