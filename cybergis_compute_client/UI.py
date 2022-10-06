@@ -133,7 +133,7 @@ class UI:
         self.tab.set_title(1, 'Your Job Status')
         self.tab.set_title(2, 'Download Job Result')
         self.tab.set_title(3, 'Your Jobs')
-        self.tab.set_title(4, 'Your Folders')
+        self.tab.set_title(4, 'Your Results')
         display(self.tab)
 
     def renderComponents(self):
@@ -530,7 +530,7 @@ class UI:
                 for j in headers:
                     data[0].append(i[j])
                 display(Markdown(MarkdownTable.render(data, headers)))
-                self.folders['button'][i['id']] = widgets.Button(description="Download")
+                self.folders['button'][i['id']] = widgets.Button(description="Download Results")
                 display(self.folders['button'][i['id']])
         for i in self.folders['button'].keys():
             self.folders['button'][i].on_click(self.onFolderDownloadButtonClick(i))
