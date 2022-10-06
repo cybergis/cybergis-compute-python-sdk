@@ -133,7 +133,7 @@ class UI:
         self.tab.set_title(1, 'Your Job Status')
         self.tab.set_title(2, 'Download Job Result')
         self.tab.set_title(3, 'Your Jobs')
-        self.tab.set_title(4, 'Your Results')
+        self.tab.set_title(4, 'Past Results')
         display(self.tab)
 
     def renderComponents(self):
