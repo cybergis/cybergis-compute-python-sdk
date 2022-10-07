@@ -1,8 +1,24 @@
 Release Notes
 =============
 
-[v0.2.2] - Ongoing
-------------------
+[v0.2.3] - 2022-10-06
+---------------------
+
+Added
+^^^^^
+
+* "Past Results" Tab with download buttons `#37 <https://github.com/cybergis/cybergis-compute-python-sdk/pull/37>`_
+* ``list_jupyter_host()`` functionality to see the Core whitelist `#55 <https://github.com/cybergis/cybergis-compute-python-sdk/pull/55>`_
+
+Updated
+^^^^^^^
+
+* Fix for broken ``list_job()`` function `#51 <https://github.com/cybergis/cybergis-compute-python-sdk/pull/51>`_ 
+* Fix for "error displaying widget: model not found" when using --force-install without --no-deps `#57 <https://github.com/cybergis/cybergis-compute-python-sdk/pull/57>`_ 
+* Minor UI bug fixes and QOL changes `#54 <https://github.com/cybergis/cybergis-compute-python-sdk/pull/54>`_
+
+[v0.2.2] - 2022-09-08
+---------------------
 
 Added
 ^^^^^
