@@ -822,6 +822,7 @@ class UI:
         """
         Get data about the job submitted (template, computing resource used,
         slurm rules, param rules, user email)
+
         Returns:
             dict : Information about the job submitted (template,
             computing resource used, slurm rules, param rules, user email)
@@ -881,10 +882,14 @@ class UI:
     def unitTimeToSecond(self, unit, time):
         """
         Helper function that turns time in a specific unit into seconds
+
         Args:
             unit (string): The unit of the time being
                 passed (Minutes, Hours, or Days)
             time (int): The time in that specific unit
+
+        Returns:
+            int: the amount of time in the given unit
         """
         if unit == 'Minutes':
             return time * 60
