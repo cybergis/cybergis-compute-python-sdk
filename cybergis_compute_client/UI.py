@@ -767,9 +767,7 @@ class UI:
         Initialization helper function that
         sets default arguments. Runs when the UI is rendered.
         """
-        silent = widgets.Output()
-        with silent:
-            self.compute.login()
+        self.compute.login()
 
         self.jobs = self.compute.list_git(raw=True)
         self.hpcs = self.compute.list_hpc(raw=True)

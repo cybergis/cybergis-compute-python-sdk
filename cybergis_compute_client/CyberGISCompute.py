@@ -144,21 +144,20 @@ class CyberGISCompute:
         """
         Checks for json file and calls login_token function.
         """
-        with open(os.path.abspath('cybergis_compute_user.json')) as f:
-            user = json.load(f)
-            token = user['token']
-            print('📃 Found "cybergis_compute_user.json"')
-            print('NOTE: if you want to login as another user, please remove this file')
-            try:
-                self.jupyterhubApiToken = token
-                self.set_username()
-                self.save_token()
-                return self.login()
-            except:
-                envToken = os.getenv('JUPYTERHUB_API_TOKEN')
-                if envToken is not None:
-                    return self.host_token_login(envToken)
-                print('❌ Failed to login via token JSON file')
+        try:
+            with open(os.path.abspath('cybergis_compute_user.json')) as f:
+                user = json.load(f)
+                token = user['token']
+            print('📃 Found "cybergis_compute_user.json! NOTE: if you want to login as another user, please remove this file')
+            self.jupyterhubApiToken = token
+            self.set_username()
+            self.save_token()
+            return self.login()
+        except:
+            # print('❌ Failed to login via token JSON file, trying environment variable...')
+            envToken = os.getenv('JUPYTERHUB_API_TOKEN')
+            if envToken is not None:
+                return self.host_token_login(envToken)
 
     def login(self, manualLogin=False, manualHost=None, verbose=True):
         """
@@ -171,7 +170,6 @@ class CyberGISCompute:
         Todo:
             Document exceptions/errors raised.
         """
-
         if manualHost is not None:
             self.jupyterhubHost = manualHost
         # login via env variable
