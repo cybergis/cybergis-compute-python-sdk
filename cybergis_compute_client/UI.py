@@ -1,5 +1,8 @@
 import os
 import math
+import requests
+import json
+import base64
 import ipywidgets as widgets
 from ipyfilechooser import FileChooser
 from IPython.display import Markdown, display, clear_output
@@ -91,6 +94,7 @@ class UI:
             display(self.param['output'])
             display(self.uploadData['output'])
             display(self.email['output'])
+            display(self.name['output'])
             display(self.submit['output'])
             display(self.submitNew['output'])
 
@@ -145,6 +149,7 @@ class UI:
         self.renderComputingResource()
         self.renderSlurm()
         self.renderEmail()
+        self.renderNaming()
         self.renderSubmit()
         self.renderParam()
         self.renderUploadData()
@@ -219,7 +224,7 @@ class UI:
 
     def renderEmail(self):
         """
-        Displays a checkbox that lets the user recieve an email
+        Displays a checkbox that lets the user receive an email
         on job status and input their email.
         """
         if self.email['output'] is None:
@@ -229,11 +234,29 @@ class UI:
             description='receive email on job status? ',
             value=False, style=self.style)
         self.email['text'] = widgets.Text(
-            value='example@illinois.edu', style=self.style)
+            placeholder='example@illinois.edu', style=self.style)
         self.email['hbox'] = widgets.HBox(
             [self.email['checkbox'], self.email['text']])
         with self.email['output']:
             display(self.email['hbox'])
+    
+    def renderNaming(self):
+        """
+        Displays a box to toggle naming the job being submitted
+        and provides a text entry for the user to input the name
+        """
+        if self.name['output'] is None:
+            self.name['output'] = widgets.Output()
+        # create components
+        self.name['checkbox'] = widgets.Checkbox(
+            description='Set a name for this job? ',
+            value=False, style=self.style)
+        self.name['text'] = widgets.Text(
+            placeholder='Type job name here', style=self.style)
+        self.name['hbox'] = widgets.HBox(
+            [self.name['checkbox'], self.name['text']])
+        with self.name['output']:
+            display(self.name['hbox'])
 
     def renderSlurm(self):
         """
@@ -515,7 +538,7 @@ class UI:
 
     def renderFolders(self):
         """
-        Display a user's folders
+        Display a user's folders with ability to download and rename them
         """
         folders = self.compute.client.request('GET', '/folder', {'jupyterhubApiToken': self.compute.jupyterhubApiToken})
         if self.folders['output'] is None:
@@ -523,6 +546,11 @@ class UI:
         with self.folders['output']:
             display(Markdown("We will do our best to keep this data for 90 days, but cannot guarantee it won’t be deleted sooner."))
             display(Markdown('<br> **Folders for ' + self.compute.username.split('@', 1)[0] + '**'))
+            listNames = []
+            for i in folders["folder"]:
+                if i['name'] != None:
+                    listNames.append(i['name'])
+            listNames = [*set(listNames)]
             for i in folders["folder"]:
                 headers = ['id', 'name', 'hpc', 'userId', 'isWritable', 'createdAt', 'updatedAt', 'deletedAt']
                 data = [[]]
@@ -531,9 +559,15 @@ class UI:
                 display(Markdown(MarkdownTable.render(data, headers)))
                 self.folders['button'][i['id']] = widgets.Button(description="Download Results")
                 display(self.folders['button'][i['id']])
-        for i in self.folders['button'].keys():
-            self.folders['button'][i].on_click(self.onFolderDownloadButtonClick(i))
-
+                self.folders['button'][i['id']].on_click(self.onFolderDownloadButtonClick(i))
+                """ Renaming UI """
+                renameButton = widgets.Button(description="Rename Job")
+                nameSelect = widgets.Combobox(placeholder='Select new name', options=listNames, description='Enter Name:', ensure_option=False, disabled=False)
+                renameWidgets = widgets.HBox([renameButton, nameSelect])
+                renameButton.on_click(self.onRenameJobButton(i, nameSelect))
+                nameSelect.on_submit(self.onRenameJobButton(i, nameSelect))
+                display(renameWidgets)
+            
     def renderRecentlySubmittedJobs(self):
         """
         Display the jobs most recently submitted by the logged in user, allows user to restore these jobs.
@@ -597,10 +631,15 @@ class UI:
                 self.download['alert_output'].clear_output(wait=True)
                 self.downloading = True
                 localEndpoint = self.jupyter_globus['endpoint']
-                localPath = os.path.join(self.jupyter_globus['root_path'], self.globus_filename)
+                """ Ensures file should be saved with name and has a non-null value """
+                if self.name['checkbox'].value and self.name['text'].value is not None and self.name['text'].value != "":
+                    filename = self.name['text'].value + '_' + self.globus_filename
+                else:
+                    filename = self.globus_filename
+                localPath = os.path.join(self.jupyter_globus['root_path'], filename)
                 self.compute.job.download_result_folder_by_globus(remotePath=self.download['dropdown'].value, localEndpoint=localEndpoint, localPath=localPath)
-                print('please check your data at your root folder under "' + self.globus_filename + '"')
-                self.compute.recentDownloadPath = os.path.join(self.jupyter_globus['container_home_path'], self.globus_filename)
+                print('please check your data at your root folder under "' + filename + '"')
+                self.compute.recentDownloadPath = os.path.join(self.jupyter_globus['container_home_path'], filename)
                 self.downloading = False
                 self.refreshing = False
                 self.recently_submitted['output'].clear_output()
@@ -678,6 +717,16 @@ class UI:
             self.submitNew['output'].clear_output()
             self.renderRecentlySubmittedJobs()
             self.renderSubmitNew()
+            """ If the user has indicated the job should be named and provided a name, the produced files are named here """
+            if data['name'] != None and data['name'] != "":
+                keepcharacters = (' ','.','_')
+                nameForFile = "".join(c for c in data['name'] if c.isalnum() or c in keepcharacters).rstrip()
+                jobs = self.compute.client.request('GET', '/user/job', {'jupyterhubApiToken': self.compute.jupyterhubApiToken})
+                job = jobs['job'][len(jobs['job']) - 1]
+                useFolder = job['remoteExecutableFolder']['id']
+                response = self.put('/folder/' + useFolder, body={'name':nameForFile + '_executable'})
+                useFolder = job['remoteResultFolder']['id']
+                response = self.put('/folder/' + useFolder, body={'name':nameForFile + '_result'})
         return on_click
 
     def onJobDropdownChange(self):
@@ -752,14 +801,42 @@ class UI:
         def on_click(change):
             jupyter_globus = self.compute.get_user_jupyter_globus()
             localEndpoint = jupyter_globus['endpoint']
-            localPath = os.path.join(jupyter_globus['root_path'], "globus_download_" + folder)
-            self.compute.client.request('POST', '/folder/' + folder + '/download/globus-init', {
+            """ Tries using name, and if no name is provided downloads folder without name information """
+            try:
+                localPath = os.path.join(jupyter_globus['root_path'], folder["name"] + "_globus_download_" + folder["id"])
+            except:
+                localPath = os.path.join(jupyter_globus['root_path'], "globus_download_" + folder["id"])
+            self.compute.client.request('POST', '/folder/' + folder["id"] + '/download/globus-init', {
                 "jupyterhubApiToken": self.compute.jupyterhubApiToken,
                 "fromPath": '/',
                 "toPath": localPath,
                 "toEndpoint": localEndpoint
             })
         return on_click
+    
+    def onRenameJobButton(self, folder, wdgt):
+        def on_click(change):
+            keepcharacters = (' ','.','_')
+            newName = "".join(c for c in wdgt.value if c.isalnum() or c in keepcharacters).rstrip()
+            response = self.put('/folder/' + folder["id"], body={'name':newName})
+            self.folders['output'].clear_output()
+            self.renderFolders()
+        return on_click
+    
+    def put(self, route, body=None, auth=True):
+        """Sends a put request to the api with auth token"""
+        if body is None:
+            body = {}
+        """This line changes if not used for cgjobsup - needs update"""
+        uri = "https://cgjobsup.cigi.illinois.edu/v2" + route
+        headers = {'Content-type': 'application/json'}
+        if auth:
+            body["jupyterhubApiToken"] = self.compute.jupyterhubApiToken
+        return requests.put(
+            uri,
+            headers=headers,
+            data=json.dumps(body)
+        )
 
     # helpers
     def init(self):
@@ -784,6 +861,7 @@ class UI:
         self.computingResource = {'output': None}
         self.slurm = {'output': None}
         self.email = {'output': None}
+        self.name = {'output': None}
         self.submit = {'output': None, 'alert_output': None}
         self.submitNew = {'output': None, 'button': None}
         self.param = {'output': None}
@@ -837,6 +915,8 @@ class UI:
             },
             'param': {},
             'email': self.email['text'].value if self.email[
+                'checkbox'].value else None,
+            'name': self.name['text'].value if self.name[
                 'checkbox'].value else None,
         }
         for i in self.slurm_configs:
