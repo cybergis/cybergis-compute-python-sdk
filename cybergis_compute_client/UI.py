@@ -724,9 +724,9 @@ class UI:
                 jobs = self.compute.client.request('GET', '/user/job', {'jupyterhubApiToken': self.compute.jupyterhubApiToken})
                 job = jobs['job'][len(jobs['job']) - 1]
                 useFolder = job['remoteExecutableFolder']['id']
-                response = self.put('/folder/' + useFolder, body={'name':nameForFile + '_executable'})
+                response = self.compute.client.request('PUT', '/folder/' + useFolder, {'jupyterhubApiToken': self.compute.jupyterhubApiToken, 'name':nameForFile + '_executable'})
                 useFolder = job['remoteResultFolder']['id']
-                response = self.put('/folder/' + useFolder, body={'name':nameForFile + '_result'})
+                response = self.compute.client.request('PUT', '/folder/' + useFolder, {'jupyterhubApiToken': self.compute.jupyterhubApiToken, 'name':nameForFile + '_result'})
         return on_click
 
     def onJobDropdownChange(self):
@@ -818,26 +818,11 @@ class UI:
         def on_click(change):
             keepcharacters = (' ','.','_')
             newName = "".join(c for c in wdgt.value if c.isalnum() or c in keepcharacters).rstrip()
-            response = self.put('/folder/' + folder["id"], body={'name':newName})
+            response = self.compute.client.request('PUT', '/folder/' + folder["id"], {'jupyterhubApiToken': self.compute.jupyterhubApiToken, 'name' : newName})
             self.folders['output'].clear_output()
             self.renderFolders()
         return on_click
     
-    def put(self, route, body=None, auth=True):
-        """Sends a put request to the api with auth token"""
-        if body is None:
-            body = {}
-        """This line changes if not used for cgjobsup - needs update"""
-        uri = "https://cgjobsup.cigi.illinois.edu/v2" + route
-        headers = {'Content-type': 'application/json'}
-        if auth:
-            body["jupyterhubApiToken"] = self.compute.jupyterhubApiToken
-        return requests.put(
-            uri,
-            headers=headers,
-            data=json.dumps(body)
-        )
-
     # helpers
     def init(self):
         """
