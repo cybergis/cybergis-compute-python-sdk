@@ -1,8 +1,5 @@
 import os
 import math
-import requests
-import json
-import base64
 import ipywidgets as widgets
 from ipyfilechooser import FileChooser
 from IPython.display import Markdown, display, clear_output
@@ -551,7 +548,7 @@ class UI:
                 if i['name'] != None:
                     listNames.append(i['name'])
             listNames = [*set(listNames)]
-            for i in folders["folder"]:
+            for i in reversed(folders["folder"]):
                 headers = ['id', 'name', 'hpc', 'userId', 'isWritable', 'createdAt', 'updatedAt', 'deletedAt']
                 data = [[]]
                 for j in headers:
@@ -633,7 +630,7 @@ class UI:
                 localEndpoint = self.jupyter_globus['endpoint']
                 """ Ensures file should be saved with name and has a non-null value """
                 if self.name['checkbox'].value and self.name['text'].value is not None and self.name['text'].value != "":
-                    filename = self.name['text'].value + '_' + self.globus_filename
+                    filename = self.makeNameSafe(self.name['text'].value) + '_' + self.globus_filename
                 else:
                     filename = self.globus_filename
                 localPath = os.path.join(self.jupyter_globus['root_path'], filename)
@@ -719,8 +716,7 @@ class UI:
             self.renderSubmitNew()
             """ If the user has indicated the job should be named and provided a name, the produced files are named here """
             if data['name'] != None and data['name'] != "":
-                keepcharacters = (' ','.','_')
-                nameForFile = "".join(c for c in data['name'] if c.isalnum() or c in keepcharacters).rstrip()
+                nameForFile = self.makeNameSafe(data['name'])
                 jobs = self.compute.client.request('GET', '/user/job', {'jupyterhubApiToken': self.compute.jupyterhubApiToken})
                 job = jobs['job'][len(jobs['job']) - 1]
                 useFolder = job['remoteExecutableFolder']['id']
@@ -803,7 +799,7 @@ class UI:
             localEndpoint = jupyter_globus['endpoint']
             """ Tries using name, and if no name is provided downloads folder without name information """
             try:
-                localPath = os.path.join(jupyter_globus['root_path'], folder["name"] + "_globus_download_" + folder["id"])
+                localPath = os.path.join(jupyter_globus['root_path'], self.makeNameSafe(folder["name"]) + "_globus_download_" + folder["id"])
             except:
                 localPath = os.path.join(jupyter_globus['root_path'], "globus_download_" + folder["id"])
             self.compute.client.request('POST', '/folder/' + folder["id"] + '/download/globus-init', {
@@ -816,8 +812,7 @@ class UI:
     
     def onRenameJobButton(self, folder, wdgt):
         def on_click(change):
-            keepcharacters = (' ','.','_')
-            newName = "".join(c for c in wdgt.value if c.isalnum() or c in keepcharacters).rstrip()
+            newName = self.makeNameSafe(wdgt.value)
             response = self.compute.client.request('PUT', '/folder/' + folder["id"], {'jupyterhubApiToken': self.compute.jupyterhubApiToken, 'name' : newName})
             self.folders['output'].clear_output()
             self.renderFolders()
@@ -880,6 +875,11 @@ class UI:
             ct = ''.join(cl)
             getattr(self, 'render' + ct)()
 
+    """ Used to ensure that folders have names with only safe characters """
+    def makeNameSafe(self, text):
+        keepcharacters = (' ','.','_')
+        return "".join(c for c in text if c.isalnum() or c in keepcharacters).rstrip()
+            
     # data
     def get_data(self):
         """
