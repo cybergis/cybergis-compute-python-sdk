@@ -542,13 +542,28 @@ class UI:
             self.folders['output'] = widgets.Output()
         with self.folders['output']:
             display(Markdown("We will do our best to keep this data for 90 days, but cannot guarantee it won’t be deleted sooner."))
-            display(Markdown('<br> **Folders for ' + self.compute.username.split('@', 1)[0] + '**'))
+            pageNum = self.folderPage
+            numFolders = self.foldersPerPage
+            firstFolder = pageNum * numFolders
+            lastFolder = firstFolder + numFolders
+            if (lastFolder >= len(folders["folder"])):
+                lastFolder = len(folders["folder"])
+            display(Markdown('<br> **Showing folders ' + str(firstFolder + 1) + ' to ' + str(lastFolder) + ' of ' + str(len(folders["folder"]))
+                             + ' for ' + self.compute.username.split('@', 1)[0] + '**'))
+            backButton = widgets.Button(description="Previous Page")
+            nextButton = widgets.Button(description="Next Page")
+            pageButtons = widgets.HBox([backButton, nextButton])
+            backButton.on_click(self.onPrevPageButton())
+            nextButton.on_click(self.onNextPageButton(len(folders["folder"])))
+            display(pageButtons)
             listNames = []
             for i in folders["folder"]:
                 if i['name'] != None:
                     listNames.append(i['name'])
             listNames = [*set(listNames)]
-            for i in reversed(folders["folder"]):
+            # for k in range(firstFolder, lastFolder + 1):
+            #     i = reversed(folders["folder"]).at(k)
+            for i in list(reversed(folders["folder"]))[firstFolder:lastFolder]:
                 headers = ['id', 'name', 'hpc', 'userId', 'isWritable', 'createdAt', 'updatedAt', 'deletedAt']
                 data = [[]]
                 for j in headers:
@@ -564,6 +579,8 @@ class UI:
                 renameButton.on_click(self.onRenameJobButton(i, nameSelect))
                 nameSelect.on_submit(self.onRenameJobButton(i, nameSelect))
                 display(renameWidgets)
+            display(Markdown('<br> **Showing folders ' + str(firstFolder + 1) + ' to ' + str(lastFolder) + ' of ' + str(len(folders["folder"])) + '**'))
+            display(pageButtons)
             
     def renderRecentlySubmittedJobs(self):
         """
@@ -818,6 +835,22 @@ class UI:
             self.renderFolders()
         return on_click
     
+    def onPrevPageButton(self):
+        def on_click(change):
+            if (self.folderPage - 1 >= 0):
+                self.folderPage -= 1
+            self.folders['output'].clear_output()
+            self.renderFolders()
+        return on_click
+    
+    def onNextPageButton(self, totalJobs):
+        def on_click(change):
+            if ((self.folderPage + 1) * self.foldersPerPage < totalJobs):
+                self.folderPage += 1
+            self.folders['output'].clear_output()
+            self.renderFolders()
+        return on_click
+    
     # helpers
     def init(self):
         """
@@ -835,6 +868,8 @@ class UI:
         self.jobFinished = False
         self.downloading = False
         self.refreshing = False
+        self.folderPage = 0
+        self.foldersPerPage = 10
         # components
         self.jobTemplate = {'output': None}
         self.description = {'output': None}
