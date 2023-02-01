@@ -236,7 +236,7 @@ class UI:
             [self.email['checkbox'], self.email['text']])
         with self.email['output']:
             display(self.email['hbox'])
-    
+
     def renderNaming(self):
         """
         Displays a box to toggle naming the job being submitted
@@ -253,6 +253,7 @@ class UI:
         self.name['hbox'] = widgets.HBox(
             [self.name['checkbox'], self.name['text']])
         with self.name['output']:
+            display(Markdown("Please note that the naming feature only allows for names made up of letters, numbers, and the characters '  ', ' . ', and ' _ '. Other characters will be removed from your input."))
             display(self.name['hbox'])
 
     def renderSlurm(self):
@@ -542,14 +543,14 @@ class UI:
             self.folders['output'] = widgets.Output()
         with self.folders['output']:
             display(Markdown("We will do our best to keep this data for 90 days, but cannot guarantee it won’t be deleted sooner."))
+            display(Markdown("Please note that the renaming feature only allows for names made up of letters, numbers, and the characters '  ', ' . ', and ' _ '. Other characters will be removed from your input."))
             pageNum = self.folderPage
             numFolders = self.foldersPerPage
             firstFolder = pageNum * numFolders
             lastFolder = firstFolder + numFolders
             if (lastFolder >= len(folders["folder"])):
                 lastFolder = len(folders["folder"])
-            display(Markdown('<br> **Showing folders ' + str(firstFolder + 1) + ' to ' + str(lastFolder) + ' of ' + str(len(folders["folder"]))
-                             + ' for ' + self.compute.username.split('@', 1)[0] + '**'))
+            display(Markdown('<br> **Showing folders ' + str(firstFolder + 1) + ' to ' + str(lastFolder) + ' of ' + str(len(folders["folder"])) + ' for ' + self.compute.username.split('@', 1)[0] + '**'))
             backButton = widgets.Button(description="Previous Page")
             nextButton = widgets.Button(description="Next Page")
             pageButtons = widgets.HBox([backButton, nextButton])
@@ -558,11 +559,9 @@ class UI:
             display(pageButtons)
             listNames = []
             for i in folders["folder"]:
-                if i['name'] != None:
+                if i['name'] is not None:
                     listNames.append(i['name'])
             listNames = [*set(listNames)]
-            # for k in range(firstFolder, lastFolder + 1):
-            #     i = reversed(folders["folder"]).at(k)
             for i in list(reversed(folders["folder"]))[firstFolder:lastFolder]:
                 headers = ['id', 'name', 'hpc', 'userId', 'isWritable', 'createdAt', 'updatedAt', 'deletedAt']
                 data = [[]]
@@ -581,7 +580,7 @@ class UI:
                 display(renameWidgets)
             display(Markdown('<br> **Showing folders ' + str(firstFolder + 1) + ' to ' + str(lastFolder) + ' of ' + str(len(folders["folder"])) + '**'))
             display(pageButtons)
-            
+
     def renderRecentlySubmittedJobs(self):
         """
         Display the jobs most recently submitted by the logged in user, allows user to restore these jobs.
@@ -732,14 +731,14 @@ class UI:
             self.renderRecentlySubmittedJobs()
             self.renderSubmitNew()
             """ If the user has indicated the job should be named and provided a name, the produced files are named here """
-            if data['name'] != None and data['name'] != "":
+            if data['name'] is not None and data['name'] != "":
                 nameForFile = self.makeNameSafe(data['name'])
                 jobs = self.compute.client.request('GET', '/user/job', {'jupyterhubApiToken': self.compute.jupyterhubApiToken})
                 job = jobs['job'][len(jobs['job']) - 1]
                 useFolder = job['remoteExecutableFolder']['id']
-                response = self.compute.client.request('PUT', '/folder/' + useFolder, {'jupyterhubApiToken': self.compute.jupyterhubApiToken, 'name':nameForFile + '_executable'})
+                self.compute.client.request('PUT', '/folder/' + useFolder, {'jupyterhubApiToken': self.compute.jupyterhubApiToken, 'name': nameForFile + '_executable'})
                 useFolder = job['remoteResultFolder']['id']
-                response = self.compute.client.request('PUT', '/folder/' + useFolder, {'jupyterhubApiToken': self.compute.jupyterhubApiToken, 'name':nameForFile + '_result'})
+                self.compute.client.request('PUT', '/folder/' + useFolder, {'jupyterhubApiToken': self.compute.jupyterhubApiToken, 'name': nameForFile + '_result'})
         return on_click
 
     def onJobDropdownChange(self):
@@ -826,15 +825,15 @@ class UI:
                 "toEndpoint": localEndpoint
             })
         return on_click
-    
+
     def onRenameJobButton(self, folder, wdgt):
         def on_click(change):
             newName = self.makeNameSafe(wdgt.value)
-            response = self.compute.client.request('PUT', '/folder/' + folder["id"], {'jupyterhubApiToken': self.compute.jupyterhubApiToken, 'name' : newName})
+            self.compute.client.request('PUT', '/folder/' + folder["id"], {'jupyterhubApiToken': self.compute.jupyterhubApiToken, 'name': newName})
             self.folders['output'].clear_output()
             self.renderFolders()
         return on_click
-    
+
     def onPrevPageButton(self):
         def on_click(change):
             if (self.folderPage - 1 >= 0):
@@ -842,7 +841,7 @@ class UI:
             self.folders['output'].clear_output()
             self.renderFolders()
         return on_click
-    
+
     def onNextPageButton(self, totalJobs):
         def on_click(change):
             if ((self.folderPage + 1) * self.foldersPerPage < totalJobs):
@@ -850,7 +849,7 @@ class UI:
             self.folders['output'].clear_output()
             self.renderFolders()
         return on_click
-    
+
     # helpers
     def init(self):
         """
@@ -912,9 +911,9 @@ class UI:
 
     """ Used to ensure that folders have names with only safe characters """
     def makeNameSafe(self, text):
-        keepcharacters = (' ','.','_')
+        keepcharacters = (' ', '.', '_')
         return "".join(c for c in text if c.isalnum() or c in keepcharacters).rstrip()
-            
+
     # data
     def get_data(self):
         """
