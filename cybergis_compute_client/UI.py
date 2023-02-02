@@ -253,7 +253,7 @@ class UI:
         self.name['hbox'] = widgets.HBox(
             [self.name['checkbox'], self.name['text']])
         with self.name['output']:
-            display(Markdown("Please note that the naming feature only allows for names made up of letters, numbers, and the characters '  ', ' . ', and ' _ '. Other characters will be removed from your input."))
+            display(Markdown("Please note that the naming feature only allows for names made up of letters, numbers, and the characters ' . ' and ' _ '. Other characters will be removed from your input."))
             display(self.name['hbox'])
 
     def renderSlurm(self):
@@ -543,7 +543,7 @@ class UI:
             self.folders['output'] = widgets.Output()
         with self.folders['output']:
             display(Markdown("We will do our best to keep this data for 90 days, but cannot guarantee it won’t be deleted sooner."))
-            display(Markdown("Please note that the renaming feature only allows for names made up of letters, numbers, and the characters '  ', ' . ', and ' _ '. Other characters will be removed from your input."))
+            display(Markdown("Please note that the renaming feature only allows for names made up of letters, numbers, and the characters ' . ' and ' _ '. Other characters will be removed from your input."))
             pageNum = self.folderPage
             numFolders = self.foldersPerPage
             firstFolder = pageNum * numFolders
@@ -911,7 +911,7 @@ class UI:
 
     """ Used to ensure that folders have names with only safe characters """
     def makeNameSafe(self, text):
-        keepcharacters = (' ', '.', '_')
+        keepcharacters = ('.', '_')
         return "".join(c for c in text if c.isalnum() or c in keepcharacters).rstrip()
 
     # data
