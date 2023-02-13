@@ -68,7 +68,7 @@ class Zip(object):
             self.in_memory_zip, "a", zipfile.ZIP_DEFLATED, False)
 
         # Write the file to the in-memory zip
-        # zf.writestr(filename_in_zip, file_contents, zipfile.ZIP_DEFLATED)
+        zf.writestr(filename_in_zip, file_contents, zipfile.ZIP_DEFLATED)
 
         # Mark the files as having been created on Windows so that
         # # Unix permissions are not inferred as 0000
