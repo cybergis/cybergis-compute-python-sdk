@@ -12,7 +12,7 @@
 
 
 <div class=viewcode-block  id=Zip ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.Zip.Zip">[docs]</a><span class=k >class</span> <span class=nc >Zip</span><span class=p >(</span><span class=nb >object</span><span class=p >):</span>
-    <span class=sd >"""</span>
+<span class=w >    </span><span class=sd >"""</span>
 <span class=sd >    Zip class</span>
 
 <span class=sd >    An interface that creates an in-memory zip object to</span>
@@ -22,12 +22,12 @@
 <span class=sd >        in_memory_zip: A BytesIO in-memory file</span>
 <span class=sd >    """</span>
     <span class=k >def</span> <span class=fm >__init__</span><span class=p >(</span><span class=bp >self</span><span class=p >):</span>
-        <span class=sd >"""Inits Zip with in_memory_zip"""</span>
+<span class=w >        </span><span class=sd >"""Inits Zip with in_memory_zip"""</span>
         <span class=c1 ># Create the in-memory file-like object</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >in_memory_zip</span> <span class=o >=</span> <span class=n >BytesIO</span><span class=p >()</span>
 
 <div class=viewcode-block  id=Zip.mkdir ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.Zip.Zip.mkdir">[docs]</a>    <span class=k >def</span> <span class=nf >mkdir</span><span class=p >(</span><span class=bp >self</span><span class=p >,</span> <span class=n >filedir_in_zip</span><span class=p >):</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Creates a directory with the name `filedir_in_zip`</span>
 
 <span class=sd >        Args:</span>
@@ -52,7 +52,7 @@
         <span class=k >return</span> <span class=bp >self</span></div>
 
 <div class=viewcode-block  id=Zip.append ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.Zip.Zip.append">[docs]</a>    <span class=k >def</span> <span class=nf >append</span><span class=p >(</span><span class=bp >self</span><span class=p >,</span> <span class=n >filename_in_zip</span><span class=p >,</span> <span class=n >file_contents</span><span class=p >):</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Appends a file with name filename_in_zip and</span>
 <span class=sd >        contents of file_contents to the in-memory zip.</span>
 
@@ -79,7 +79,7 @@
         <span class=k >return</span> <span class=bp >self</span></div>
 
 <div class=viewcode-block  id=Zip.read ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.Zip.Zip.read">[docs]</a>    <span class=k >def</span> <span class=nf >read</span><span class=p >(</span><span class=bp >self</span><span class=p >):</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Reads the contents of the in-memory zip.</span>
 
 <span class=sd >        Returns:</span>
@@ -89,7 +89,7 @@
         <span class=k >return</span> <span class=bp >self</span><span class=o >.</span><span class=n >in_memory_zip</span><span class=o >.</span><span class=n >read</span><span class=p >()</span></div>
 
 <div class=viewcode-block  id=Zip.write ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.Zip.Zip.write">[docs]</a>    <span class=k >def</span> <span class=nf >write</span><span class=p >(</span><span class=bp >self</span><span class=p >,</span> <span class=n >filename</span><span class=p >):</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Writes the in-memory zip to a file</span>
 
 <span class=sd >        Args:</span>

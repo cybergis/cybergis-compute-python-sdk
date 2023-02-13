@@ -20,7 +20,7 @@
 
 
 <div class=viewcode-block  id=CyberGISCompute ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute">[docs]</a><span class=k >class</span> <span class=nc >CyberGISCompute</span><span class=p >:</span>
-    <span class=sd >"""CyberGISCompute class</span>
+<span class=w >    </span><span class=sd >"""CyberGISCompute class</span>
 <span class=sd >    An inteface that handles all interactions with the HPC backend</span>
 
 <span class=sd >    Args:</span>
@@ -46,7 +46,7 @@
     <span class=n >job</span> <span class=o >=</span> <span class=kc >None</span>
 
     <span class=k >def</span> <span class=fm >__init__</span><span class=p >(</span><span class=bp >self</span><span class=p >,</span> <span class=n >url</span><span class=o >=</span><span class=s2 >"cgjobsup.cigi.illinois.edu"</span><span class=p >,</span> <span class=n >port</span><span class=o >=</span><span class=mi >443</span><span class=p >,</span> <span class=n >protocol</span><span class=o >=</span><span class=s1 >'HTTPS'</span><span class=p >,</span> <span class=n >suffix</span><span class=o >=</span><span class=s2 >""</span><span class=p >,</span> <span class=n >isJupyter</span><span class=o >=</span><span class=kc >True</span><span class=p >):</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Initializes instance CyberGISCompute using inputs from the client</span>
 
 <span class=sd >        Args:</span>
@@ -72,7 +72,7 @@
         <span class=bp >self</span><span class=o >.</span><span class=n >recentDownloadPath</span> <span class=o >=</span> <span class=kc >None</span>
 
 <div class=viewcode-block  id=CyberGISCompute.encrypt_token ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.encrypt_token">[docs]</a>    <span class=k >def</span> <span class=nf >encrypt_token</span><span class=p >(</span><span class=bp >self</span><span class=p >,</span> <span class=n >token</span><span class=p >):</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Encrypts the token using host variable.</span>
 
 <span class=sd >        Args:</span>
@@ -82,7 +82,7 @@
             <span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >jupyterhubHost</span> <span class=o >+</span> <span class=s1 >'@'</span> <span class=o >+</span> <span class=n >token</span><span class=p >)</span><span class=o >.</span><span class=n >encode</span><span class=p >(</span><span class=s1 >'ascii'</span><span class=p >))</span><span class=o >.</span><span class=n >decode</span><span class=p >(</span><span class=s1 >'utf-8'</span><span class=p >)</span></div>
 
 <div class=viewcode-block  id=CyberGISCompute.get_jupyterhubHost ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.get_jupyterhubHost">[docs]</a>    <span class=k >def</span> <span class=nf >get_jupyterhubHost</span><span class=p >(</span><span class=bp >self</span><span class=p >):</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Gets the jupyterhub host(str) from the user.</span>
 <span class=sd >        """</span>
         <span class=k >if</span> <span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >jupyterhubHost</span> <span class=ow >is</span> <span class=kc >None</span><span class=p >):</span>
@@ -91,7 +91,7 @@
             <span class=bp >self</span><span class=o >.</span><span class=n >jupyterhubHost</span> <span class=o >=</span> <span class=nb >input</span><span class=p >(</span><span class=s1 >'Enter your jupyterhubHost here: '</span><span class=p >)</span></div>
 
 <div class=viewcode-block  id=CyberGISCompute.set_username ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.set_username">[docs]</a>    <span class=k >def</span> <span class=nf >set_username</span><span class=p >(</span><span class=bp >self</span><span class=p >):</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Authenticates the token(str) and saves the username(str).</span>
 <span class=sd >        """</span>
         <span class=n >res</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >client</span><span class=o >.</span><span class=n >request</span><span class=p >(</span>
@@ -99,14 +99,14 @@
         <span class=bp >self</span><span class=o >.</span><span class=n >username</span> <span class=o >=</span> <span class=n >res</span><span class=p >[</span><span class=s1 >'username'</span><span class=p >]</span></div>
 
 <div class=viewcode-block  id=CyberGISCompute.save_token ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.save_token">[docs]</a>    <span class=k >def</span> <span class=nf >save_token</span><span class=p >(</span><span class=bp >self</span><span class=p >):</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Writes token(str) to json file.</span>
 <span class=sd >        """</span>
         <span class=k >with</span> <span class=nb >open</span><span class=p >(</span><span class=s1 >'./cybergis_compute_user.json'</span><span class=p >,</span> <span class=s1 >'w'</span><span class=p >)</span> <span class=k >as</span> <span class=n >json_file</span><span class=p >:</span>
             <span class=n >json</span><span class=o >.</span><span class=n >dump</span><span class=p >({</span><span class=s2 >"token"</span><span class=p >:</span> <span class=bp >self</span><span class=o >.</span><span class=n >jupyterhubApiToken</span><span class=p >},</span> <span class=n >json_file</span><span class=p >)</span></div>
 
 <div class=viewcode-block  id=CyberGISCompute.login_token ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.login_token">[docs]</a>    <span class=k >def</span> <span class=nf >login_token</span><span class=p >(</span><span class=bp >self</span><span class=p >):</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Saves username(str) and token(str).</span>
 <span class=sd >        """</span>
         <span class=k >try</span><span class=p >:</span>
@@ -117,7 +117,7 @@
             <span class=nb >print</span><span class=p >(</span><span class=s1 >'❌ Failed to login via system token'</span><span class=p >)</span></div>
 
 <div class=viewcode-block  id=CyberGISCompute.host_token_login ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.host_token_login">[docs]</a>    <span class=k >def</span> <span class=nf >host_token_login</span><span class=p >(</span><span class=bp >self</span><span class=p >,</span> <span class=n >token</span><span class=p >):</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Gets the host(str), encrypts the token(str) and calls login.</span>
 
 <span class=sd >        Args:</span>
@@ -128,7 +128,7 @@
         <span class=k >return</span> <span class=bp >self</span><span class=o >.</span><span class=n >login_token</span><span class=p >()</span></div>
 
 <div class=viewcode-block  id=CyberGISCompute.login_manual ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.login_manual">[docs]</a>    <span class=k >def</span> <span class=nf >login_manual</span><span class=p >(</span><span class=bp >self</span><span class=p >):</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Asks for token and host from user and calls login_token function.</span>
 <span class=sd >        """</span>
         <span class=k >if</span> <span class=bp >self</span><span class=o >.</span><span class=n >isJupyter</span><span class=p >:</span>
@@ -142,7 +142,7 @@
             <span class=nb >print</span><span class=p >(</span><span class=s1 >'❌ Enable Jupyter using .enable_jupyter() before you login'</span><span class=p >)</span></div>
 
 <div class=viewcode-block  id=CyberGISCompute.login_json ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.login_json">[docs]</a>    <span class=k >def</span> <span class=nf >login_json</span><span class=p >(</span><span class=bp >self</span><span class=p >):</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Checks for json file and calls login_token function.</span>
 <span class=sd >        """</span>
         <span class=k >with</span> <span class=nb >open</span><span class=p >(</span><span class=n >os</span><span class=o >.</span><span class=n >path</span><span class=o >.</span><span class=n >abspath</span><span class=p >(</span><span class=s1 >'cybergis_compute_user.json'</span><span class=p >))</span> <span class=k >as</span> <span class=n >f</span><span class=p >:</span>
@@ -162,7 +162,7 @@
                 <span class=nb >print</span><span class=p >(</span><span class=s1 >'❌ Failed to login via token JSON file'</span><span class=p >)</span></div>
 
 <div class=viewcode-block  id=CyberGISCompute.login ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.login">[docs]</a>    <span class=k >def</span> <span class=nf >login</span><span class=p >(</span><span class=bp >self</span><span class=p >,</span> <span class=n >manualLogin</span><span class=o >=</span><span class=kc >False</span><span class=p >,</span> <span class=n >manualHost</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span> <span class=n >verbose</span><span class=o >=</span><span class=kc >True</span><span class=p >):</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Authenticates the client's jupyterhubApiToken and gives them access</span>
 <span class=sd >        to CyberGISCompute features</span>
 
@@ -195,7 +195,7 @@
             <span class=nb >print</span><span class=p >(</span><span class=s1 >'❌ Not logged in. To enable more features, use .login()'</span><span class=p >)</span></div>
 
 <div class=viewcode-block  id=CyberGISCompute.create_job ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.create_job">[docs]</a>    <span class=k >def</span> <span class=nf >create_job</span><span class=p >(</span><span class=bp >self</span><span class=p >,</span> <span class=n >maintainer</span><span class=o >=</span><span class=s1 >'community_contribution'</span><span class=p >,</span> <span class=n >hpc</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span> <span class=n >hpcUsername</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span> <span class=n >hpcPassword</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span> <span class=n >verbose</span><span class=o >=</span><span class=kc >True</span><span class=p >):</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Creates a job object</span>
 <span class=sd >        Initializes instance CyberGISCompute using inputs from the client</span>
 
@@ -214,7 +214,7 @@
         <span class=k >return</span> <span class=n >Job</span><span class=p >(</span><span class=n >maintainer</span><span class=o >=</span><span class=n >maintainer</span><span class=p >,</span> <span class=n >hpc</span><span class=o >=</span><span class=n >hpc</span><span class=p >,</span> <span class=nb >id</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span> <span class=n >hpcUsername</span><span class=o >=</span><span class=n >hpcUsername</span><span class=p >,</span> <span class=n >hpcPassword</span><span class=o >=</span><span class=n >hpcPassword</span><span class=p >,</span> <span class=n >client</span><span class=o >=</span><span class=bp >self</span><span class=o >.</span><span class=n >client</span><span class=p >,</span> <span class=n >isJupyter</span><span class=o >=</span><span class=bp >self</span><span class=o >.</span><span class=n >isJupyter</span><span class=p >,</span> <span class=n >jupyterhubApiToken</span><span class=o >=</span><span class=bp >self</span><span class=o >.</span><span class=n >jupyterhubApiToken</span><span class=p >,</span> <span class=n >printJob</span><span class=o >=</span><span class=n >verbose</span><span class=p >)</span></div>
 
 <div class=viewcode-block  id=CyberGISCompute.get_job_by_id ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.get_job_by_id">[docs]</a>    <span class=k >def</span> <span class=nf >get_job_by_id</span><span class=p >(</span><span class=bp >self</span><span class=p >,</span> <span class=nb >id</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span> <span class=n >verbose</span><span class=o >=</span><span class=kc >True</span><span class=p >):</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Returns Job object with the specified id</span>
 
 <span class=sd >        Args:</span>
@@ -227,7 +227,7 @@
         <span class=k >return</span> <span class=n >Job</span><span class=p >(</span><span class=n >client</span><span class=o >=</span><span class=bp >self</span><span class=o >.</span><span class=n >client</span><span class=p >,</span> <span class=nb >id</span><span class=o >=</span><span class=nb >id</span><span class=p >,</span> <span class=n >isJupyter</span><span class=o >=</span><span class=bp >self</span><span class=o >.</span><span class=n >isJupyter</span><span class=p >,</span> <span class=n >jupyterhubApiToken</span><span class=o >=</span><span class=bp >self</span><span class=o >.</span><span class=n >jupyterhubApiToken</span><span class=p >,</span> <span class=n >printJob</span><span class=o >=</span><span class=n >verbose</span><span class=p >)</span></div>
 
 <div class=viewcode-block  id=CyberGISCompute.get_slurm_usage ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.get_slurm_usage">[docs]</a>    <span class=k >def</span> <span class=nf >get_slurm_usage</span><span class=p >(</span><span class=bp >self</span><span class=p >,</span> <span class=n >raw</span><span class=o >=</span><span class=kc >False</span><span class=p >):</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Prints slurm usage</span>
 
 <span class=sd >        Args:</span>
@@ -247,7 +247,7 @@
                 <span class=s2 >"Nodes: </span><span class=si >{}</span><span class=s2 >&lt;br&gt;Allocated CPUs: </span><span class=si >{}</span><span class=s2 >&lt;br&gt;Total CPU Time: </span><span class=si >{}</span><span class=s2 >&lt;br&gt;Memory Utilized: </span><span class=si >{}</span><span class=s2 >&lt;br&gt;Total Allocated Memory: </span><span class=si >{}</span><span class=s2 >&lt;br&gt;Total Walltime: </span><span class=si >{}</span><span class=s2 >"</span><span class=o >.</span><span class=n >format</span><span class=p >(</span><span class=n >usage</span><span class=p >[</span><span class=s1 >'nodes'</span><span class=p >],</span> <span class=n >usage</span><span class=p >[</span><span class=s1 >'cpus'</span><span class=p >],</span> <span class=n >usage</span><span class=p >[</span><span class=s1 >'cpuTime'</span><span class=p >],</span> <span class=n >usage</span><span class=p >[</span><span class=s1 >'memory'</span><span class=p >],</span> <span class=n >usage</span><span class=p >[</span><span class=s1 >'memoryUsage'</span><span class=p >],</span> <span class=n >usage</span><span class=p >[</span><span class=s1 >'walltime'</span><span class=p >])))</span></div>
 
 <div class=viewcode-block  id=CyberGISCompute.list_job ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.list_job">[docs]</a>    <span class=k >def</span> <span class=nf >list_job</span><span class=p >(</span><span class=bp >self</span><span class=p >,</span> <span class=n >raw</span><span class=o >=</span><span class=kc >False</span><span class=p >):</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Prints a list of jobs that were submitted</span>
 
 <span class=sd >        Args:</span>
@@ -297,7 +297,7 @@
             <span class=nb >print</span><span class=p >(</span><span class=n >MarkdownTable</span><span class=o >.</span><span class=n >render</span><span class=p >(</span><span class=n >data</span><span class=p >,</span> <span class=n >headers</span><span class=p >))</span></div>
 
 <div class=viewcode-block  id=CyberGISCompute.list_hpc ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.list_hpc">[docs]</a>    <span class=k >def</span> <span class=nf >list_hpc</span><span class=p >(</span><span class=bp >self</span><span class=p >,</span> <span class=n >raw</span><span class=o >=</span><span class=kc >False</span><span class=p >):</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Prints a list of hpc resources that the server supports</span>
 
 <span class=sd >        Args:</span>
@@ -331,7 +331,7 @@
             <span class=nb >print</span><span class=p >(</span><span class=n >MarkdownTable</span><span class=o >.</span><span class=n >render</span><span class=p >(</span><span class=n >data</span><span class=p >,</span> <span class=n >headers</span><span class=p >))</span></div>
 
 <div class=viewcode-block  id=CyberGISCompute.list_container ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.list_container">[docs]</a>    <span class=k >def</span> <span class=nf >list_container</span><span class=p >(</span><span class=bp >self</span><span class=p >,</span> <span class=n >raw</span><span class=o >=</span><span class=kc >False</span><span class=p >):</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Prints a list of containers that the server supports</span>
 
 <span class=sd >        Args:</span>
@@ -364,7 +364,7 @@
             <span class=nb >print</span><span class=p >(</span><span class=n >MarkdownTable</span><span class=o >.</span><span class=n >render</span><span class=p >(</span><span class=n >data</span><span class=p >,</span> <span class=n >headers</span><span class=p >))</span></div>
 
 <div class=viewcode-block  id=CyberGISCompute.list_jupyter_host ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.list_jupyter_host">[docs]</a>    <span class=k >def</span> <span class=nf >list_jupyter_host</span><span class=p >(</span><span class=bp >self</span><span class=p >,</span> <span class=n >raw</span><span class=o >=</span><span class=kc >False</span><span class=p >):</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Prints a list of jupyter hosts that the server supports</span>
 
 <span class=sd >        Args:</span>
@@ -399,7 +399,7 @@
             <span class=nb >print</span><span class=p >(</span><span class=s2 >"The server "</span> <span class=o >+</span> <span class=bp >self</span><span class=o >.</span><span class=n >client</span><span class=o >.</span><span class=n >url</span> <span class=o >+</span> <span class=s2 >" doesn't have this route"</span><span class=p >)</span></div>
 
 <div class=viewcode-block  id=CyberGISCompute.list_git ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.list_git">[docs]</a>    <span class=k >def</span> <span class=nf >list_git</span><span class=p >(</span><span class=bp >self</span><span class=p >,</span> <span class=n >raw</span><span class=o >=</span><span class=kc >False</span><span class=p >):</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Prints a list of Git projects that the server supports</span>
 
 <span class=sd >        Args:</span>
@@ -434,7 +434,7 @@
             <span class=nb >print</span><span class=p >(</span><span class=n >MarkdownTable</span><span class=o >.</span><span class=n >render</span><span class=p >(</span><span class=n >data</span><span class=p >,</span> <span class=n >headers</span><span class=p >))</span></div>
 
 <div class=viewcode-block  id=CyberGISCompute.list_maintainer ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.list_maintainer">[docs]</a>    <span class=k >def</span> <span class=nf >list_maintainer</span><span class=p >(</span><span class=bp >self</span><span class=p >,</span> <span class=n >raw</span><span class=o >=</span><span class=kc >False</span><span class=p >):</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        prints a list of maintainers that the server supports</span>
 
 <span class=sd >        Args:</span>
@@ -491,7 +491,7 @@
 
     <span class=c1 ># Integrated functions</span>
 <div class=viewcode-block  id=CyberGISCompute.list_info ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.list_info">[docs]</a>    <span class=k >def</span> <span class=nf >list_info</span><span class=p >(</span><span class=bp >self</span><span class=p >,</span> <span class=n >list_maintainer</span><span class=o >=</span><span class=kc >False</span><span class=p >,</span> <span class=n >list_container</span><span class=o >=</span><span class=kc >False</span><span class=p >):</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Calls :meth:`cybergis_compute_client.CyberGISCompute.CyberGISCompute.list_git`, :meth:`cybergis_compute_client.CyberGISCompute.CyberGISCompute.list_hpc`, :meth:`cybergis_compute_client.CyberGISCompute.CyberGISCompute.list_job` with options to call</span>
 <span class=sd >        :meth:`cybergis_compute_client.CyberGISCompute.CyberGISCompute.list_maintainer` and :meth:`cybergis_compute_client.CyberGISCompute.CyberGISCompute.list_container`.</span>
 
@@ -523,7 +523,7 @@
             <span class=n >defaultJob</span><span class=o >=</span><span class=s2 >"hello_world"</span><span class=p >,</span>
             <span class=n >defaultDataFolder</span><span class=o >=</span><span class=s2 >"./"</span><span class=p >,</span>
             <span class=n >defaultRemoteResultFolder</span><span class=o >=</span><span class=kc >None</span><span class=p >):</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Displays the job submission UI.</span>
 
 <span class=sd >        Args:</span>
@@ -534,7 +534,7 @@
         <span class=bp >self</span><span class=o >.</span><span class=n >show_ui</span><span class=p >(</span><span class=n >input_params</span><span class=p >,</span> <span class=n >defaultJob</span><span class=p >,</span> <span class=n >defaultDataFolder</span><span class=p >,</span> <span class=n >defaultRemoteResultFolder</span><span class=p >)</span></div>
 
 <div class=viewcode-block  id=CyberGISCompute.show_ui ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.show_ui">[docs]</a>    <span class=k >def</span> <span class=nf >show_ui</span><span class=p >(</span><span class=bp >self</span><span class=p >,</span> <span class=n >input_params</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span> <span class=n >defaultJob</span><span class=o >=</span><span class=s2 >"hello_world"</span><span class=p >,</span> <span class=n >defaultDataFolder</span><span class=o >=</span><span class=s2 >"./"</span><span class=p >,</span> <span class=n >defaultRemoteResultFolder</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span> <span class=n >jupyterhubApiToken</span><span class=o >=</span><span class=kc >None</span><span class=p >):</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Displays the job submission UI</span>
 
 <span class=sd >        Args:</span>
@@ -556,7 +556,7 @@
         <span class=bp >self</span><span class=o >.</span><span class=n >ui</span><span class=o >.</span><span class=n >render</span><span class=p >()</span></div>
 
 <div class=viewcode-block  id=CyberGISCompute.get_latest_created_job ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.get_latest_created_job">[docs]</a>    <span class=k >def</span> <span class=nf >get_latest_created_job</span><span class=p >(</span><span class=bp >self</span><span class=p >):</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Return the current job instance</span>
 
 <span class=sd >        Returns:</span>
@@ -566,7 +566,7 @@
 
     <span class=c1 ># helper functions</span>
 <div class=viewcode-block  id=CyberGISCompute.enable_jupyter ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.enable_jupyter">[docs]</a>    <span class=k >def</span> <span class=nf >enable_jupyter</span><span class=p >(</span><span class=bp >self</span><span class=p >):</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Sets up jupyter environment in jupyterhubHost</span>
 <span class=sd >        """</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >isJupyter</span> <span class=o >=</span> <span class=kc >True</span>
@@ -581,7 +581,7 @@
                 <span class=s1 >'IPython.notebook.kernel.execute(''`CyberGISCompute.jupyterhubHost = "$</span><span class=si >{window.location.host}</span><span class=s1 >"`);'</span><span class=p >))</span></div>
 
 <div class=viewcode-block  id=CyberGISCompute.get_user_jupyter_globus ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.get_user_jupyter_globus">[docs]</a>    <span class=k >def</span> <span class=nf >get_user_jupyter_globus</span><span class=p >(</span><span class=bp >self</span><span class=p >):</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Return the current job instance</span>
 
 <span class=sd >        Returns:</span>
@@ -592,7 +592,7 @@
                 <span class=s2 >"jupyterhubApiToken"</span><span class=p >:</span> <span class=bp >self</span><span class=o >.</span><span class=n >jupyterhubApiToken</span><span class=p >})</span></div>
 
 <div class=viewcode-block  id=CyberGISCompute.is_login ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.is_login">[docs]</a>    <span class=k >def</span> <span class=nf >is_login</span><span class=p >(</span><span class=bp >self</span><span class=p >):</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Checks whether jupyterhubApi token exists or not</span>
 
 <span class=sd >        Returns:</span>
