@@ -145,21 +145,20 @@
 <span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Checks for json file and calls login_token function.</span>
 <span class=sd >        """</span>
-        <span class=k >with</span> <span class=nb >open</span><span class=p >(</span><span class=n >os</span><span class=o >.</span><span class=n >path</span><span class=o >.</span><span class=n >abspath</span><span class=p >(</span><span class=s1 >'cybergis_compute_user.json'</span><span class=p >))</span> <span class=k >as</span> <span class=n >f</span><span class=p >:</span>
-            <span class=n >user</span> <span class=o >=</span> <span class=n >json</span><span class=o >.</span><span class=n >load</span><span class=p >(</span><span class=n >f</span><span class=p >)</span>
-            <span class=n >token</span> <span class=o >=</span> <span class=n >user</span><span class=p >[</span><span class=s1 >'token'</span><span class=p >]</span>
-            <span class=nb >print</span><span class=p >(</span><span class=s1 >'📃 Found "cybergis_compute_user.json"'</span><span class=p >)</span>
-            <span class=nb >print</span><span class=p >(</span><span class=s1 >'NOTE: if you want to login as another user, please remove this file'</span><span class=p >)</span>
-            <span class=k >try</span><span class=p >:</span>
-                <span class=bp >self</span><span class=o >.</span><span class=n >jupyterhubApiToken</span> <span class=o >=</span> <span class=n >token</span>
-                <span class=bp >self</span><span class=o >.</span><span class=n >set_username</span><span class=p >()</span>
-                <span class=bp >self</span><span class=o >.</span><span class=n >save_token</span><span class=p >()</span>
-                <span class=k >return</span> <span class=bp >self</span><span class=o >.</span><span class=n >login</span><span class=p >()</span>
-            <span class=k >except</span><span class=p >:</span>
-                <span class=n >envToken</span> <span class=o >=</span> <span class=n >os</span><span class=o >.</span><span class=n >getenv</span><span class=p >(</span><span class=s1 >'JUPYTERHUB_API_TOKEN'</span><span class=p >)</span>
-                <span class=k >if</span> <span class=n >envToken</span> <span class=ow >is</span> <span class=ow >not</span> <span class=kc >None</span><span class=p >:</span>
-                    <span class=k >return</span> <span class=bp >self</span><span class=o >.</span><span class=n >host_token_login</span><span class=p >(</span><span class=n >envToken</span><span class=p >)</span>
-                <span class=nb >print</span><span class=p >(</span><span class=s1 >'❌ Failed to login via token JSON file'</span><span class=p >)</span></div>
+        <span class=k >try</span><span class=p >:</span>
+            <span class=k >with</span> <span class=nb >open</span><span class=p >(</span><span class=n >os</span><span class=o >.</span><span class=n >path</span><span class=o >.</span><span class=n >abspath</span><span class=p >(</span><span class=s1 >'cybergis_compute_user.json'</span><span class=p >))</span> <span class=k >as</span> <span class=n >f</span><span class=p >:</span>
+                <span class=n >user</span> <span class=o >=</span> <span class=n >json</span><span class=o >.</span><span class=n >load</span><span class=p >(</span><span class=n >f</span><span class=p >)</span>
+                <span class=n >token</span> <span class=o >=</span> <span class=n >user</span><span class=p >[</span><span class=s1 >'token'</span><span class=p >]</span>
+            <span class=nb >print</span><span class=p >(</span><span class=s1 >'📃 Found "cybergis_compute_user.json! NOTE: if you want to login as another user, please remove this file'</span><span class=p >)</span>
+            <span class=bp >self</span><span class=o >.</span><span class=n >jupyterhubApiToken</span> <span class=o >=</span> <span class=n >token</span>
+            <span class=bp >self</span><span class=o >.</span><span class=n >set_username</span><span class=p >()</span>
+            <span class=bp >self</span><span class=o >.</span><span class=n >save_token</span><span class=p >()</span>
+            <span class=k >return</span> <span class=bp >self</span><span class=o >.</span><span class=n >login</span><span class=p >()</span>
+        <span class=k >except</span><span class=p >:</span>
+            <span class=c1 ># print('❌ Failed to login via token JSON file, trying environment variable...')</span>
+            <span class=n >envToken</span> <span class=o >=</span> <span class=n >os</span><span class=o >.</span><span class=n >getenv</span><span class=p >(</span><span class=s1 >'JUPYTERHUB_API_TOKEN'</span><span class=p >)</span>
+            <span class=k >if</span> <span class=n >envToken</span> <span class=ow >is</span> <span class=ow >not</span> <span class=kc >None</span><span class=p >:</span>
+                <span class=k >return</span> <span class=bp >self</span><span class=o >.</span><span class=n >host_token_login</span><span class=p >(</span><span class=n >envToken</span><span class=p >)</span></div>
 
 <div class=viewcode-block  id=CyberGISCompute.login ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.login">[docs]</a>    <span class=k >def</span> <span class=nf >login</span><span class=p >(</span><span class=bp >self</span><span class=p >,</span> <span class=n >manualLogin</span><span class=o >=</span><span class=kc >False</span><span class=p >,</span> <span class=n >manualHost</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span> <span class=n >verbose</span><span class=o >=</span><span class=kc >True</span><span class=p >):</span>
 <span class=w >        </span><span class=sd >"""</span>
@@ -172,7 +171,6 @@
 <span class=sd >        Todo:</span>
 <span class=sd >            Document exceptions/errors raised.</span>
 <span class=sd >        """</span>
-
         <span class=k >if</span> <span class=n >manualHost</span> <span class=ow >is</span> <span class=ow >not</span> <span class=kc >None</span><span class=p >:</span>
             <span class=bp >self</span><span class=o >.</span><span class=n >jupyterhubHost</span> <span class=o >=</span> <span class=n >manualHost</span>
         <span class=c1 ># login via env variable</span>

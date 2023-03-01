@@ -857,9 +857,7 @@
 <span class=sd >        Initialization helper function that</span>
 <span class=sd >        sets default arguments. Runs when the UI is rendered.</span>
 <span class=sd >        """</span>
-        <span class=n >silent</span> <span class=o >=</span> <span class=n >widgets</span><span class=o >.</span><span class=n >Output</span><span class=p >()</span>
-        <span class=k >with</span> <span class=n >silent</span><span class=p >:</span>
-            <span class=bp >self</span><span class=o >.</span><span class=n >compute</span><span class=o >.</span><span class=n >login</span><span class=p >()</span>
+        <span class=bp >self</span><span class=o >.</span><span class=n >compute</span><span class=o >.</span><span class=n >login</span><span class=p >()</span>
 
         <span class=bp >self</span><span class=o >.</span><span class=n >jobs</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >compute</span><span class=o >.</span><span class=n >list_git</span><span class=p >(</span><span class=n >raw</span><span class=o >=</span><span class=kc >True</span><span class=p >)</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >hpcs</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >compute</span><span class=o >.</span><span class=n >list_hpc</span><span class=p >(</span><span class=n >raw</span><span class=o >=</span><span class=kc >True</span><span class=p >)</span>
