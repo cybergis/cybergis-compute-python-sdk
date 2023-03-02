@@ -1,6 +1,26 @@
 Release Notes
 =============
 
+Release notes for the CyberGISX platform can be found here: `https://cybergisxhub.cigi.illinois.edu/release-notes/ <https://cybergisxhub.cigi.illinois.edu/release-notes/>`_
+
+For details and full changelogs, check out the releases on Github: `https://github.com/cybergis/cybergis-compute-python-sdk/releases <https://github.com/cybergis/cybergis-compute-python-sdk/releases>`_
+
+[v0.2.4] - 2023-03-02
+---------------------
+
+Added
+^^^^^
+
+* Allow users to name folders in the UI in `#62 <https://github.com/cybergis/cybergis-compute-python-sdk/pull/62>`_
+
+Updated
+^^^^^^^
+
+* Minor Fixes to Site and Docstrings in `#59 <https://github.com/cybergis/cybergis-compute-python-sdk/pull/59>`_
+* update JSON login to avoid silent fails, confusing errors in `#61 <https://github.com/cybergis/cybergis-compute-python-sdk/pull/61>`_
+* Updated tests and fixed bug in Zip.py in `#63 <https://github.com/cybergis/cybergis-compute-python-sdk/pull/63>`_
+
+
 [v0.2.3] - 2022-10-06
 ---------------------
 
