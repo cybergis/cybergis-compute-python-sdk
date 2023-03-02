@@ -69,7 +69,7 @@
             <span class=bp >self</span><span class=o >.</span><span class=n >in_memory_zip</span><span class=p >,</span> <span class=s2 >"a"</span><span class=p >,</span> <span class=n >zipfile</span><span class=o >.</span><span class=n >ZIP_DEFLATED</span><span class=p >,</span> <span class=kc >False</span><span class=p >)</span>
 
         <span class=c1 ># Write the file to the in-memory zip</span>
-        <span class=c1 ># zf.writestr(filename_in_zip, file_contents, zipfile.ZIP_DEFLATED)</span>
+        <span class=n >zf</span><span class=o >.</span><span class=n >writestr</span><span class=p >(</span><span class=n >filename_in_zip</span><span class=p >,</span> <span class=n >file_contents</span><span class=p >,</span> <span class=n >zipfile</span><span class=o >.</span><span class=n >ZIP_DEFLATED</span><span class=p >)</span>
 
         <span class=c1 ># Mark the files as having been created on Windows so that</span>
         <span class=c1 ># # Unix permissions are not inferred as 0000</span>
