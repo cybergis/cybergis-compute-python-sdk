@@ -84,7 +84,7 @@ class UI:
             display(Markdown('# Welcome to CyberGIS-Compute'))
             display(Markdown('A scalable middleware framework for enabling high-performance and data-intensive geospatial research and education on CyberGIS-Jupyter'))
             display(divider)
-            self.renderAnnouncements();
+            self.renderAnnouncements()
             display(self.jobTemplate['output'])
             display(self.description['output'])
             display(self.computingResource['output'])
@@ -171,7 +171,7 @@ class UI:
             for i in range(len(announcement)):
                 display(Markdown('### Message ' + str(i + 1) + ':'))
                 display(Markdown(str(announcement[i]["message"])))
-                display(Markdown('Posted by: ' + announcement[i]["poster"] + " at " +  announcement[i]["time_stamp"]))
+                display(Markdown('Posted by: ' + announcement[i]["poster"] + " at " + announcement[i]["time_stamp"]))
             display(Markdown("***"))
 
     def renderJobTemplate(self):
