@@ -21,8 +21,9 @@ The COVID-19 Spatial Accessibility model (covid-access) uses CyberGIS-Compute to
 
     Kang, JY., Michels, A., Lyu, F. et al. Rapidly measuring spatial accessibility of COVID-19 healthcare resources: a case study of Illinois, USA. Int J Health Geogr 19, 36 (2020). https://doi.org/10.1186/s12942-020-00229-x
 
-* Github Repository: `cybergis-compute-spatial-access-covid-19 <https://github.com/cybergis/cybergis-compute-spatial-access-covid-19>`_
+* Github Repository: `cybergis/cybergis-compute-spatial-access-covid-19 <https://github.com/cybergis/cybergis-compute-spatial-access-covid-19>`_
 * Related Publication: `"Rapidly measuring spatial accessibility of COVID-19 healthcare resources: a case study of Illinois, USA" <https://doi.org/10.1186/s12942-020-00229-x>`_
+* Notebook on CyberGISxHub: `Calculating Accessibility to Ventilators in Illinois with CyberGIS-Compute <https://cybergisxhub.cigi.illinois.edu/notebook/calculating-accessibility-to-ventilators-in-illinois-with-cybergis-compute/>`_
 
 
 Pysal Access

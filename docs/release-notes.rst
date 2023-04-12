@@ -1,8 +1,44 @@
 Release Notes
 =============
 
-[v0.2.2] - Ongoing
-------------------
+Release notes for the CyberGISX platform can be found here: `https://cybergisxhub.cigi.illinois.edu/release-notes/ <https://cybergisxhub.cigi.illinois.edu/release-notes/>`_
+
+For details and full changelogs, check out the releases on Github: `https://github.com/cybergis/cybergis-compute-python-sdk/releases <https://github.com/cybergis/cybergis-compute-python-sdk/releases>`_
+
+[v0.2.4] - 2023-03-02
+---------------------
+
+Added
+^^^^^
+
+* Allow users to name folders in the UI in `#62 <https://github.com/cybergis/cybergis-compute-python-sdk/pull/62>`_
+
+Updated
+^^^^^^^
+
+* Minor Fixes to Site and Docstrings in `#59 <https://github.com/cybergis/cybergis-compute-python-sdk/pull/59>`_
+* update JSON login to avoid silent fails, confusing errors in `#61 <https://github.com/cybergis/cybergis-compute-python-sdk/pull/61>`_
+* Updated tests and fixed bug in Zip.py in `#63 <https://github.com/cybergis/cybergis-compute-python-sdk/pull/63>`_
+
+
+[v0.2.3] - 2022-10-06
+---------------------
+
+Added
+^^^^^
+
+* "Past Results" Tab with download buttons `#37 <https://github.com/cybergis/cybergis-compute-python-sdk/pull/37>`_
+* ``list_jupyter_host()`` functionality to see the Core whitelist `#55 <https://github.com/cybergis/cybergis-compute-python-sdk/pull/55>`_
+
+Updated
+^^^^^^^
+
+* Fix for broken ``list_job()`` function `#51 <https://github.com/cybergis/cybergis-compute-python-sdk/pull/51>`_ 
+* Fix for "error displaying widget: model not found" when using --force-install without --no-deps `#57 <https://github.com/cybergis/cybergis-compute-python-sdk/pull/57>`_ 
+* Minor UI bug fixes and QOL changes `#54 <https://github.com/cybergis/cybergis-compute-python-sdk/pull/54>`_
+
+[v0.2.2] - 2022-09-08
+---------------------
 
 Added
 ^^^^^

@@ -10,6 +10,8 @@ This section walks you through converting a Jupyter notebook to a model for Cybe
     * On CyberGISX Hub: `https://cybergisxhub.cigi.illinois.edu/notebook/pysal-access-compute-example/ <https://cybergisxhub.cigi.illinois.edu/notebook/pysal-access-compute-example/>`_
     * On Github: `https://github.com/cybergis/pysal-access-compute-example <https://github.com/cybergis/pysal-access-compute-example>`_ 
 
+    The `CyberGIS-Compute-Examples <https://github.com/cybergis/cybergis-compute-examples>`_ repository also has a guided walkthrough for creating a CyberGIS-Compute model with three simple examples.
+
     We recommend these notebooks first to get some hands-on experience with CyberGIS-Compute before diving into making your own model!
 
 What are the stages of your model?
@@ -268,7 +270,7 @@ For more complex use cases, you can build a Docker or Singularity image which ca
 Contributing Your Model
 -----------------------
 
-We are still working on the specific mechanism for having your model added to our deployment of compute.
+We are still working on the specific mechanism for having your model added to our deployment of compute. To have your model registered, please contact the CyberGIS-Compute team.
 
 
 Advanced Topic: Manifest Options
@@ -293,9 +295,9 @@ The manifest has a variety of options and here we will try to give a more compre
 
 **How the User Interacts with Your Model:** CyberGIS-Compute provides the flexibility for users to customize jobs by specifying parameters, tweaking SLURM inputs, and uploading data.
 
-* **param_rules:** This is a section that allows you to define widgets which users will use to pass parameters into the model. For more information, see ["Advanced Topic: Passing Parameters" in our Model Contribution guide](https://cybergis.github.io/cybergis-compute-python-sdk/model_contribution/develop_model.html#advanced-topic-passing-parameters)
-* **slurm_input_rules:** This information populates widgets allowing users to specify their SLURM settings. For more information, see ["Crash Course in SLURM Parameters" in our Model Contribution guide](https://cybergis.github.io/cybergis-compute-python-sdk/model_contribution/develop_model.html#crash-course-in-slurm-parameters).
-* **require_upload_data** This allows you to ask users for input data which can be used in your analysis. For more information, see ["Providing Input Data" in our Model Contribution guide](https://cybergis.github.io/cybergis-compute-python-sdk/model_contribution/develop_model.html#providing-input-data).
+* **param_rules:** This is a section that allows you to define widgets which users will use to pass parameters into the model. For more information, see `"Advanced Topic: Passing Parameters" in our Model Contribution guide <https://cybergis.github.io/cybergis-compute-python-sdk/model_contribution/develop_model.html#advanced-topic-passing-parameters>`_.
+* **slurm_input_rules:** This information populates widgets allowing users to specify their SLURM settings. For more information, see `"Crash Course in SLURM Parameters" in our Model Contribution guide <https://cybergis.github.io/cybergis-compute-python-sdk/model_contribution/develop_model.html#crash-course-in-slurm-parameters>`_.
+* **require_upload_data** This allows you to ask users for input data which can be used in your analysis. For more information, see `"Providing Input Data" in our Model Contribution guide <https://cybergis.github.io/cybergis-compute-python-sdk/model_contribution/develop_model.html#providing-input-data>`_.
 * **default_result_folder_downloadable_path:** This allows you to specify the path within the result folder which will be the default option in the Download Results dropdown.
 
 
