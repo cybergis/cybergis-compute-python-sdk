@@ -163,7 +163,7 @@ class UI:
     # components
     def renderAnnouncements(self):
         """
-        Displays announcements if there are any 
+        Displays announcements if the announcement route exists and there are any
         """
         try:
             announcement = self.compute.client.request('GET', '/announcement')["announcements"]
