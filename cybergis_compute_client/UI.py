@@ -163,16 +163,19 @@ class UI:
     # components
     def renderAnnouncements(self):
         """
-        Displays announcements if there are any
+        Displays announcements if there are any 
         """
-        announcement = self.compute.client.request('GET', '/announcement')["announcements"]
-        if (len(announcement) > 0):
-            display(Markdown('## Announcements'))
-            for i in range(len(announcement)):
-                display(Markdown('### Message ' + str(i + 1) + ':'))
-                display(Markdown(str(announcement[i]["message"])))
-                display(Markdown('Posted by: ' + announcement[i]["poster"] + " at " + announcement[i]["time_stamp"]))
-            display(Markdown("***"))
+        try:
+            announcement = self.compute.client.request('GET', '/announcement')["announcements"]
+            if (len(announcement) > 0):
+                display(Markdown('## Announcements'))
+                for i in range(len(announcement)):
+                    display(Markdown('### Message ' + str(i + 1) + ':'))
+                    display(Markdown('Message: ' + announcement[i]["message"]))
+                    display(Markdown('Posted by: ' + announcement[i]["poster"] + " at " + announcement[i]["time_stamp"]))
+                display(Markdown("***"))
+        except:
+            pass
 
     def renderJobTemplate(self):
         """
