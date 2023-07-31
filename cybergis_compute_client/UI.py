@@ -718,8 +718,19 @@ class UI:
                         'endpoint': self.jupyter_globus['endpoint'],
                         'path': dataPath
                     }
-
-            self.compute.job = self.compute.create_job(hpc=data['computing_resource'], verbose=False)
+            try:
+                self.compute.job = self.compute.create_job(hpc=data['computing_resource'], verbose=False)
+            except Exception as e:
+                print("There was an exception while submitting the job: " + str(e))
+                if "Not authorized for HPC" in str(e):  # TODO: we should create a specific exception rather than checking the message
+                    with self.submit['alert_output']:
+                        display(Markdown("<b><font color='red'>You are not authorized to submit jobs to this HPC (" +
+                                         data['computing_resource'] +
+                                         "). Please try another HPC or contact the CyberGIS-Compute team.</b>"""))
+                else:  # generic error
+                    with self.submit['alert_output']:
+                        display(Markdown("<b><font color='red'>There was an exception while submitting the job: " + str(e) + "</b>"))
+                return
             # slurm
             slurm = data['slurm']
             if data['email'] is not None:
@@ -793,6 +804,7 @@ class UI:
                 self.hpcName = self.computingResource['dropdown'].value
                 self.hpc = self.hpcs[self.hpcName]
                 self.rerender(['description', 'slurm', 'param', 'uploadData'])
+                self.submit['alert_output'].clear_output()  # clear any errors from previous job
         return on_change
 
     def onLoadMoreClick(self):
