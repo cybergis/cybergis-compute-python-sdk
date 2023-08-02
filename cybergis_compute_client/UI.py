@@ -82,8 +82,9 @@ class UI:
         job_config = widgets.Output()
         with job_config:
             display(Markdown('# Welcome to CyberGIS-Compute'))
-            display(Markdown('A scalable middleware framework for enabling high-performance and data-intensive geospatial research and education on CyberGIS-Jupyter'))
+            display(Markdown('A scalable middleware framework for enabling high-performance and data-intensive geospatial research and education on CyberGIS-Jupyter. [Click here for documentation.](https://cybergis.github.io/cybergis-compute-python-sdk/index.html)'))
             display(divider)
+            display(Markdown('**Your CyberGIS-Compute Username:** ' + str(self.compute.username)))
             self.renderAnnouncements()
             display(self.jobTemplate['output'])
             display(self.description['output'])
