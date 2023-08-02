@@ -5,6 +5,17 @@ Release notes for the CyberGISX platform can be found here: `https://cybergisxhu
 
 For details and full changelogs, check out the releases on Github: `https://github.com/cybergis/cybergis-compute-python-sdk/releases <https://github.com/cybergis/cybergis-compute-python-sdk/releases>`_
 
+[v0.2.5] - 2023-08-02
+---------------------
+
+Added
+^^^^^
+
+* Added an announcements section to the GUI in `#65 <https://github.com/cybergis/cybergis-compute-python-sdk/pull/65>`_
+* Catching the Core's new HPC access denied exception in `#68 <https://github.com/cybergis/cybergis-compute-python-sdk/pull/68>`_
+* Added the username to the GUI in `#70 <https://github.com/cybergis/cybergis-compute-python-sdk/pull/70>`_
+
+
 [v0.2.4] - 2023-03-02
 ---------------------
 
