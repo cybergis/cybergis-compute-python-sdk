@@ -82,8 +82,10 @@ class UI:
         job_config = widgets.Output()
         with job_config:
             display(Markdown('# Welcome to CyberGIS-Compute'))
-            display(Markdown('A scalable middleware framework for enabling high-performance and data-intensive geospatial research and education on CyberGIS-Jupyter'))
+            display(Markdown('A scalable middleware framework for enabling high-performance and data-intensive geospatial research and education on CyberGIS-Jupyter. [Click here for documentation.](https://cybergis.github.io/cybergis-compute-python-sdk/index.html)'))
             display(divider)
+            display(Markdown('**Your CyberGIS-Compute Username:** ' + str(self.compute.username)))
+            self.renderAnnouncements()
             display(self.jobTemplate['output'])
             display(self.description['output'])
             display(self.computingResource['output'])
@@ -160,6 +162,22 @@ class UI:
         self.renderFolders()
 
     # components
+    def renderAnnouncements(self):
+        """
+        Displays announcements if the announcement route exists and there are any
+        """
+        try:
+            announcement = self.compute.client.request('GET', '/announcement')["announcements"]
+            if (len(announcement) > 0):
+                display(Markdown('## Announcements'))
+                for i in range(len(announcement)):
+                    display(Markdown('### Message ' + str(i + 1) + ':'))
+                    display(Markdown('Message: ' + announcement[i]["message"]))
+                    display(Markdown('Posted by: ' + announcement[i]["poster"] + " at " + announcement[i]["time_stamp"]))
+                display(Markdown("***"))
+        except:
+            pass
+
     def renderJobTemplate(self):
         """
         Display a dropdown of jobs to run.
@@ -701,8 +719,17 @@ class UI:
                         'endpoint': self.jupyter_globus['endpoint'],
                         'path': dataPath
                     }
-
-            self.compute.job = self.compute.create_job(hpc=data['computing_resource'], verbose=False)
+            try:
+                self.compute.job = self.compute.create_job(hpc=data['computing_resource'], verbose=False)
+            except Exception as e:
+                print("There was an exception while submitting the job: " + str(e))
+                if "Not authorized for HPC" in str(e):  # TODO: we should create a specific exception rather than checking the message
+                    with self.submit['alert_output']:
+                        display(Markdown("<b><font color='red'>You are not authorized to submit jobs to this HPC (" + str(data['computing_resource']) + "). Please try another HPC or contact the CyberGIS-Compute team.</b>"""))
+                else:  # generic error
+                    with self.submit['alert_output']:
+                        display(Markdown("<b><font color='red'>There was an exception while submitting the job: " + str(e) + "</b>"))
+                return
             # slurm
             slurm = data['slurm']
             if data['email'] is not None:
@@ -776,6 +803,7 @@ class UI:
                 self.hpcName = self.computingResource['dropdown'].value
                 self.hpc = self.hpcs[self.hpcName]
                 self.rerender(['description', 'slurm', 'param', 'uploadData'])
+                self.submit['alert_output'].clear_output()  # clear any errors from previous job
         return on_change
 
     def onLoadMoreClick(self):
