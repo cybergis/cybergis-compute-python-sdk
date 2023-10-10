@@ -523,7 +523,7 @@ class UI:
             display(Markdown('# ✌️ Your Job is Here!'))
             self.compute.job.status()
         return
-    
+
     def renderResultCancel(self):
         if self.resultCancel['output'] is None:
             self.resultCancel['output'] = widgets.Output()
@@ -535,7 +535,7 @@ class UI:
 <p>3. Enter this command is your code block and press run:&nbsp;<em>cybergis.cancel_job()</em></p>
 
 <p>4. You should see a message displaying that your job has been canceled. Success!</p>"""
-            cancelExp = widgets.Accordion(children=(widgets.HTML(value = cancelText), ), selected_index=None)
+            cancelExp = widgets.Accordion(children=(widgets.HTML(value=cancelText), ), selected_index=None)
             cancelExp.set_title(0, "How to cancel a job")
             display(cancelExp)
         return
