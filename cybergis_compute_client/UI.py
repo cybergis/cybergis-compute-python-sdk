@@ -101,6 +101,7 @@ class UI:
         job_status = widgets.Output()
         with job_status:
             display(self.resultStatus['output'])
+            display(self.resultCancel['output'])
             display(divider)
             display(Markdown('## 📋 job events (live refresh)'))
             display(self.resultEvents['output'])
@@ -153,6 +154,7 @@ class UI:
         self.renderParam()
         self.renderUploadData()
         self.renderResultStatus()
+        self.renderResultCancel()
         self.renderResultEvents()
         self.renderResultLogs()
         self.renderDownload()
@@ -520,6 +522,22 @@ class UI:
         with self.resultStatus['output']:
             display(Markdown('# ✌️ Your Job is Here!'))
             self.compute.job.status()
+        return
+    
+    def renderResultCancel(self):
+        if self.resultCancel['output'] is None:
+            self.resultCancel['output'] = widgets.Output()
+        with self.resultCancel['output']:
+            cancelText = """<p>1. Press the stop button in the top bar of your Jupyter notebook <b>twice</b>. Please note that errors will appear on the user interface. While your logs will stop updating, <b>your job is still running</b>.</p>
+
+<p>2. Create a new code block below the UI.</p>
+
+<p>3. Enter this command is your code block and press run:&nbsp;<em>cybergis.cancel_job()</em></p>
+
+<p>4. You should see a message displaying that your job has been canceled. Success!</p>"""
+            cancelExp = widgets.Accordion(children=(widgets.HTML(value = cancelText), ), selected_index=None)
+            cancelExp.set_title(0, "How to cancel a job")
+            display(cancelExp)
         return
 
     def renderResultEvents(self):
@@ -907,6 +925,7 @@ class UI:
         self.param = {'output': None}
         self.uploadData = {'output': None}
         self.resultStatus = {'output': None}
+        self.resultCancel = {'output': None}
         self.resultEvents = {'output': None}
         self.resultLogs = {'output': None}
         self.download = {'output': None, 'alert_output': None, 'result_output': None}
