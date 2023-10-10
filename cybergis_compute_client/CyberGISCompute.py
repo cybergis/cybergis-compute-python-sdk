@@ -88,10 +88,10 @@ class CyberGISCompute:
             print(
                 "Please copy the JupyterHub url along with port. E.g http://127.0.0.1:8081")
             self.jupyterhubHost = input('Enter your jupyterhubHost here: ')
-            
+
     def cancel_job(self):
-        if self.job != None:
-            res = self.client.request('PUT', '/job/' + self.job.id + '/cancel', {"jupyterhubApiToken": self.jupyterhubApiToken, "jobId" : self.job.id})
+        if self.job is not None:
+            res = self.client.request('PUT', '/job/' + self.job.id + '/cancel', {"jupyterhubApiToken": self.jupyterhubApiToken, "jobId": self.job.id})
             display(Markdown(str(res)))
 
     def set_username(self):
