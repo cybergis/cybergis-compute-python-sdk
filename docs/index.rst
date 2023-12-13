@@ -42,6 +42,7 @@ Table of Contents
    model_contribution/index.rst
    reference.rst
    contributing.rst
+   deployment/index.rst
 
 
 
