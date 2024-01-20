@@ -78,6 +78,7 @@ target/
 
 # Jupyter Notebook
 .ipynb_checkpoints
+cybergis_compute_user.json
 
 # IPython
 profile_default/
