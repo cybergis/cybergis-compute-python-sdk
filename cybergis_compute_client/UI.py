@@ -190,7 +190,7 @@ class UI:
             self.jobTemplate['output'] = widgets.Output()
         # create components
         self.jobTemplate['dropdown'] = widgets.Dropdown(
-            options=[i for i in self.jobs], value=self.jobName,
+            options=sorted([i for i in self.jobs]), value=self.jobName,
             description='📦 Job Templates:',
             style=self.style,
             layout=self.layout)
@@ -557,6 +557,7 @@ class UI:
         Display when the job is finished and
         rerender the download section when it is.
         """
+        
         if self.resultLogs['output'] is None:
             self.resultLogs['output'] = widgets.Output()
         if not self.submitted:

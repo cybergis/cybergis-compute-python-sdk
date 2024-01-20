@@ -3,6 +3,7 @@ import time
 import json
 from os import system, name
 from IPython.display import display, clear_output, Markdown
+from IPython.display import HTML
 
 
 class Job:
@@ -214,11 +215,25 @@ class Job:
             if 'slurmId' in status:
                 print('🤖 Slurm ID: ' + str(status['slurmId']))
             if len(logs) > 0:
+                '''
                 if self.isJupyter:
+                    #print("This is jupyter client")
                     display(Markdown(MarkdownTable.render(logs, headers)))
                 else:
                     print(MarkdownTable.render(logs, headers))
-
+                '''
+                
+                markdown = MarkdownTable.render(logs, headers)
+                html_str = f"""
+                <details>
+                <summary>Click to show logs</summary>
+                <pre>{markdown}</pre>
+                </details>
+                """
+                if self.isJupyter:
+                    display(HTML(html_str))
+                else:
+                    print(markdown)
             if not isEnd:
                 time.sleep(refreshRateInSeconds)
 
