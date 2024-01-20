@@ -190,7 +190,7 @@ class UI:
             self.jobTemplate['output'] = widgets.Output()
         # create components
         self.jobTemplate['dropdown'] = widgets.Dropdown(
-            options=[i for i in self.jobs], value=self.jobName,
+            options=sorted([i for i in self.jobs]), value=self.jobName,
             description='📦 Job Templates:',
             style=self.style,
             layout=self.layout)
