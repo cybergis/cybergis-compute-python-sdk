@@ -108,12 +108,14 @@ class UI:
             display(divider)
             display(Markdown('## 📋 job logs'))
             display(self.resultLogs['output'])
+            display(divider)
+            #display(self.autoDownload['output'])
 
         # 3. download
         download = widgets.Output()
         with download:
             display(self.download['output'])
-
+        
         # 4. your jobs
         job_refresh = widgets.Output()
         with job_refresh:
@@ -157,6 +159,7 @@ class UI:
         self.renderResultCancel()
         self.renderResultEvents()
         self.renderResultLogs()
+       # self.renderAutoDownload()
         self.renderDownload()
         self.renderRecentlySubmittedJobs()
         self.renderLoadMore()
@@ -557,7 +560,6 @@ class UI:
         Display when the job is finished and
         rerender the download section when it is.
         """
-        
         if self.resultLogs['output'] is None:
             self.resultLogs['output'] = widgets.Output()
         if not self.submitted:
@@ -568,9 +570,33 @@ class UI:
             display(Markdown('***'))
             display(Markdown('## ✅ your job completed'))
             self.jobFinished = True
+            self.onDownloadButtonClick()
             self.rerender(['download'])
         return
-
+    '''
+    def renderAutoDownload(self):
+        """
+        WIP function for automatically downloading results 
+        once a job is finished
+        """
+        if self.autoDownload['output'] is None:
+            display(Markdown('## first branch'))
+            print("first branch")
+            self.autoDownload['output'] = widgets.Output()
+        if not self.submitted:
+            display(Markdown('## second branch'))
+            print("second branch")
+            return
+        with self.autoDownload['output']:
+            self.tab.set_title(2, '✅ Download Job Result')
+            display(Markdown('## ⏳ automatically downloading'))
+            self.jobFinished = True
+            if self.jobFinished:
+                self.onDownloadButtonClick()
+            print("Download was automatically executed")
+            self.rerender(['download'])
+        return
+    '''
     def renderFolders(self):
         """
         Display a user's folders with ability to download and rename them
@@ -929,6 +955,7 @@ class UI:
         self.resultCancel = {'output': None}
         self.resultEvents = {'output': None}
         self.resultLogs = {'output': None}
+        #self.autoDownload = {'output': None}
         self.download = {'output': None, 'alert_output': None, 'result_output': None}
         self.recently_submitted = {'output': None, 'submit': {}, 'job_list_size': 5, 'load_more': None}
         self.load_more = {'output': None, 'load_more': None}
