@@ -222,18 +222,47 @@ class Job:
                 else:
                     print(MarkdownTable.render(logs, headers))
                 '''
+                    
+                def html_table(markdown_table):
+                    table = '<table align="right">\n'
+                    for i, line in enumerate(markdown_table.strip().split('\n')):
+                        cells = line.strip("|").split("|")
+                        if i == 0:
+                            table += "<tr>\n"
+                            for c in cells:
+                                table += f'<th style="text-align: left">{c.strip()}</th>'
+                            table += "</tr>\n"
+                        elif i == 1:
+                            '''
+                            table += "<tr>\n"
+                            for c in cells:
+                                table += '<th>---------</th>'
+                            table += "</tr>\n"
+                            '''
+                            continue
+                        else:
+                            table += "<tr>\n"
+                            for c in cells:
+                                table += f'<td style="text-align: left">{c.strip()}</td>'
+                            table += "</tr>\n"
+                    table +=  "</table>"
+                    return table
                 
                 markdown = MarkdownTable.render(logs, headers)
+                html_markdown = html_table(markdown)
+                #html_markdown = markdown.to_html(index=False)
                 html_str = f"""
                 <details>
                 <summary>Click to show logs</summary>
-                <pre>{markdown}</pre>
+                <pre>{html_markdown}</pre>
                 </details>
                 """
-                if self.isJupyter:
+                
+                if self.isJupyter:                    
                     display(HTML(html_str))
                 else:
                     print(markdown)
+                
             if not isEnd:
                 time.sleep(refreshRateInSeconds)
 

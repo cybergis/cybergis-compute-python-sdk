@@ -1,6 +1,8 @@
 # my stuff
 docs/_build/**
 .vscode/**
+core*
+hello_world.ipynb
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
