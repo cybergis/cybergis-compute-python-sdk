@@ -4,7 +4,7 @@ import json
 from os import system, name
 from IPython.display import display, clear_output, Markdown
 from IPython.display import HTML
-
+import ipywidgets as widgets
 
 class Job:
     """
@@ -117,7 +117,7 @@ class Job:
         job = self.client.request('PUT', '/job/' + self.id, body)
         if printJob:
             self._print_job(job)
-
+    
     def events(
         self, raw=False,
             basic=True,
@@ -162,10 +162,45 @@ class Job:
             if 'slurmId' in status:
                 print('🤖 Slurm ID: ' + str(status['slurmId']))
             if len(events) > 0:
+                def html_table(markdown_table):
+                    table = '<table align="right">\n'
+                    for i, line in enumerate(markdown_table.strip().split('\n')):
+                        cells = line.strip("|").split("|")
+                        if i == 0:
+                            table += "<tr>\n"
+                            for c in cells:
+                                table += f'<th style="text-align: left">{c.strip()}</th>'
+                            table += "</tr>\n"
+                        elif i == 1:
+                            '''
+                            table += "<tr>\n"
+                            for c in cells:
+                                table += '<th>---------</th>'
+                            table += "</tr>\n"
+                            '''
+                            continue
+                        else:
+                            table += "<tr>\n"
+                            for c in cells:
+                                table += f'<td style="text-align: left">{c.strip()}</td>'
+                            table += "</tr>\n"
+                    table +=  "</table>"
+                    return table
+                
+                markdown = MarkdownTable.render(events, headers)
+                html_markdown = html_table(markdown)
+                
+                html_str = f"""
+                <details>
+                <summary>Click to show logs</summary>
+                <pre>{html_markdown}</pre>
+                </details>
+                """
+                
                 if self.isJupyter:
-                    display(Markdown(MarkdownTable.render(events, headers)))
+                    display(HTML(html_str)) # collapsible output only in jupyter so far
                 else:
-                    print(MarkdownTable.render(events, headers))
+                    print(markdown)
 
             if not isEnd:
                 time.sleep(refreshRateInSeconds)
@@ -214,15 +249,7 @@ class Job:
             print('📮 Job ID: ' + self.id)
             if 'slurmId' in status:
                 print('🤖 Slurm ID: ' + str(status['slurmId']))
-            if len(logs) > 0:
-                '''
-                if self.isJupyter:
-                    #print("This is jupyter client")
-                    display(Markdown(MarkdownTable.render(logs, headers)))
-                else:
-                    print(MarkdownTable.render(logs, headers))
-                '''
-                    
+            if len(logs) > 0: 
                 def html_table(markdown_table):
                     table = '<table align="right">\n'
                     for i, line in enumerate(markdown_table.strip().split('\n')):
@@ -250,7 +277,7 @@ class Job:
                 
                 markdown = MarkdownTable.render(logs, headers)
                 html_markdown = html_table(markdown)
-                #html_markdown = markdown.to_html(index=False)
+                
                 html_str = f"""
                 <details>
                 <summary>Click to show logs</summary>
@@ -258,8 +285,26 @@ class Job:
                 </details>
                 """
                 
+                style = """
+                        <style>
+                        table {
+                            width: 100%;
+                        }
+                        th, td {
+                            text-align: left;
+                        }
+                        </style>
+                        """
                 if self.isJupyter:                    
-                    display(HTML(html_str))
+                    display(HTML(html_str)) # collapsible output only in jupyter so far
+                    #
+                    
+                    #print(html_str)
+                    
+                    #html_widget = widgets.HTML(value=(html_markdown))
+                    #html_exp = widgets.Accordion(children=[html_widget])
+                    #html_exp.set_title(0, "See logs")
+                    #display(html_exp)
                 else:
                     print(markdown)
                 

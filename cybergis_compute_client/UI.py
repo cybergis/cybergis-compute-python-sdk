@@ -5,6 +5,8 @@ from ipyfilechooser import FileChooser
 from IPython.display import Markdown, display, clear_output
 from .MarkdownTable import MarkdownTable  # noqa
 
+import pandas as pd
+import geopandas as gpd
 
 class UI:
     """
@@ -127,6 +129,11 @@ class UI:
         user_folders = widgets.Output()
         with user_folders:
             display(self.folders['output'])
+            
+        # 6. visualization / extra script execution 
+        visual_exec = widgets.Output() # commenting to mark changes
+        with visual_exec:
+            display(self.visuals['output'])
 
         # assemble into tabs
         self.tab = widgets.Tab(children=[
@@ -134,13 +141,15 @@ class UI:
             job_status,
             download,
             job_refresh,
-            user_folders
+            user_folders,
+            visual_exec # commenting to mark changes
         ])
         self.tab.set_title(0, 'Job Configuration')
         self.tab.set_title(1, 'Your Job Status')
         self.tab.set_title(2, 'Download Job Result')
         self.tab.set_title(3, 'Your Jobs')
         self.tab.set_title(4, 'Past Results')
+        self.tab.set_title(5, 'Visualization')
         display(self.tab)
 
     def renderComponents(self):
@@ -166,6 +175,7 @@ class UI:
         self.renderLoadMore()
         self.renderSubmitNew()
         self.renderFolders()
+        self.renderVisuals()
 
     # components
     def renderAnnouncements(self):
@@ -574,6 +584,8 @@ class UI:
             self.rerender(['download']) 
         with self.autoDownload['output']: # rerender autoDownload to avoid overwriting log output
             self.rerender(['autoDownload'])
+        with self.visuals['output']: # commenting to mark changes
+            self.rerender(['visuals'])
         return
     
     def renderAutoDownload(self):
@@ -611,6 +623,17 @@ class UI:
             #files = [f for f in os.listdir(root) if os.path.isfile(join(root, f))]
             #print(files)
             self.compute.recentDownloadPath = os.path.join(self.jupyter_globus['container_home_path'], filename)
+            
+            d = self.compute.recentDownloadPath
+            #for entry in os.listdir(d):
+            #    path = os.path.join(d, entry)
+            #    if os.path.isfile(path):
+            #        print(full_path)
+            for root, dirs, files in os.walk(d):
+                print(f"Files in {dirs}")
+                for file in files:
+                    print(file)
+            
             self.recently_submitted['output'].clear_output()
             self.load_more['output'].clear_output()
             self.renderRecentlySubmittedJobs()
@@ -704,6 +727,58 @@ class UI:
                 self.load_more['load_more'] = widgets.Button(description="Load More")
             display(self.load_more['load_more'])
         self.load_more['load_more'].on_click(self.onLoadMoreClick())
+        
+    def renderVisuals(self):
+        if self.visuals['output'] is None:
+            self.visuals['output'] = widgets.Output()
+        with self.visuals['output']:
+            if self.jobFinished:
+                data_files = []
+                d = self.compute.recentDownloadPath
+                # get all files that can be viewed as dataframes
+                for entry in os.listdir(d):
+                    path = os.path.join(d, entry)
+                    if os.path.isfile(path):
+                        file_name, file_ext = os.path.splitext(path)
+                        if file_ext.lower() in ['.csv', '.shp']:
+                            data_files.append(path)
+                if not data_files:
+                    display(Markdown(' No compatible filetypes to view'))
+                else:
+                    # include future implementation for detecting file extension type and changing read method used
+                    
+                    #df_html = pd.read_csv(data_files[0]).to_html(index=False)
+                    #html_widget = widgets.HTML(value=df_html)
+                    #display(html_widget)
+                    display(Markdown(' Currently supporting ".csv" and ".shp" file extensions'))
+                    
+                    idx = 0
+                    print(f"Showing results in \n{data_files[idx]}")
+                    if (os.path.splitext(data_files[idx])[1] == '.csv'):
+                        df = pd.read_csv(data_files[idx])
+                        scroll_widget = widgets.Output()
+                        scroll_widget.layout.overflow = 'auto'
+                        scroll_widget.layout.height = '200px'  
+                        with scroll_widget:
+                            display(df)
+                        display(scroll_widget)
+                    else: # don't know yet if viewing geodataframe in widget works
+                        gdf = gpd.read_file(data_files[idx])
+                        scroll_widget = widgets.Output()
+                        scroll_widget.layout.overflow = 'auto'
+                        scroll_widget.layout.height = '200px'  
+                        with scroll_widget:
+                            display(gdf)
+                        display(scroll_widget)
+                            
+                #for root, dirs, files in os.walk(d):
+                #    print(f"Files in {dirs}")
+                #        for file in files:
+                #            print(file)
+                #            path = os.path.join(root, file)
+            else:
+                display(Markdown('# ⏳ Waiting for Job to Finish...'))
+        
 
     # events
     def onDownloadButtonClick(self):
@@ -977,6 +1052,7 @@ class UI:
         self.resultEvents = {'output': None}
         self.resultLogs = {'output': None}
         self.autoDownload = {'output': None} # commenting to mark changes
+        self.visuals = {'output': None} # commenting to mark changes
         self.download = {'output': None, 'alert_output': None, 'result_output': None}
         self.recently_submitted = {'output': None, 'submit': {}, 'job_list_size': 5, 'load_more': None}
         self.load_more = {'output': None, 'load_more': None}
