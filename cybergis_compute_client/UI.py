@@ -745,7 +745,9 @@ class UI:
                 if not data_files:
                     display(Markdown(' No compatible filetypes to view'))
                 else:
-                    # include future implementation for detecting file extension type and changing read method used
+                    # TODO:
+                    # - include future implementation for detecting file extension type and changing read method used
+                    # - include dropdown / way of selecting data to visualize if case of multiple data files being collected from output
                     
                     #df_html = pd.read_csv(data_files[0]).to_html(index=False)
                     #html_widget = widgets.HTML(value=df_html)
