@@ -131,16 +131,10 @@ class UI:
         with user_folders:
             display(self.folders['output'])
             
-        # 6. visualization 
-        visual_exec = widgets.Output() # commenting to mark changes
-        with visual_exec:
-            display(self.visuals['output'])
-            
-        # 7. extra script execution 
+        # 6. extra script execution 
         script_exec = widgets.Output() # commenting to mark changes
         with script_exec:
             display(self.scripts['output'])
-        
 
         # assemble into tabs
         self.tab = widgets.Tab(children=[
@@ -149,7 +143,6 @@ class UI:
             download,
             job_refresh,
             user_folders,
-            visual_exec, # commenting to mark changes
             script_exec # commenting to mark changes
         ])
         self.tab.set_title(0, 'Job Configuration')
@@ -157,8 +150,7 @@ class UI:
         self.tab.set_title(2, 'Download Job Result')
         self.tab.set_title(3, 'Your Jobs')
         self.tab.set_title(4, 'Past Results')
-        self.tab.set_title(5, 'Visualization')
-        self.tab.set_title(6, 'Extra Scripts')
+        self.tab.set_title(5, 'Extra Scripts')
         display(self.tab)
 
     def renderComponents(self):
@@ -184,7 +176,7 @@ class UI:
         self.renderLoadMore()
         self.renderSubmitNew()
         self.renderFolders()
-        self.renderVisuals()
+        #self.renderVisuals()
         self.renderScripts()
 
     # components
@@ -594,8 +586,6 @@ class UI:
             self.rerender(['download']) 
         with self.autoDownload['output']: # rerender autoDownload to avoid overwriting log output
             self.rerender(['autoDownload'])
-        with self.visuals['output']: # commenting to mark changes
-            self.rerender(['visuals'])
         with self.scripts['output']: # commenting to mark changes
             self.rerender(['scripts'])
         return
@@ -739,7 +729,8 @@ class UI:
                 self.load_more['load_more'] = widgets.Button(description="Load More")
             display(self.load_more['load_more'])
         self.load_more['load_more'].on_click(self.onLoadMoreClick())
-        
+
+    """
     def renderVisuals(self):
         if self.visuals['output'] is None:
             self.visuals['output'] = widgets.Output()
@@ -792,24 +783,31 @@ class UI:
                 #            path = os.path.join(root, file)
             else:
                 display(Markdown('# ⏳ Waiting for Job to Finish...'))
-    
+    """
     
     def renderScripts(self):
         if self.scripts['output'] is None:
             self.scripts['output'] = widgets.Output()
         with self.scripts['output']:
             if self.jobFinished:
-                url = 'https://raw.githubusercontent.com/cybergis/pysal-access-compute-example-cvmfs/main/ChicagoAccess.py'
-                print(f"Running script from: {url}")
-                r = requests.get(url)
-                if r.status_code == 200:
-                    try:
-                        exec(r.text)
-                    except Exception as e:
-                        print("Download successful, but running file led to error")
-                        print(e)
-                else:
-                    print("File download failed")
+
+                def run_script(url): 
+                    print(f"Running script from: {url}")
+                    r = requests.get(url)
+                    if r.status_code == 200:
+                        try:
+                            exec(r.text, globals())
+                        except Exception as e:
+                            print("Download successful, but running file led to error")
+                            print(e)
+                
+                display(Markdown(" Showing job manifest: "))
+                for key, value in self.job.items():
+                    print(f'{key}: {value}')
+                    if key == "post_run_scripts":
+                        if value is not None: # if raw script url exists
+                            run_script(value)
+                            
             else:
                 display(Markdown('# ⏳ Waiting for Job to Finish...'))
 
@@ -1085,7 +1083,6 @@ class UI:
         self.resultEvents = {'output': None}
         self.resultLogs = {'output': None}
         self.autoDownload = {'output': None} # commenting to mark changes
-        self.visuals = {'output': None} # commenting to mark changes
         self.scripts = {'output': None} # commenting to mark changes
         self.download = {'output': None, 'alert_output': None, 'result_output': None}
         self.recently_submitted = {'output': None, 'submit': {}, 'job_list_size': 5, 'load_more': None}

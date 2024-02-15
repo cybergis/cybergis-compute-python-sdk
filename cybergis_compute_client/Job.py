@@ -170,7 +170,7 @@ class Job:
             markdown = MarkdownTable.render(events, headers)
             markdown_table = markdown_widget(markdown)
             table_exp = widgets.Accordion(children=[markdown_table])
-            table_exp.set_title(0, "See logs")
+            table_exp.set_title(0, "See events")
             if len(events) > 0:
                 if self.isJupyter:
                     display(table_exp)

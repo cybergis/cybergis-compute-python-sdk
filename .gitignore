@@ -3,6 +3,11 @@ docs/_build/**
 .vscode/**
 core*
 hello_world.ipynb
+*.cpg
+*.dbf
+*.shp
+*.shx
+*.cfg
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
