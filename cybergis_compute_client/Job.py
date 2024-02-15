@@ -161,44 +161,19 @@ class Job:
             print('📮 Job ID: ' + self.id)
             if 'slurmId' in status:
                 print('🤖 Slurm ID: ' + str(status['slurmId']))
+                
+            def markdown_widget(text):
+                out = widgets.Output()
+                with out:
+                    display(Markdown(text))
+                return out
+            markdown = MarkdownTable.render(events, headers)
+            markdown_table = markdown_widget(markdown)
+            table_exp = widgets.Accordion(children=[markdown_table])
+            table_exp.set_title(0, "See logs")
             if len(events) > 0:
-                def html_table(markdown_table):
-                    table = '<table align="right">\n'
-                    for i, line in enumerate(markdown_table.strip().split('\n')):
-                        cells = line.strip("|").split("|")
-                        if i == 0:
-                            table += "<tr>\n"
-                            for c in cells:
-                                table += f'<th style="text-align: left">{c.strip()}</th>'
-                            table += "</tr>\n"
-                        elif i == 1:
-                            '''
-                            table += "<tr>\n"
-                            for c in cells:
-                                table += '<th>---------</th>'
-                            table += "</tr>\n"
-                            '''
-                            continue
-                        else:
-                            table += "<tr>\n"
-                            for c in cells:
-                                table += f'<td style="text-align: left">{c.strip()}</td>'
-                            table += "</tr>\n"
-                    table +=  "</table>"
-                    return table
-                
-                markdown = MarkdownTable.render(events, headers)
-                html_markdown = html_table(markdown)
-                
-                html_str = f"""
-                <details>
-                <summary>Click to show logs</summary>
-                <pre>{html_markdown}</pre>
-                </details>
-                """
-                
                 if self.isJupyter:
-                    display(HTML(html_str)) # collapsible output only in jupyter so far
+                    display(table_exp)
                 else:
                     print(markdown)
 
@@ -249,65 +224,21 @@ class Job:
             print('📮 Job ID: ' + self.id)
             if 'slurmId' in status:
                 print('🤖 Slurm ID: ' + str(status['slurmId']))
+                
+            def markdown_widget(text):
+                out = widgets.Output()
+                with out:
+                    display(Markdown(text))
+                return out
+            markdown = MarkdownTable.render(logs, headers)
+            markdown_table = markdown_widget(markdown)
+            table_exp = widgets.Accordion(children=[markdown_table])
+            table_exp.set_title(0, "See logs")
             if len(logs) > 0: 
-                def html_table(markdown_table):
-                    table = '<table align="right">\n'
-                    for i, line in enumerate(markdown_table.strip().split('\n')):
-                        cells = line.strip("|").split("|")
-                        if i == 0:
-                            table += "<tr>\n"
-                            for c in cells:
-                                table += f'<th style="text-align: left">{c.strip()}</th>'
-                            table += "</tr>\n"
-                        elif i == 1:
-                            '''
-                            table += "<tr>\n"
-                            for c in cells:
-                                table += '<th>---------</th>'
-                            table += "</tr>\n"
-                            '''
-                            continue
-                        else:
-                            table += "<tr>\n"
-                            for c in cells:
-                                table += f'<td style="text-align: left">{c.strip()}</td>'
-                            table += "</tr>\n"
-                    table +=  "</table>"
-                    return table
-                
-                markdown = MarkdownTable.render(logs, headers)
-                html_markdown = html_table(markdown)
-                
-                html_str = f"""
-                <details>
-                <summary>Click to show logs</summary>
-                <pre>{html_markdown}</pre>
-                </details>
-                """
-                
-                style = """
-                        <style>
-                        table {
-                            width: 100%;
-                        }
-                        th, td {
-                            text-align: left;
-                        }
-                        </style>
-                        """
-                if self.isJupyter:                    
-                    display(HTML(html_str)) # collapsible output only in jupyter so far
-                    #
-                    
-                    #print(html_str)
-                    
-                    #html_widget = widgets.HTML(value=(html_markdown))
-                    #html_exp = widgets.Accordion(children=[html_widget])
-                    #html_exp.set_title(0, "See logs")
-                    #display(html_exp)
+                if self.isJupyter:
+                    display(table_exp)
                 else:
                     print(markdown)
-                
             if not isEnd:
                 time.sleep(refreshRateInSeconds)
 

@@ -7,6 +7,7 @@ from .MarkdownTable import MarkdownTable  # noqa
 
 import pandas as pd
 import geopandas as gpd
+import requests
 
 class UI:
     """
@@ -130,10 +131,16 @@ class UI:
         with user_folders:
             display(self.folders['output'])
             
-        # 6. visualization / extra script execution 
+        # 6. visualization 
         visual_exec = widgets.Output() # commenting to mark changes
         with visual_exec:
             display(self.visuals['output'])
+            
+        # 7. extra script execution 
+        script_exec = widgets.Output() # commenting to mark changes
+        with script_exec:
+            display(self.scripts['output'])
+        
 
         # assemble into tabs
         self.tab = widgets.Tab(children=[
@@ -142,7 +149,8 @@ class UI:
             download,
             job_refresh,
             user_folders,
-            visual_exec # commenting to mark changes
+            visual_exec, # commenting to mark changes
+            script_exec # commenting to mark changes
         ])
         self.tab.set_title(0, 'Job Configuration')
         self.tab.set_title(1, 'Your Job Status')
@@ -150,6 +158,7 @@ class UI:
         self.tab.set_title(3, 'Your Jobs')
         self.tab.set_title(4, 'Past Results')
         self.tab.set_title(5, 'Visualization')
+        self.tab.set_title(6, 'Extra Scripts')
         display(self.tab)
 
     def renderComponents(self):
@@ -176,6 +185,7 @@ class UI:
         self.renderSubmitNew()
         self.renderFolders()
         self.renderVisuals()
+        self.renderScripts()
 
     # components
     def renderAnnouncements(self):
@@ -586,6 +596,8 @@ class UI:
             self.rerender(['autoDownload'])
         with self.visuals['output']: # commenting to mark changes
             self.rerender(['visuals'])
+        with self.scripts['output']: # commenting to mark changes
+            self.rerender(['scripts'])
         return
     
     def renderAutoDownload(self):
@@ -780,7 +792,26 @@ class UI:
                 #            path = os.path.join(root, file)
             else:
                 display(Markdown('# ⏳ Waiting for Job to Finish...'))
-        
+    
+    
+    def renderScripts(self):
+        if self.scripts['output'] is None:
+            self.scripts['output'] = widgets.Output()
+        with self.scripts['output']:
+            if self.jobFinished:
+                url = 'https://raw.githubusercontent.com/cybergis/pysal-access-compute-example-cvmfs/main/ChicagoAccess.py'
+                print(f"Running script from: {url}")
+                r = requests.get(url)
+                if r.status_code == 200:
+                    try:
+                        exec(r.text)
+                    except Exception as e:
+                        print("Download successful, but running file led to error")
+                        print(e)
+                else:
+                    print("File download failed")
+            else:
+                display(Markdown('# ⏳ Waiting for Job to Finish...'))
 
     # events
     def onDownloadButtonClick(self):
@@ -1055,6 +1086,7 @@ class UI:
         self.resultLogs = {'output': None}
         self.autoDownload = {'output': None} # commenting to mark changes
         self.visuals = {'output': None} # commenting to mark changes
+        self.scripts = {'output': None} # commenting to mark changes
         self.download = {'output': None, 'alert_output': None, 'result_output': None}
         self.recently_submitted = {'output': None, 'submit': {}, 'job_list_size': 5, 'load_more': None}
         self.load_more = {'output': None, 'load_more': None}
