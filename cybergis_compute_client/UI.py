@@ -5,6 +5,9 @@ from ipyfilechooser import FileChooser
 from IPython.display import Markdown, display, clear_output
 from .MarkdownTable import MarkdownTable  # noqa
 
+import pandas as pd
+import geopandas as gpd
+import requests
 
 class UI:
     """
@@ -108,12 +111,15 @@ class UI:
             display(divider)
             display(Markdown('## 📋 job logs'))
             display(self.resultLogs['output'])
+            display(divider)
+            display(self.autoDownload['output']) # making mark here to show changes
+            display(divider)
 
         # 3. download
         download = widgets.Output()
         with download:
             display(self.download['output'])
-
+        
         # 4. your jobs
         job_refresh = widgets.Output()
         with job_refresh:
@@ -124,6 +130,11 @@ class UI:
         user_folders = widgets.Output()
         with user_folders:
             display(self.folders['output'])
+            
+        # 6. extra script execution 
+        script_exec = widgets.Output() # commenting to mark changes
+        with script_exec:
+            display(self.scripts['output'])
 
         # assemble into tabs
         self.tab = widgets.Tab(children=[
@@ -131,13 +142,15 @@ class UI:
             job_status,
             download,
             job_refresh,
-            user_folders
+            user_folders,
+            script_exec # commenting to mark changes
         ])
         self.tab.set_title(0, 'Job Configuration')
         self.tab.set_title(1, 'Your Job Status')
         self.tab.set_title(2, 'Download Job Result')
         self.tab.set_title(3, 'Your Jobs')
         self.tab.set_title(4, 'Past Results')
+        self.tab.set_title(5, 'Extra Scripts')
         display(self.tab)
 
     def renderComponents(self):
@@ -157,11 +170,14 @@ class UI:
         self.renderResultCancel()
         self.renderResultEvents()
         self.renderResultLogs()
+        self.renderAutoDownload() # commenting to mark changes
         self.renderDownload()
         self.renderRecentlySubmittedJobs()
         self.renderLoadMore()
         self.renderSubmitNew()
         self.renderFolders()
+        #self.renderVisuals()
+        self.renderScripts()
 
     # components
     def renderAnnouncements(self):
@@ -190,7 +206,7 @@ class UI:
             self.jobTemplate['output'] = widgets.Output()
         # create components
         self.jobTemplate['dropdown'] = widgets.Dropdown(
-            options=[i for i in self.jobs], value=self.jobName,
+            options=sorted([i for i in self.jobs]), value=self.jobName,
             description='📦 Job Templates:',
             style=self.style,
             layout=self.layout)
@@ -567,9 +583,66 @@ class UI:
             display(Markdown('***'))
             display(Markdown('## ✅ your job completed'))
             self.jobFinished = True
-            self.rerender(['download'])
+            self.rerender(['download']) 
+        with self.autoDownload['output']: # rerender autoDownload to avoid overwriting log output
+            self.rerender(['autoDownload'])
+        with self.scripts['output']: # commenting to mark changes
+            self.rerender(['scripts'])
         return
+    
+    def renderAutoDownload(self):
+        """
+        WIP function for automatically downloading results 
+        once a job is finished
+        """
 
+        if self.autoDownload['output'] is None:
+            self.autoDownload['output'] = widgets.Output()
+        if self.jobFinished:
+            result_folder_content = self.compute.job.result_folder_content()
+            # push default value to front
+            try:
+                result_folder_content.insert(
+                    0, result_folder_content.pop(
+                        result_folder_content.index(
+                            self.defaultRemoteResultFolder)))
+            except Exception:
+                result_folder_content
+            if len(result_folder_content) == 0:
+                raise Exception('failed to get result folder content')
+
+
+            display(Markdown('Beginning automatic download'))
+            localEndpoint = self.jupyter_globus['endpoint']
+
+            filename = self.globus_filename
+            root = self.jupyter_globus['root_path']
+            localPath = os.path.join(root, filename)
+            self.compute.job.download_result_folder_by_globus(remotePath=result_folder_content[0], localEndpoint=localEndpoint, localPath=localPath)
+            print('please check your data at your root folder under "' + filename + '"')
+            print(f'folder in path {localPath}')
+            display(Markdown("Download succeeded"))
+            #files = [f for f in os.listdir(root) if os.path.isfile(join(root, f))]
+            #print(files)
+            self.compute.recentDownloadPath = os.path.join(self.jupyter_globus['container_home_path'], filename)
+            
+            d = self.compute.recentDownloadPath
+            #for entry in os.listdir(d):
+            #    path = os.path.join(d, entry)
+            #    if os.path.isfile(path):
+            #        print(full_path)
+            for root, dirs, files in os.walk(d):
+                print(f"Files in {dirs}")
+                for file in files:
+                    print(file)
+            
+            self.recently_submitted['output'].clear_output()
+            self.load_more['output'].clear_output()
+            self.renderRecentlySubmittedJobs()
+            self.renderLoadMore()
+    
+        return
+    
     def renderFolders(self):
         """
         Display a user's folders with ability to download and rename them
@@ -656,6 +729,87 @@ class UI:
                 self.load_more['load_more'] = widgets.Button(description="Load More")
             display(self.load_more['load_more'])
         self.load_more['load_more'].on_click(self.onLoadMoreClick())
+
+    """
+    def renderVisuals(self):
+        if self.visuals['output'] is None:
+            self.visuals['output'] = widgets.Output()
+        with self.visuals['output']:
+            if self.jobFinished:
+                data_files = []
+                d = self.compute.recentDownloadPath
+                # get all files that can be viewed as dataframes
+                for entry in os.listdir(d):
+                    path = os.path.join(d, entry)
+                    if os.path.isfile(path):
+                        file_name, file_ext = os.path.splitext(path)
+                        if file_ext.lower() in ['.csv', '.shp']:
+                            data_files.append(path)
+                if not data_files:
+                    display(Markdown(' No compatible filetypes to view'))
+                else:
+                    # TODO:
+                    # - include future implementation for detecting file extension type and changing read method used
+                    # - include dropdown / way of selecting data to visualize if case of multiple data files being collected from output
+                    
+                    #df_html = pd.read_csv(data_files[0]).to_html(index=False)
+                    #html_widget = widgets.HTML(value=df_html)
+                    #display(html_widget)
+                    display(Markdown(' Currently supporting ".csv" and ".shp" file extensions'))
+                    
+                    idx = 0
+                    print(f"Showing results in \n{data_files[idx]}")
+                    if (os.path.splitext(data_files[idx])[1] == '.csv'):
+                        df = pd.read_csv(data_files[idx])
+                        scroll_widget = widgets.Output()
+                        scroll_widget.layout.overflow = 'auto'
+                        scroll_widget.layout.height = '200px'  
+                        with scroll_widget:
+                            display(df)
+                        display(scroll_widget)
+                    else: # don't know yet if viewing geodataframe in widget works
+                        gdf = gpd.read_file(data_files[idx])
+                        scroll_widget = widgets.Output()
+                        scroll_widget.layout.overflow = 'auto'
+                        scroll_widget.layout.height = '200px'  
+                        with scroll_widget:
+                            display(gdf)
+                        display(scroll_widget)
+                            
+                #for root, dirs, files in os.walk(d):
+                #    print(f"Files in {dirs}")
+                #        for file in files:
+                #            print(file)
+                #            path = os.path.join(root, file)
+            else:
+                display(Markdown('# ⏳ Waiting for Job to Finish...'))
+    """
+    
+    def renderScripts(self):
+        if self.scripts['output'] is None:
+            self.scripts['output'] = widgets.Output()
+        with self.scripts['output']:
+            if self.jobFinished:
+
+                def run_script(url): 
+                    print(f"Running script from: {url}")
+                    r = requests.get(url)
+                    if r.status_code == 200:
+                        try:
+                            exec(r.text, globals())
+                        except Exception as e:
+                            print("Download successful, but running file led to error")
+                            print(e)
+                
+                display(Markdown(" Showing job manifest: "))
+                for key, value in self.job.items():
+                    print(f'{key}: {value}')
+                    if key == "post_run_scripts":
+                        if value is not None: # if raw script url exists
+                            run_script(value)
+                            
+            else:
+                display(Markdown('# ⏳ Waiting for Job to Finish...'))
 
     # events
     def onDownloadButtonClick(self):
@@ -928,6 +1082,8 @@ class UI:
         self.resultCancel = {'output': None}
         self.resultEvents = {'output': None}
         self.resultLogs = {'output': None}
+        self.autoDownload = {'output': None} # commenting to mark changes
+        self.scripts = {'output': None} # commenting to mark changes
         self.download = {'output': None, 'alert_output': None, 'result_output': None}
         self.recently_submitted = {'output': None, 'submit': {}, 'job_list_size': 5, 'load_more': None}
         self.load_more = {'output': None, 'load_more': None}

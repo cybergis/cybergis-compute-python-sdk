@@ -1,6 +1,13 @@
 # my stuff
 docs/_build/**
 .vscode/**
+core*
+hello_world.ipynb
+*.cpg
+*.dbf
+*.shp
+*.shx
+*.cfg
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -78,6 +85,7 @@ target/
 
 # Jupyter Notebook
 .ipynb_checkpoints
+cybergis_compute_user.json
 
 # IPython
 profile_default/
