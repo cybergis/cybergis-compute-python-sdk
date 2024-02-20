@@ -503,6 +503,7 @@ class UI:
         with self.download['output']:
             if self.jobFinished:
                 display(Markdown('# ☁️ Download Job Output Files'))
+                display(Markdown('NOTICE: Options in the dropdown are subdirectories in the result folder, not the files themselves. Selecting "/" will download the entire results folder.'))
                 display(self.download['alert_output'])
                 display(self.download['result_output'])
                 display(self.download['dropdown'])
