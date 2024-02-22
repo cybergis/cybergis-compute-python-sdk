@@ -569,6 +569,32 @@ class UI:
             self.jobFinished = True
             self.rerender(['download'])
         return
+    
+    def renderScripts(self):
+        if self.scripts['output'] is None:
+            self.scripts['output'] = widgets.Output()
+        with self.scripts['output']:
+            if self.jobFinished:
+
+                def run_script(url): 
+                    print(f"Running script from: {url}")
+                    r = requests.get(url)
+                    if r.status_code == 200:
+                        try:
+                            exec(r.text, globals())
+                        except Exception as e:
+                            print("Download successful, but running file led to error")
+                            print(e)
+                
+                display(Markdown(" Showing job manifest: "))
+                for key, value in self.job.items():
+                    print(f'{key}: {value}')
+                    if key == "post_run_scripts":
+                        if value is not None: # if raw script url exists
+                            run_script(value)
+                            
+            else:
+                display(Markdown('# ⏳ Waiting for Job to Finish...'))
 
     def renderFolders(self):
         """
