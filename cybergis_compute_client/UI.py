@@ -4,7 +4,7 @@ import ipywidgets as widgets
 from ipyfilechooser import FileChooser
 from IPython.display import Markdown, display, clear_output
 from .MarkdownTable import MarkdownTable  # noqa
-
+import requests
 
 class UI:
     """
@@ -124,20 +124,27 @@ class UI:
         user_folders = widgets.Output()
         with user_folders:
             display(self.folders['output'])
-
+            
+        # 6. extra script execution post run
+        script_exec = widgets.Output()
+        with script_exec:
+            display(self.scripts['output'])
+        
         # assemble into tabs
         self.tab = widgets.Tab(children=[
             job_config,
             job_status,
             download,
             job_refresh,
-            user_folders
+            user_folders,
+            script_exec
         ])
         self.tab.set_title(0, 'Job Configuration')
         self.tab.set_title(1, 'Your Job Status')
         self.tab.set_title(2, 'Download Job Result')
         self.tab.set_title(3, 'Your Jobs')
         self.tab.set_title(4, 'Past Results')
+        self.tab.set_title(5, 'Post Run Scripts')
         display(self.tab)
 
     def renderComponents(self):
@@ -162,6 +169,7 @@ class UI:
         self.renderLoadMore()
         self.renderSubmitNew()
         self.renderFolders()
+        self.renderScripts()
 
     # components
     def renderAnnouncements(self):
@@ -568,6 +576,8 @@ class UI:
             display(Markdown('## ✅ your job completed'))
             self.jobFinished = True
             self.rerender(['download'])
+        with self.scripts['output']:
+            self.rerender(['scripts'])
         return
     
     def renderScripts(self):
@@ -954,6 +964,7 @@ class UI:
         self.resultCancel = {'output': None}
         self.resultEvents = {'output': None}
         self.resultLogs = {'output': None}
+        self.scripts = {'output': None}
         self.download = {'output': None, 'alert_output': None, 'result_output': None}
         self.recently_submitted = {'output': None, 'submit': {}, 'job_list_size': 5, 'load_more': None}
         self.load_more = {'output': None, 'load_more': None}
