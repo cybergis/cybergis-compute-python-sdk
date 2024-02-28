@@ -109,8 +109,9 @@ class UI:
             display(Markdown('## 📋 job logs'))
             display(self.resultLogs['output'])
             display(divider)
-            display(self.autoDownload['output']) 
-            display(divider)
+            if self.compute.simple == True:
+                display(self.autoDownload['output']) 
+                display(divider)
 
         # 3. download
         download = widgets.Output()
@@ -582,7 +583,8 @@ class UI:
         Automatically downloading results 
         once a job is finished
         """
-
+        if self.compute.simple == False:
+            return
         if self.autoDownload['output'] is None:
             self.autoDownload['output'] = widgets.Output()
         if self.jobFinished:
@@ -606,6 +608,7 @@ class UI:
             root = self.jupyter_globus['root_path']
             localPath = os.path.join(root, filename)
             self.compute.job.download_result_folder_by_globus(remotePath=result_folder_content[0], localEndpoint=localEndpoint, localPath=localPath)
+            print(f'Downloading results from default folder in {result_folder_content[0]}')
             print('please check your data at your root folder under "' + filename + '"')
             print(f'folder in path {localPath}')
             display(Markdown("Download succeeded"))
