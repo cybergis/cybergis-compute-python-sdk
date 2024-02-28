@@ -4,7 +4,9 @@ import ipywidgets as widgets
 from ipyfilechooser import FileChooser
 from IPython.display import Markdown, display, clear_output
 from .MarkdownTable import MarkdownTable  # noqa
-import requests
+import requests, datetime
+import geopandas as gpd
+import pandas as pd
 
 class UI:
     """
@@ -584,8 +586,12 @@ class UI:
         if self.scripts['output'] is None:
             self.scripts['output'] = widgets.Output()
         with self.scripts['output']:
-            if self.jobFinished:
-
+            if self.jobFinished == False:
+                display(Markdown('# ⏳ Waiting for Job to Finish...'))
+            else:
+                """
+                Helper function to run raw script and get output data files
+                """
                 def run_script(url): 
                     print(f"Running script from: {url}")
                     r = requests.get(url)
@@ -595,16 +601,72 @@ class UI:
                         except Exception as e:
                             print("Download successful, but running file led to error")
                             print(e)
+                            return;
+                        
+                    data_files = []
+                    d = os.getcwd()
+                    #d = self.compute.recentDownloadPath
+                    # get all files that can be viewed and operated on as dataframes
+                    for entry in os.listdir(d): # check subdirectories
+                        path = os.path.join(d, entry)
+                        if os.path.isfile(path):
+                            file_name, file_ext = os.path.splitext(path)
+                            if file_ext.lower() not in ['.csv', '.shp']:
+                                continue
+                            else:
+                                # check for recency (file was created in last 30 minutes)
+                                c = datetime.datetime.fromtimestamp(os.path.getctime(path))
+                                if datetime.datetime.now() - c < datetime.timedelta(minutes=30):
+                                    data_files.append(path)
+                    if not data_files:
+                        display(Markdown(' No recently created compatible filetypes to view'))
+                    return data_files
                 
-                display(Markdown(" Showing job manifest: "))
+                """
+                Helper function to display a geodataframe using explore() function
+                """
+                def visual(geo_filepath):
+                    ext = os.path.splitext(geo_filepath)[1]
+                    if ext not in ['.shp']:
+                        print("Not a valid geodataframe file")
+                        return
+                    gdf = gpd.read_file(geo_filepath)
+                    try:
+                        gdf = gdf.to_crs(epsg=4326)
+                    except Exception as e:
+                        gdf = gdf.set_crs("EPSG:4326", allow_override=False)
+                    map = gdf.explore(tiles='OpenStreetMap')
+                    map_html = map._repr_html_() # convert explore() map to html string
+                    iframe = widgets.HTML(
+                        value=map_html,
+                        placeholder='Loading map...',
+                        description='Map:',
+                    )
+                    display(iframe)
+                    
+                display(Markdown(" Checking job manifest for additional scripts... "))
+                script_output_files = []
                 for key, value in self.job.items():
-                    print(f'{key}: {value}')
+                    #print(f'{key}: {value}')
                     if key == "post_run_scripts":
                         if value is not None: # if raw script url exists
-                            run_script(value)
-                            
-            else:
-                display(Markdown('# ⏳ Waiting for Job to Finish...'))
+                            script_output_files = run_script(value)
+                """
+                #for file in script_output_files:
+                #    print(file)
+                #    visual(file)
+                """
+                 # implementing additional UI interaction
+                self.scripts['dropdown'] = widgets.Dropdown(
+                    options=script_output_files, value=script_output_files[0],
+                description='Select data file to display')
+                self.scripts['button'] = widgets.Button(description="Display")
+                self.download['button'].on_click(visual(self.scripts['dropdown'].value))
+                with self.scripts['output']:
+                    display(self.scripts['dropdown'])
+                    display(self.scripts['button'])
+                
+                
 
     def renderFolders(self):
         """
