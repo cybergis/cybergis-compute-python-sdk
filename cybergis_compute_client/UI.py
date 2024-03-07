@@ -116,7 +116,8 @@ class UI:
         # 3. download
         download = widgets.Output()
         with download:
-            display(self.download['output']) 
+            display(self.download['output'])
+
         # 4. your jobs
         job_refresh = widgets.Output()
         with job_refresh:
@@ -575,6 +576,8 @@ class UI:
             self.rerender(['download'])
         with self.autoDownload['output']:
             self.rerender(['autoDownload'])
+        with self.submitNew['output']:
+            self.rerender(['submitNew'])
         return
 
     def renderAutoDownload(self):
