@@ -109,15 +109,14 @@ class UI:
             display(Markdown('## 📋 job logs'))
             display(self.resultLogs['output'])
             display(divider)
-            if self.compute.simple == True:
-                display(self.autoDownload['output']) 
+            if self.compute.simple is True:
+                display(self.autoDownload['output'])
                 display(divider)
 
         # 3. download
         download = widgets.Output()
         with download:
-            display(self.download['output'])
-        
+            display(self.download['output']) 
         # 4. your jobs
         job_refresh = widgets.Output()
         with job_refresh:
@@ -161,7 +160,7 @@ class UI:
         self.renderResultCancel()
         self.renderResultEvents()
         self.renderResultLogs()
-        self.renderAutoDownload() # commenting to mark changes
+        self.renderAutoDownload()
         self.renderDownload()
         self.renderRecentlySubmittedJobs()
         self.renderLoadMore()
@@ -573,17 +572,17 @@ class UI:
             display(Markdown('***'))
             display(Markdown('## ✅ your job completed'))
             self.jobFinished = True
-            self.rerender(['download']) 
-        with self.autoDownload['output']: # rerender autoDownload to avoid overwriting log output
+            self.rerender(['download'])
+        with self.autoDownload['output']:
             self.rerender(['autoDownload'])
         return
-    
+
     def renderAutoDownload(self):
         """
-        Automatically downloading results 
+        Automatically downloading results
         once a job is finished
         """
-        if self.compute.simple == False:
+        if self.compute.simple is False:
             return
         if self.autoDownload['output'] is None:
             self.autoDownload['output'] = widgets.Output()
@@ -599,11 +598,9 @@ class UI:
                 result_folder_content
             if len(result_folder_content) == 0:
                 raise Exception('failed to get result folder content')
-
-
+                
             display(Markdown('Beginning automatic download'))
             localEndpoint = self.jupyter_globus['endpoint']
-
             filename = self.globus_filename
             root = self.jupyter_globus['root_path']
             localPath = os.path.join(root, filename)
@@ -612,16 +609,14 @@ class UI:
             print('please check your data at your root folder under "' + filename + '"')
             print(f'folder in path {localPath}')
             display(Markdown("Download succeeded"))
-            #files = [f for f in os.listdir(root) if os.path.isfile(join(root, f))]
-            #print(files)
             self.compute.recentDownloadPath = os.path.join(self.jupyter_globus['container_home_path'], filename)
             self.recently_submitted['output'].clear_output()
             self.load_more['output'].clear_output()
             self.renderRecentlySubmittedJobs()
             self.renderLoadMore()
-    
+
         return
-    
+
     def renderFolders(self):
         """
         Display a user's folders with ability to download and rename them
@@ -980,7 +975,7 @@ class UI:
         self.resultCancel = {'output': None}
         self.resultEvents = {'output': None}
         self.resultLogs = {'output': None}
-        self.autoDownload = {'output': None} 
+        self.autoDownload = {'output': None}
         self.download = {'output': None, 'alert_output': None, 'result_output': None}
         self.recently_submitted = {'output': None, 'submit': {}, 'job_list_size': 5, 'load_more': None}
         self.load_more = {'output': None, 'load_more': None}

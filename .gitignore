@@ -9,7 +9,8 @@ core.1842
 *.shp
 *.dbf
 *.cpg
-
+*.html
+*.prj
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
