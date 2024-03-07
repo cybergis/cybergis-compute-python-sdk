@@ -4,9 +4,10 @@ import ipywidgets as widgets
 from ipyfilechooser import FileChooser
 from IPython.display import Markdown, display, clear_output
 from .MarkdownTable import MarkdownTable  # noqa
-import requests, datetime
+import requests, datetime, webbrowser
 import geopandas as gpd
 import pandas as pd
+import folium
 
 class UI:
     """
@@ -590,6 +591,26 @@ class UI:
                 display(Markdown('# ⏳ Waiting for Job to Finish...'))
             else:
                 """
+                Helper function to search directory and all subdirectories recursively
+                """
+                def search_dir(dir, data):
+                    for entry in os.listdir(dir): # check subdirectories
+                            path = os.path.join(dir, entry)
+                            if os.path.isdir(path):
+                                #print("Checking subdirectories...")
+                                data = search_dir(path, data)
+                            elif os.path.isfile(path):
+                                #print("Checking file...")
+                                file_name, file_ext = os.path.splitext(path)
+                                if file_ext.lower() not in ['.csv', '.shp']:
+                                    continue
+                                else:
+                                    # check for recency (file was created in last 30 minutes)
+                                    c = datetime.datetime.fromtimestamp(os.path.getctime(path))
+                                    if datetime.datetime.now() - c < datetime.timedelta(minutes=30):
+                                        data.append(path)
+                    return data
+                """
                 Helper function to run raw script and get output data files
                 """
                 def run_script(url): 
@@ -597,7 +618,7 @@ class UI:
                     r = requests.get(url)
                     if r.status_code == 200:
                         try:
-                            exec(r.text, globals())
+                            exec(r.text, globals()) # change current working directory to self.compute.recentDownloadPath
                         except Exception as e:
                             print("Download successful, but running file led to error")
                             print(e)
@@ -607,65 +628,67 @@ class UI:
                     d = os.getcwd()
                     #d = self.compute.recentDownloadPath
                     # get all files that can be viewed and operated on as dataframes
-                    for entry in os.listdir(d): # check subdirectories
-                        path = os.path.join(d, entry)
-                        if os.path.isfile(path):
-                            file_name, file_ext = os.path.splitext(path)
-                            if file_ext.lower() not in ['.csv', '.shp']:
-                                continue
-                            else:
-                                # check for recency (file was created in last 30 minutes)
-                                c = datetime.datetime.fromtimestamp(os.path.getctime(path))
-                                if datetime.datetime.now() - c < datetime.timedelta(minutes=30):
-                                    data_files.append(path)
+                    data_files = search_dir(d, data_files)
                     if not data_files:
                         display(Markdown(' No recently created compatible filetypes to view'))
                     return data_files
                 
-                """
-                Helper function to display a geodataframe using explore() function
-                """
-                def visual(geo_filepath):
-                    ext = os.path.splitext(geo_filepath)[1]
-                    if ext not in ['.shp']:
-                        print("Not a valid geodataframe file")
-                        return
-                    gdf = gpd.read_file(geo_filepath)
-                    try:
-                        gdf = gdf.to_crs(epsg=4326)
-                    except Exception as e:
-                        gdf = gdf.set_crs("EPSG:4326", allow_override=False)
-                    map = gdf.explore(tiles='OpenStreetMap')
-                    map_html = map._repr_html_() # convert explore() map to html string
-                    iframe = widgets.HTML(
-                        value=map_html,
-                        placeholder='Loading map...',
-                        description='Map:',
-                    )
-                    display(iframe)
-                    
                 display(Markdown(" Checking job manifest for additional scripts... "))
                 script_output_files = []
-                for key, value in self.job.items():
+                for key, value in self.job.items(): # iterate through manifest to locate post_run_scripts
                     #print(f'{key}: {value}')
                     if key == "post_run_scripts":
                         if value is not None: # if raw script url exists
                             script_output_files = run_script(value)
-                """
-                #for file in script_output_files:
-                #    print(file)
-                #    visual(file)
-                """
+                
                  # implementing additional UI interaction
                 self.scripts['dropdown'] = widgets.Dropdown(
                     options=script_output_files, value=script_output_files[0],
-                description='Select data file to display')
+                    description='Select data file to display')
                 self.scripts['button'] = widgets.Button(description="Display")
-                self.download['button'].on_click(visual(self.scripts['dropdown'].value))
+                self.scripts['button'].on_click(self.onScriptButtonClick())
                 with self.scripts['output']:
                     display(self.scripts['dropdown'])
                     display(self.scripts['button'])
-                
+    
+    def onScriptButtonClick(self):
+        """
+        Helper function to convert file into geodataframe
+        """   
+        def to_geofile(geo_filepath):
+            ext = os.path.splitext(geo_filepath)[1]
+            if ext not in ['.shp']:
+                print("Not a valid geodataframe file")
+                return
+            gdf = gpd.read_file(geo_filepath)
+            try:
+                gdf = gdf.to_crs(epsg=4326)
+            except Exception as e:
+                gdf = gdf.set_crs("EPSG:4326", allow_override=False)
+            return gdf
+        """
+         Helper function to display a geodataframe using explore() function
+        """
+        def geo_vis(gdf):
+            map = gdf.explore(tiles='OpenStreetMap')
+            map.save("map_visualization2.html")
+            map_html = map._repr_html_() # convert explore() map to html string
+            iframe = widgets.HTML(
+                value=map_html,
+                placeholder='Loading map...',
+                description='Map:',
+            )
+            return iframe
+        def on_click(change):
+            self.rerender(['scripts'])
+            geo_filepath = self.scripts['dropdown'].value
+            display(Markdown("Processing file..."))
+            print("Converting to geodataframe")
+            gdf = to_geofile(geo_filepath)
+            print("Showing map display")
+            iframe = geo_vis(gdf)
+            display(iframe)
+        return on_click
                 
 
     def renderFolders(self):
