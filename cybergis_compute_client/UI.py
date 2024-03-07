@@ -591,66 +591,48 @@ class UI:
                 display(Markdown('# ⏳ Waiting for Job to Finish...'))
             else:
                 """
-                Helper function to search directory and all subdirectories recursively
+                Helper function to run script from url and send output files to specified destination directory
                 """
-                def search_dir(dir, data):
-                    for entry in os.listdir(dir): # check subdirectories
-                            path = os.path.join(dir, entry)
-                            if os.path.isdir(path):
-                                #print("Checking subdirectories...")
-                                data = search_dir(path, data)
-                            elif os.path.isfile(path):
-                                #print("Checking file...")
-                                file_name, file_ext = os.path.splitext(path)
-                                if file_ext.lower() not in ['.csv', '.shp']:
-                                    continue
-                                else:
-                                    # check for recency (file was created in last 30 minutes)
-                                    c = datetime.datetime.fromtimestamp(os.path.getctime(path))
-                                    if datetime.datetime.now() - c < datetime.timedelta(minutes=30):
-                                        data.append(path)
-                    return data
-                """
-                Helper function to run raw script and get output data files
-                """
-                def run_script(url): 
+                def run_script(destination, url): 
                     print(f"Running script from: {url}")
+                    os.chdir(destination)
+                    print(f"Sending all output files to: {os.getcwd()}")
                     r = requests.get(url)
                     if r.status_code == 200:
                         try:
-                            exec(r.text, globals()) # change current working directory to self.compute.recentDownloadPath
+                            exec(r.text, globals())
                         except Exception as e:
                             print("Download successful, but running file led to error")
                             print(e)
-                            return;
-                        
-                    data_files = []
-                    d = os.getcwd()
-                    #d = self.compute.recentDownloadPath
-                    # get all files that can be viewed and operated on as dataframes
-                    data_files = search_dir(d, data_files)
-                    if not data_files:
-                        display(Markdown(' No recently created compatible filetypes to view'))
-                    return data_files
+                            return
+                    return
+                def show_files(out_dir):
+                    # For printing out directory in testing
+                    try:
+                        output = os.listdir(out_dir)
+                        if output:
+                            print(f"Contents of '{out_dir}':")
+                            for file in output:
+                                print(file)
+                        else:
+                            print(f"The directory '{out_dir}' is empty.")
+                    except Exception as e:
+                        print(f"Unable to access directory {out_dir} / directory not found")
                 
                 display(Markdown(" Checking job manifest for additional scripts... "))
-                script_output_files = []
+                with self.download['output']:
+                    dest = self.compute.recentDownloadPath
+                if dest is None:
+                    print("!!! Cannot read in recent download path, aborting")
+                    return
                 for key, value in self.job.items(): # iterate through manifest to locate post_run_scripts
                     #print(f'{key}: {value}')
                     if key == "post_run_scripts":
                         if value is not None: # if raw script url exists
-                            script_output_files = run_script(value)
-                
-                 # implementing additional UI interaction
-                self.scripts['dropdown'] = widgets.Dropdown(
-                    options=script_output_files, value=script_output_files[0],
-                    description='Select data file to display')
-                self.scripts['button'] = widgets.Button(description="Display")
-                self.scripts['button'].on_click(self.onScriptButtonClick())
-                with self.scripts['output']:
-                    display(self.scripts['dropdown'])
-                    display(self.scripts['button'])
-    
+                            run_script(dest, value)
+                            show_files(dest)
+
+
     def onScriptButtonClick(self):
         """
         Helper function to convert file into geodataframe

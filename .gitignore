@@ -10,6 +10,8 @@ cybergis_compute_user.json
 core.1842
 core.2406
 core.2435
+*.html
+*.prj
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
