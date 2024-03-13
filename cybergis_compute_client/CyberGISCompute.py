@@ -69,6 +69,7 @@ class CyberGISCompute:
         # job
         self.job = None
         self.recentDownloadPath = None
+        self.simple = False
 
     def encrypt_token(self, token):
         """
@@ -535,7 +536,7 @@ class CyberGISCompute:
         """
         self.show_ui(input_params, defaultJob, defaultDataFolder, defaultRemoteResultFolder)
 
-    def show_ui(self, input_params=None, defaultJob="hello_world", defaultDataFolder="./", defaultRemoteResultFolder=None, jupyterhubApiToken=None):
+    def show_ui(self, simple=False, input_params=None, defaultJob="hello_world", defaultDataFolder="./", defaultRemoteResultFolder=None, jupyterhubApiToken=None):
         """
         Displays the job submission UI
 
@@ -547,6 +548,7 @@ class CyberGISCompute:
         Returns:
             None
         """
+        self.simple = simple
         if (jupyterhubApiToken is not None):
             self.jupyterhubApiToken = jupyterhubApiToken
         self.ui.defaultJobName = defaultJob

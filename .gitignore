@@ -1,6 +1,16 @@
 # my stuff
 docs/_build/**
 .vscode/**
+cybergis_compute_user.json
+core.2435
+core.2406
+core.1842
+*.shx
+*.shp
+*.dbf
+*.cpg
+*.html
+*.prj
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

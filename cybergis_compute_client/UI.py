@@ -108,6 +108,10 @@ class UI:
             display(divider)
             display(Markdown('## 📋 job logs'))
             display(self.resultLogs['output'])
+            display(divider)
+            if self.compute.simple is True:
+                display(self.autoDownload['output'])
+                display(divider)
 
         # 3. download
         download = widgets.Output()
@@ -157,6 +161,7 @@ class UI:
         self.renderResultCancel()
         self.renderResultEvents()
         self.renderResultLogs()
+        self.renderAutoDownload()
         self.renderDownload()
         self.renderRecentlySubmittedJobs()
         self.renderLoadMore()
@@ -190,7 +195,7 @@ class UI:
             self.jobTemplate['output'] = widgets.Output()
         # create components
         self.jobTemplate['dropdown'] = widgets.Dropdown(
-            options=[i for i in self.jobs], value=self.jobName,
+            options=sorted([i for i in self.jobs]), value=self.jobName,
             description='📦 Job Templates:',
             style=self.style,
             layout=self.layout)
@@ -499,6 +504,7 @@ class UI:
         with self.download['output']:
             if self.jobFinished:
                 display(Markdown('# ☁️ Download Job Output Files'))
+                display(Markdown('NOTICE: Options in the dropdown are subdirectories in the result folder, not the files themselves. Selecting "/" will download the entire results folder.'))
                 display(self.download['alert_output'])
                 display(self.download['result_output'])
                 display(self.download['dropdown'])
@@ -568,6 +574,50 @@ class UI:
             display(Markdown('## ✅ your job completed'))
             self.jobFinished = True
             self.rerender(['download'])
+        with self.submitNew['output']:
+            self.rerender(['submitNew'])
+        with self.autoDownload['output']:
+            self.rerender(['autoDownload'])
+        return
+
+    def renderAutoDownload(self):
+        """
+        Automatically downloading results
+        once a job is finished
+        """
+        if self.compute.simple is False:
+            return
+        if self.autoDownload['output'] is None:
+            self.autoDownload['output'] = widgets.Output()
+        if self.jobFinished:
+            result_folder_content = self.compute.job.result_folder_content()
+            # push default value to front
+            try:
+                result_folder_content.insert(
+                    0, result_folder_content.pop(
+                        result_folder_content.index(
+                            self.defaultRemoteResultFolder)))
+            except Exception:
+                result_folder_content
+            if len(result_folder_content) == 0:
+                raise Exception('failed to get result folder content')
+
+            display(Markdown('Beginning automatic download'))
+            localEndpoint = self.jupyter_globus['endpoint']
+            filename = self.globus_filename
+            root = self.jupyter_globus['root_path']
+            localPath = os.path.join(root, filename)
+            self.compute.job.download_result_folder_by_globus(remotePath=result_folder_content[0], localEndpoint=localEndpoint, localPath=localPath)
+            print(f'Downloading results from default folder in {result_folder_content[0]}')
+            print('please check your data at your root folder under "' + filename + '"')
+            print(f'folder in path {localPath}')
+            display(Markdown("Download succeeded"))
+            self.compute.recentDownloadPath = os.path.join(self.jupyter_globus['container_home_path'], filename)
+            self.recently_submitted['output'].clear_output()
+            self.load_more['output'].clear_output()
+            self.renderRecentlySubmittedJobs()
+            self.renderLoadMore()
+
         return
 
     def renderFolders(self):
@@ -928,6 +978,7 @@ class UI:
         self.resultCancel = {'output': None}
         self.resultEvents = {'output': None}
         self.resultLogs = {'output': None}
+        self.autoDownload = {'output': None}
         self.download = {'output': None, 'alert_output': None, 'result_output': None}
         self.recently_submitted = {'output': None, 'submit': {}, 'job_list_size': 5, 'load_more': None}
         self.load_more = {'output': None, 'load_more': None}

@@ -3,6 +3,7 @@ import time
 import json
 from os import system, name
 from IPython.display import display, clear_output, Markdown
+import ipywidgets as widgets
 
 
 class Job:
@@ -160,11 +161,21 @@ class Job:
             print('📮 Job ID: ' + self.id)
             if 'slurmId' in status:
                 print('🤖 Slurm ID: ' + str(status['slurmId']))
+
+            def markdown_widget(text):
+                out = widgets.Output()
+                with out:
+                    display(Markdown(text))
+                return out
+            markdown = MarkdownTable.render(events, headers)
+            markdown_table = markdown_widget(markdown)
+            table_exp = widgets.Accordion(children=[markdown_table], selected_index=None)
+            table_exp.set_title(0, "See events")
             if len(events) > 0:
                 if self.isJupyter:
-                    display(Markdown(MarkdownTable.render(events, headers)))
+                    display(table_exp)
                 else:
-                    print(MarkdownTable.render(events, headers))
+                    print(markdown)
 
             if not isEnd:
                 time.sleep(refreshRateInSeconds)
@@ -213,12 +224,21 @@ class Job:
             print('📮 Job ID: ' + self.id)
             if 'slurmId' in status:
                 print('🤖 Slurm ID: ' + str(status['slurmId']))
+
+            def markdown_widget(text):
+                out = widgets.Output()
+                with out:
+                    display(Markdown(text))
+                return out
+            markdown = MarkdownTable.render(logs, headers)
+            markdown_table = markdown_widget(markdown)
+            table_exp = widgets.Accordion(children=[markdown_table], selected_index=None)
+            table_exp.set_title(0, "See logs")
             if len(logs) > 0:
                 if self.isJupyter:
-                    display(Markdown(MarkdownTable.render(logs, headers)))
+                    display(table_exp)
                 else:
-                    print(MarkdownTable.render(logs, headers))
-
+                    print(markdown)
             if not isEnd:
                 time.sleep(refreshRateInSeconds)
 
