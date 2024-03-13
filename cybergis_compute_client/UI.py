@@ -574,10 +574,10 @@ class UI:
             display(Markdown('## ✅ your job completed'))
             self.jobFinished = True
             self.rerender(['download'])
-        with self.autoDownload['output']:
-            self.rerender(['autoDownload'])
         with self.submitNew['output']:
             self.rerender(['submitNew'])
+        with self.autoDownload['output']:
+            self.rerender(['autoDownload'])
         return
 
     def renderAutoDownload(self):
