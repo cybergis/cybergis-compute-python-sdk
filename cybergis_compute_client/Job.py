@@ -160,7 +160,8 @@ class Job:
 
             print('📮 Job ID: ' + self.id)
             if 'slurmId' in status:
-                print('🤖 Slurm ID: ' + str(status['slurmId']))  
+                print('🤖 Slurm ID: ' + str(status['slurmId']))
+
             def markdown_widget(text):
                 out = widgets.Output()
                 with out:
@@ -223,6 +224,7 @@ class Job:
             print('📮 Job ID: ' + self.id)
             if 'slurmId' in status:
                 print('🤖 Slurm ID: ' + str(status['slurmId']))
+
             def markdown_widget(text):
                 out = widgets.Output()
                 with out:
@@ -232,7 +234,7 @@ class Job:
             markdown_table = markdown_widget(markdown)
             table_exp = widgets.Accordion(children=[markdown_table], selected_index=None)
             table_exp.set_title(0, "See logs")
-            if len(logs) > 0: 
+            if len(logs) > 0:
                 if self.isJupyter:
                     display(table_exp)
                 else:

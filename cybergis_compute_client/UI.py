@@ -601,7 +601,7 @@ class UI:
                 result_folder_content
             if len(result_folder_content) == 0:
                 raise Exception('failed to get result folder content')
-                
+
             display(Markdown('Beginning automatic download'))
             localEndpoint = self.jupyter_globus['endpoint']
             filename = self.globus_filename
