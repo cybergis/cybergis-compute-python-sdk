@@ -4,10 +4,8 @@ import ipywidgets as widgets
 from ipyfilechooser import FileChooser
 from IPython.display import Markdown, display, clear_output
 from .MarkdownTable import MarkdownTable  # noqa
-import requests, datetime, webbrowser
-import geopandas as gpd
-import pandas as pd
-import folium
+import requests
+
 
 class UI:
     """
@@ -127,12 +125,12 @@ class UI:
         user_folders = widgets.Output()
         with user_folders:
             display(self.folders['output'])
-            
+
         # 6. extra script execution post run
         script_exec = widgets.Output()
         with script_exec:
             display(self.scripts['output'])
-        
+
         # assemble into tabs
         self.tab = widgets.Tab(children=[
             job_config,
@@ -582,96 +580,78 @@ class UI:
         with self.scripts['output']:
             self.rerender(['scripts'])
         return
-    
+
     def renderScripts(self):
         if self.scripts['output'] is None:
             self.scripts['output'] = widgets.Output()
         with self.scripts['output']:
-            if self.jobFinished == False:
+            if self.jobFinished is False:
                 display(Markdown('# ⏳ Waiting for Job to Finish...'))
             else:
                 """
                 Helper function to run script from url and send output files to specified destination directory
                 """
-                def run_script(destination, url): 
-                    print(f"Running script from: {url}")
-                    os.chdir(destination)
-                    print(f"Sending all output files to: {os.getcwd()}")
-                    r = requests.get(url)
-                    if r.status_code == 200:
-                        try:
-                            exec(r.text, globals())
-                        except Exception as e:
-                            print("Download successful, but running file led to error")
-                            print(e)
-                            return
-                    return
-                def show_files(out_dir):
-                    # For printing out directory in testing
-                    try:
-                        output = os.listdir(out_dir)
-                        if output:
-                            print(f"Contents of '{out_dir}':")
-                            for file in output:
-                                print(file)
-                        else:
-                            print(f"The directory '{out_dir}' is empty.")
-                    except Exception as e:
-                        print(f"Unable to access directory {out_dir} / directory not found")
-                
                 display(Markdown(" Checking job manifest for additional scripts... "))
-                with self.download['output']:
-                    dest = self.compute.recentDownloadPath
+                dest = self.compute.recentDownloadPath  # if recently downloaded, make destination recent download folder
                 if dest is None:
-                    print("!!! Cannot read in recent download path, aborting")
-                    return
-                for key, value in self.job.items(): # iterate through manifest to locate post_run_scripts
-                    #print(f'{key}: {value}')
+                    print("!!! Cannot read in recent download path, destination now current working directory")
+                    dest = os.getcwd()
+
+                scripts = []
+                for key, value in self.job.items():  # iterate through manifest to locate post_run_scripts
                     if key == "post_run_scripts":
-                        if value is not None: # if raw script url exists
-                            run_script(dest, value)
-                            show_files(dest)
+                        if value is not None:  # if raw script url exists
+                            scripts.append(value)
+                if scripts is not None:
+                    print("Found extra scripts to run post job execution, would you like to run?")
+                    print("Raw scripts: ")
+                    for raw in scripts:
+                        print(raw)
+                    self.scripts['button'] = widgets.Button(description="Run script")
+                    self.scripts['script_raw'] = scripts[0]
+                    self.scripts['script_destination'] = dest
+                    self.scripts['button'].on_click(self.onScriptRunButtonClick())
+                    display(self.scripts['button'])
 
-
-    def onScriptButtonClick(self):
-        """
-        Helper function to convert file into geodataframe
-        """   
-        def to_geofile(geo_filepath):
-            ext = os.path.splitext(geo_filepath)[1]
-            if ext not in ['.shp']:
-                print("Not a valid geodataframe file")
+    def onScriptRunButtonClick(self):
+        def run_script(destination, url):
+            with self.scripts['output']:
+                print(f"Running script from: {url}")
+                os.chdir(destination)
+                print(f"Sending all output files to: {os.getcwd()}")
+                r = requests.get(url)
+                if r.status_code == 200:
+                    try:
+                        exec(r.text, globals())
+                    except Exception as e:
+                        print("Download successful, but running file led to error")
+                        print(e)
+                        return
                 return
-            gdf = gpd.read_file(geo_filepath)
-            try:
-                gdf = gdf.to_crs(epsg=4326)
-            except Exception as e:
-                gdf = gdf.set_crs("EPSG:4326", allow_override=False)
-            return gdf
-        """
-         Helper function to display a geodataframe using explore() function
-        """
-        def geo_vis(gdf):
-            map = gdf.explore(tiles='OpenStreetMap')
-            map.save("map_visualization2.html")
-            map_html = map._repr_html_() # convert explore() map to html string
-            iframe = widgets.HTML(
-                value=map_html,
-                placeholder='Loading map...',
-                description='Map:',
-            )
-            return iframe
+
+        def show_files(out_dir):
+            with self.scripts['output']:
+                # For printing out directory in testing
+                try:
+                    output = os.listdir(out_dir)
+                    if output:
+                        print(f"\nContents of destination directory '{out_dir}':")
+                        for file in output:
+                            print(file)
+                    else:
+                        print(f"The directory '{out_dir}' is empty.")
+                except Exception as e:
+                    print(f"Unable to access directory {out_dir} / directory not found")
+                    print(e)
+
         def on_click(change):
+            self.script_executed = True
             self.rerender(['scripts'])
-            geo_filepath = self.scripts['dropdown'].value
-            display(Markdown("Processing file..."))
-            print("Converting to geodataframe")
-            gdf = to_geofile(geo_filepath)
-            print("Showing map display")
-            iframe = geo_vis(gdf)
-            display(iframe)
+            dest = self.scripts['script_destination']
+            value = self.scripts['script_raw']
+            run_script(dest, value)
+            show_files(dest)
         return on_click
-                
 
     def renderFolders(self):
         """
@@ -1016,6 +996,7 @@ class UI:
         self.refreshing = False
         self.folderPage = 0
         self.foldersPerPage = 10
+        self.script_executed = False
         # components
         self.jobTemplate = {'output': None}
         self.description = {'output': None}
@@ -1031,7 +1012,7 @@ class UI:
         self.resultCancel = {'output': None}
         self.resultEvents = {'output': None}
         self.resultLogs = {'output': None}
-        self.scripts = {'output': None}
+        self.scripts = {'output': None, 'script_raw': None, 'script_destination': None}
         self.download = {'output': None, 'alert_output': None, 'result_output': None}
         self.recently_submitted = {'output': None, 'submit': {}, 'job_list_size': 5, 'load_more': None}
         self.load_more = {'output': None, 'load_more': None}
