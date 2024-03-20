@@ -6,6 +6,7 @@ from IPython.display import Markdown, display, clear_output
 from .MarkdownTable import MarkdownTable  # noqa
 import requests
 import datetime
+import geopandas as gpd
 
 
 class UI:
@@ -581,7 +582,7 @@ class UI:
         with self.scripts['output']:
             self.rerender(['scripts'])
         return
-    
+
     def search(self):  # function for searching from directory that post job-run scripts recently outputted to
         """
         Helper function to search directory and all subdirectories recursively
@@ -590,10 +591,8 @@ class UI:
             for entry in os.listdir(dir):  # check subdirectories
                 path = os.path.join(dir, entry)
                 if os.path.isdir(path):
-                    #print("Checking subdirectories...")
                     data = search_dir(path, data)
                 elif os.path.isfile(path):
-                    #print("Checking file...")
                     file_name, file_ext = os.path.splitext(path)
                     if file_ext.lower() not in ['.csv', '.shp', '.geojson']:
                         continue
@@ -644,19 +643,18 @@ class UI:
                     self.scripts['script_destination'] = dest
                     self.scripts['button'].on_click(self.onScriptRunButtonClick())
                     display(self.scripts['button'])
-                if self.script_executed:  # if post job script was recently executed: 
+                if self.script_executed:  # if post job script was recently executed:
                     script_output_files = self.search()
                     if script_output_files is None:
                         print("No files downloaded from script execution")
                         return
                     self.scripts['dropdown'] = widgets.Dropdown(
-                    options=script_output_files, value=script_output_files[0],
-                    description='Select data file to display')
+                        options=script_output_files, value=script_output_files[0],
+                        description='Select data file to display')
                     display(self.scripts['dropdown'])
                     self.scripts['visual_button'] = widgets.Button(description="Visualize geospatial file")
                     self.scripts['visual_button'].on_click(self.onVisualizeButtonClick())
                     display(self.scripts['visual_button'])
-
 
     def onScriptRunButtonClick(self):
         """
@@ -700,11 +698,11 @@ class UI:
             show_files(dest)
             self.rerender(['scripts'])
         return on_click
-    
+
     def onVisualizeButtonClick(self):
         """
         Helper function to convert file into geodataframe
-        """   
+        """
         def to_geofile(geo_filepath):
             ext = os.path.splitext(geo_filepath)[1]
             if ext not in ['.shp', '.geojson']:
@@ -715,6 +713,7 @@ class UI:
                 gdf = gdf.to_crs(epsg=4326)
             except Exception as e:
                 gdf = gdf.set_crs("EPSG:4326", allow_override=False)
+                print(e)
             return gdf
         """
          Helper function to display a geodataframe using explore() function
@@ -722,7 +721,7 @@ class UI:
         def geo_vis(gdf):
             map = gdf.explore(tiles='OpenStreetMap')
             map.save("map_visualization2.html")
-            map_html = map._repr_html_() # convert explore() map to html string
+            map_html = map._repr_html_()  # convert explore() map to html string
             iframe = widgets.HTML(
                 value=map_html,
                 placeholder='Loading map...',
