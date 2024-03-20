@@ -12,6 +12,7 @@ core.2406
 core.2435
 *.html
 *.prj
+*.geojson
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

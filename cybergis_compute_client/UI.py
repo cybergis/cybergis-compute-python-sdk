@@ -5,6 +5,7 @@ from ipyfilechooser import FileChooser
 from IPython.display import Markdown, display, clear_output
 from .MarkdownTable import MarkdownTable  # noqa
 import requests
+import datetime
 
 
 class UI:
@@ -580,6 +581,40 @@ class UI:
         with self.scripts['output']:
             self.rerender(['scripts'])
         return
+    
+    def search(self):  # function for searching from directory that post job-run scripts recently outputted to
+        """
+        Helper function to search directory and all subdirectories recursively
+        """
+        def search_dir(dir, data):
+            for entry in os.listdir(dir):  # check subdirectories
+                path = os.path.join(dir, entry)
+                if os.path.isdir(path):
+                    #print("Checking subdirectories...")
+                    data = search_dir(path, data)
+                elif os.path.isfile(path):
+                    #print("Checking file...")
+                    file_name, file_ext = os.path.splitext(path)
+                    if file_ext.lower() not in ['.csv', '.shp', '.geojson']:
+                        continue
+                    else:
+                        # check for recency (file was created in last 30 minutes)
+                        c = datetime.datetime.fromtimestamp(os.path.getctime(path))
+                        if datetime.datetime.now() - c < datetime.timedelta(minutes=30):
+                            data.append(path)
+            return data
+        """
+        Helper function to run raw script and get output data files
+        """
+        def search_files(d=os.getcwd()):
+            data_files = []
+            print(f"Searching for data files in: {d}")
+            # get all files that can be viewed and operated on as dataframes
+            data_files = search_dir(d, data_files)
+            if not data_files:
+                display(Markdown(' No recently created compatible filetypes to view'))
+            return data_files
+        return search_files(self.scripts['script_destination'])
 
     def renderScripts(self):
         if self.scripts['output'] is None:
@@ -588,9 +623,6 @@ class UI:
             if self.jobFinished is False:
                 display(Markdown('# ⏳ Waiting for Job to Finish...'))
             else:
-                """
-                Helper function to run script from url and send output files to specified destination directory
-                """
                 display(Markdown(" Checking job manifest for additional scripts... "))
                 dest = self.compute.recentDownloadPath  # if recently downloaded, make destination recent download folder
                 if dest is None:
@@ -612,8 +644,24 @@ class UI:
                     self.scripts['script_destination'] = dest
                     self.scripts['button'].on_click(self.onScriptRunButtonClick())
                     display(self.scripts['button'])
+                if self.script_executed:  # if post job script was recently executed: 
+                    script_output_files = self.search()
+                    if script_output_files is None:
+                        print("No files downloaded from script execution")
+                        return
+                    self.scripts['dropdown'] = widgets.Dropdown(
+                    options=script_output_files, value=script_output_files[0],
+                    description='Select data file to display')
+                    display(self.scripts['dropdown'])
+                    self.scripts['visual_button'] = widgets.Button(description="Visualize geospatial file")
+                    self.scripts['visual_button'].on_click(self.onVisualizeButtonClick())
+                    display(self.scripts['visual_button'])
+
 
     def onScriptRunButtonClick(self):
+        """
+        Helper function to run script from url and send output files to specified destination directory
+        """
         def run_script(destination, url):
             with self.scripts['output']:
                 print(f"Running script from: {url}")
@@ -646,11 +694,52 @@ class UI:
 
         def on_click(change):
             self.script_executed = True
-            self.rerender(['scripts'])
             dest = self.scripts['script_destination']
             value = self.scripts['script_raw']
             run_script(dest, value)
             show_files(dest)
+            self.rerender(['scripts'])
+        return on_click
+    
+    def onVisualizeButtonClick(self):
+        """
+        Helper function to convert file into geodataframe
+        """   
+        def to_geofile(geo_filepath):
+            ext = os.path.splitext(geo_filepath)[1]
+            if ext not in ['.shp', '.geojson']:
+                print("Not a valid geodataframe file")
+                return
+            gdf = gpd.read_file(geo_filepath)
+            try:
+                gdf = gdf.to_crs(epsg=4326)
+            except Exception as e:
+                gdf = gdf.set_crs("EPSG:4326", allow_override=False)
+            return gdf
+        """
+         Helper function to display a geodataframe using explore() function
+        """
+        def geo_vis(gdf):
+            map = gdf.explore(tiles='OpenStreetMap')
+            map.save("map_visualization2.html")
+            map_html = map._repr_html_() # convert explore() map to html string
+            iframe = widgets.HTML(
+                value=map_html,
+                placeholder='Loading map...',
+                description='Map:',
+            )
+            return iframe
+
+        def on_click(change):
+            with self.scripts['output']:
+                self.rerender(['scripts'])
+                geo_filepath = self.scripts['dropdown'].value
+                display(Markdown("Processing file..."))
+                print("Converting to geodataframe")
+                gdf = to_geofile(geo_filepath)
+                print("Showing map display")
+                iframe = geo_vis(gdf)
+                display(iframe)
         return on_click
 
     def renderFolders(self):
