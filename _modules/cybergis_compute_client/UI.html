@@ -109,6 +109,10 @@
             <span class=n >display</span><span class=p >(</span><span class=n >divider</span><span class=p >)</span>
             <span class=n >display</span><span class=p >(</span><span class=n >Markdown</span><span class=p >(</span><span class=s1 >'## 📋 job logs'</span><span class=p >))</span>
             <span class=n >display</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >resultLogs</span><span class=p >[</span><span class=s1 >'output'</span><span class=p >])</span>
+            <span class=n >display</span><span class=p >(</span><span class=n >divider</span><span class=p >)</span>
+            <span class=k >if</span> <span class=bp >self</span><span class=o >.</span><span class=n >compute</span><span class=o >.</span><span class=n >simple</span> <span class=ow >is</span> <span class=kc >True</span><span class=p >:</span>
+                <span class=n >display</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >autoDownload</span><span class=p >[</span><span class=s1 >'output'</span><span class=p >])</span>
+                <span class=n >display</span><span class=p >(</span><span class=n >divider</span><span class=p >)</span>
 
         <span class=c1 ># 3. download</span>
         <span class=n >download</span> <span class=o >=</span> <span class=n >widgets</span><span class=o >.</span><span class=n >Output</span><span class=p >()</span>
@@ -158,6 +162,7 @@
         <span class=bp >self</span><span class=o >.</span><span class=n >renderResultCancel</span><span class=p >()</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >renderResultEvents</span><span class=p >()</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >renderResultLogs</span><span class=p >()</span>
+        <span class=bp >self</span><span class=o >.</span><span class=n >renderAutoDownload</span><span class=p >()</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >renderDownload</span><span class=p >()</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >renderRecentlySubmittedJobs</span><span class=p >()</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >renderLoadMore</span><span class=p >()</span>
@@ -191,7 +196,7 @@
             <span class=bp >self</span><span class=o >.</span><span class=n >jobTemplate</span><span class=p >[</span><span class=s1 >'output'</span><span class=p >]</span> <span class=o >=</span> <span class=n >widgets</span><span class=o >.</span><span class=n >Output</span><span class=p >()</span>
         <span class=c1 ># create components</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >jobTemplate</span><span class=p >[</span><span class=s1 >'dropdown'</span><span class=p >]</span> <span class=o >=</span> <span class=n >widgets</span><span class=o >.</span><span class=n >Dropdown</span><span class=p >(</span>
-            <span class=n >options</span><span class=o >=</span><span class=p >[</span><span class=n >i</span> <span class=k >for</span> <span class=n >i</span> <span class=ow >in</span> <span class=bp >self</span><span class=o >.</span><span class=n >jobs</span><span class=p >],</span> <span class=n >value</span><span class=o >=</span><span class=bp >self</span><span class=o >.</span><span class=n >jobName</span><span class=p >,</span>
+            <span class=n >options</span><span class=o >=</span><span class=nb >sorted</span><span class=p >([</span><span class=n >i</span> <span class=k >for</span> <span class=n >i</span> <span class=ow >in</span> <span class=bp >self</span><span class=o >.</span><span class=n >jobs</span><span class=p >]),</span> <span class=n >value</span><span class=o >=</span><span class=bp >self</span><span class=o >.</span><span class=n >jobName</span><span class=p >,</span>
             <span class=n >description</span><span class=o >=</span><span class=s1 >'📦 Job Templates:'</span><span class=p >,</span>
             <span class=n >style</span><span class=o >=</span><span class=bp >self</span><span class=o >.</span><span class=n >style</span><span class=p >,</span>
             <span class=n >layout</span><span class=o >=</span><span class=bp >self</span><span class=o >.</span><span class=n >layout</span><span class=p >)</span>
@@ -500,6 +505,7 @@
         <span class=k >with</span> <span class=bp >self</span><span class=o >.</span><span class=n >download</span><span class=p >[</span><span class=s1 >'output'</span><span class=p >]:</span>
             <span class=k >if</span> <span class=bp >self</span><span class=o >.</span><span class=n >jobFinished</span><span class=p >:</span>
                 <span class=n >display</span><span class=p >(</span><span class=n >Markdown</span><span class=p >(</span><span class=s1 >'# ☁️ Download Job Output Files'</span><span class=p >))</span>
+                <span class=n >display</span><span class=p >(</span><span class=n >Markdown</span><span class=p >(</span><span class=s1 >'NOTICE: Options in the dropdown are subdirectories in the result folder, not the files themselves. Selecting "/" will download the entire results folder.'</span><span class=p >))</span>
                 <span class=n >display</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >download</span><span class=p >[</span><span class=s1 >'alert_output'</span><span class=p >])</span>
                 <span class=n >display</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >download</span><span class=p >[</span><span class=s1 >'result_output'</span><span class=p >])</span>
                 <span class=n >display</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >download</span><span class=p >[</span><span class=s1 >'dropdown'</span><span class=p >])</span>
@@ -521,7 +527,10 @@
             <span class=k >return</span>
 
         <span class=k >with</span> <span class=bp >self</span><span class=o >.</span><span class=n >resultStatus</span><span class=p >[</span><span class=s1 >'output'</span><span class=p >]:</span>
-            <span class=n >display</span><span class=p >(</span><span class=n >Markdown</span><span class=p >(</span><span class=s1 >'# ✌️ Your Job is Here!'</span><span class=p >))</span>
+            <span class=k >if</span> <span class=ow >not</span> <span class=bp >self</span><span class=o >.</span><span class=n >jobFinished</span><span class=p >:</span>
+                <span class=n >display</span><span class=p >(</span><span class=n >Markdown</span><span class=p >(</span><span class=s1 >'# 🕝 Your Job is Running!'</span><span class=p >))</span>
+            <span class=k >else</span><span class=p >:</span>
+                <span class=n >display</span><span class=p >(</span><span class=n >Markdown</span><span class=p >(</span><span class=s1 >'# ✌️ Your Job is Finished!'</span><span class=p >))</span>
             <span class=bp >self</span><span class=o >.</span><span class=n >compute</span><span class=o >.</span><span class=n >job</span><span class=o >.</span><span class=n >status</span><span class=p >()</span>
         <span class=k >return</span></div>
 
@@ -568,7 +577,51 @@
             <span class=n >display</span><span class=p >(</span><span class=n >Markdown</span><span class=p >(</span><span class=s1 >'***'</span><span class=p >))</span>
             <span class=n >display</span><span class=p >(</span><span class=n >Markdown</span><span class=p >(</span><span class=s1 >'## ✅ your job completed'</span><span class=p >))</span>
             <span class=bp >self</span><span class=o >.</span><span class=n >jobFinished</span> <span class=o >=</span> <span class=kc >True</span>
-            <span class=bp >self</span><span class=o >.</span><span class=n >rerender</span><span class=p >([</span><span class=s1 >'download'</span><span class=p >])</span>
+            <span class=bp >self</span><span class=o >.</span><span class=n >rerender</span><span class=p >([</span><span class=s1 >'download'</span><span class=p >,</span> <span class=s1 >'resultStatus'</span><span class=p >])</span>
+        <span class=k >with</span> <span class=bp >self</span><span class=o >.</span><span class=n >submitNew</span><span class=p >[</span><span class=s1 >'output'</span><span class=p >]:</span>
+            <span class=bp >self</span><span class=o >.</span><span class=n >rerender</span><span class=p >([</span><span class=s1 >'submitNew'</span><span class=p >])</span>
+        <span class=k >with</span> <span class=bp >self</span><span class=o >.</span><span class=n >autoDownload</span><span class=p >[</span><span class=s1 >'output'</span><span class=p >]:</span>
+            <span class=bp >self</span><span class=o >.</span><span class=n >rerender</span><span class=p >([</span><span class=s1 >'autoDownload'</span><span class=p >])</span>
+        <span class=k >return</span></div>
+
+<div class=viewcode-block  id=UI.renderAutoDownload ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.UI.UI.renderAutoDownload">[docs]</a>    <span class=k >def</span> <span class=nf >renderAutoDownload</span><span class=p >(</span><span class=bp >self</span><span class=p >):</span>
+<span class=w >        </span><span class=sd >"""</span>
+<span class=sd >        Automatically downloading results</span>
+<span class=sd >        once a job is finished</span>
+<span class=sd >        """</span>
+        <span class=k >if</span> <span class=bp >self</span><span class=o >.</span><span class=n >compute</span><span class=o >.</span><span class=n >simple</span> <span class=ow >is</span> <span class=kc >False</span><span class=p >:</span>
+            <span class=k >return</span>
+        <span class=k >if</span> <span class=bp >self</span><span class=o >.</span><span class=n >autoDownload</span><span class=p >[</span><span class=s1 >'output'</span><span class=p >]</span> <span class=ow >is</span> <span class=kc >None</span><span class=p >:</span>
+            <span class=bp >self</span><span class=o >.</span><span class=n >autoDownload</span><span class=p >[</span><span class=s1 >'output'</span><span class=p >]</span> <span class=o >=</span> <span class=n >widgets</span><span class=o >.</span><span class=n >Output</span><span class=p >()</span>
+        <span class=k >if</span> <span class=bp >self</span><span class=o >.</span><span class=n >jobFinished</span><span class=p >:</span>
+            <span class=n >result_folder_content</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >compute</span><span class=o >.</span><span class=n >job</span><span class=o >.</span><span class=n >result_folder_content</span><span class=p >()</span>
+            <span class=c1 ># push default value to front</span>
+            <span class=k >try</span><span class=p >:</span>
+                <span class=n >result_folder_content</span><span class=o >.</span><span class=n >insert</span><span class=p >(</span>
+                    <span class=mi >0</span><span class=p >,</span> <span class=n >result_folder_content</span><span class=o >.</span><span class=n >pop</span><span class=p >(</span>
+                        <span class=n >result_folder_content</span><span class=o >.</span><span class=n >index</span><span class=p >(</span>
+                            <span class=bp >self</span><span class=o >.</span><span class=n >defaultRemoteResultFolder</span><span class=p >)))</span>
+            <span class=k >except</span> <span class=ne >Exception</span><span class=p >:</span>
+                <span class=n >result_folder_content</span>
+            <span class=k >if</span> <span class=nb >len</span><span class=p >(</span><span class=n >result_folder_content</span><span class=p >)</span> <span class=o >==</span> <span class=mi >0</span><span class=p >:</span>
+                <span class=k >raise</span> <span class=ne >Exception</span><span class=p >(</span><span class=s1 >'failed to get result folder content'</span><span class=p >)</span>
+
+            <span class=n >display</span><span class=p >(</span><span class=n >Markdown</span><span class=p >(</span><span class=s1 >'Beginning automatic download'</span><span class=p >))</span>
+            <span class=n >localEndpoint</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >jupyter_globus</span><span class=p >[</span><span class=s1 >'endpoint'</span><span class=p >]</span>
+            <span class=n >filename</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >globus_filename</span>
+            <span class=n >root</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >jupyter_globus</span><span class=p >[</span><span class=s1 >'root_path'</span><span class=p >]</span>
+            <span class=n >localPath</span> <span class=o >=</span> <span class=n >os</span><span class=o >.</span><span class=n >path</span><span class=o >.</span><span class=n >join</span><span class=p >(</span><span class=n >root</span><span class=p >,</span> <span class=n >filename</span><span class=p >)</span>
+            <span class=bp >self</span><span class=o >.</span><span class=n >compute</span><span class=o >.</span><span class=n >job</span><span class=o >.</span><span class=n >download_result_folder_by_globus</span><span class=p >(</span><span class=n >remotePath</span><span class=o >=</span><span class=n >result_folder_content</span><span class=p >[</span><span class=mi >0</span><span class=p >],</span> <span class=n >localEndpoint</span><span class=o >=</span><span class=n >localEndpoint</span><span class=p >,</span> <span class=n >localPath</span><span class=o >=</span><span class=n >localPath</span><span class=p >)</span>
+            <span class=nb >print</span><span class=p >(</span><span class=sa >f</span><span class=s1 >'Downloading results from default folder in </span><span class=si >{</span><span class=n >result_folder_content</span><span class=p >[</span><span class=mi >0</span><span class=p >]</span><span class=si >}</span><span class=s1 >'</span><span class=p >)</span>
+            <span class=nb >print</span><span class=p >(</span><span class=s1 >'please check your data at your root folder under "'</span> <span class=o >+</span> <span class=n >filename</span> <span class=o >+</span> <span class=s1 >'"'</span><span class=p >)</span>
+            <span class=nb >print</span><span class=p >(</span><span class=sa >f</span><span class=s1 >'folder in path </span><span class=si >{</span><span class=n >localPath</span><span class=si >}</span><span class=s1 >'</span><span class=p >)</span>
+            <span class=n >display</span><span class=p >(</span><span class=n >Markdown</span><span class=p >(</span><span class=s2 >"Download succeeded"</span><span class=p >))</span>
+            <span class=bp >self</span><span class=o >.</span><span class=n >compute</span><span class=o >.</span><span class=n >recentDownloadPath</span> <span class=o >=</span> <span class=n >os</span><span class=o >.</span><span class=n >path</span><span class=o >.</span><span class=n >join</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >jupyter_globus</span><span class=p >[</span><span class=s1 >'container_home_path'</span><span class=p >],</span> <span class=n >filename</span><span class=p >)</span>
+            <span class=bp >self</span><span class=o >.</span><span class=n >recently_submitted</span><span class=p >[</span><span class=s1 >'output'</span><span class=p >]</span><span class=o >.</span><span class=n >clear_output</span><span class=p >()</span>
+            <span class=bp >self</span><span class=o >.</span><span class=n >load_more</span><span class=p >[</span><span class=s1 >'output'</span><span class=p >]</span><span class=o >.</span><span class=n >clear_output</span><span class=p >()</span>
+            <span class=bp >self</span><span class=o >.</span><span class=n >renderRecentlySubmittedJobs</span><span class=p >()</span>
+            <span class=bp >self</span><span class=o >.</span><span class=n >renderLoadMore</span><span class=p >()</span>
+
         <span class=k >return</span></div>
 
 <div class=viewcode-block  id=UI.renderFolders ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.UI.UI.renderFolders">[docs]</a>    <span class=k >def</span> <span class=nf >renderFolders</span><span class=p >(</span><span class=bp >self</span><span class=p >):</span>
@@ -929,6 +982,7 @@
         <span class=bp >self</span><span class=o >.</span><span class=n >resultCancel</span> <span class=o >=</span> <span class=p >{</span><span class=s1 >'output'</span><span class=p >:</span> <span class=kc >None</span><span class=p >}</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >resultEvents</span> <span class=o >=</span> <span class=p >{</span><span class=s1 >'output'</span><span class=p >:</span> <span class=kc >None</span><span class=p >}</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >resultLogs</span> <span class=o >=</span> <span class=p >{</span><span class=s1 >'output'</span><span class=p >:</span> <span class=kc >None</span><span class=p >}</span>
+        <span class=bp >self</span><span class=o >.</span><span class=n >autoDownload</span> <span class=o >=</span> <span class=p >{</span><span class=s1 >'output'</span><span class=p >:</span> <span class=kc >None</span><span class=p >}</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >download</span> <span class=o >=</span> <span class=p >{</span><span class=s1 >'output'</span><span class=p >:</span> <span class=kc >None</span><span class=p >,</span> <span class=s1 >'alert_output'</span><span class=p >:</span> <span class=kc >None</span><span class=p >,</span> <span class=s1 >'result_output'</span><span class=p >:</span> <span class=kc >None</span><span class=p >}</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >recently_submitted</span> <span class=o >=</span> <span class=p >{</span><span class=s1 >'output'</span><span class=p >:</span> <span class=kc >None</span><span class=p >,</span> <span class=s1 >'submit'</span><span class=p >:</span> <span class=p >{},</span> <span class=s1 >'job_list_size'</span><span class=p >:</span> <span class=mi >5</span><span class=p >,</span> <span class=s1 >'load_more'</span><span class=p >:</span> <span class=kc >None</span><span class=p >}</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >load_more</span> <span class=o >=</span> <span class=p >{</span><span class=s1 >'output'</span><span class=p >:</span> <span class=kc >None</span><span class=p >,</span> <span class=s1 >'load_more'</span><span class=p >:</span> <span class=kc >None</span><span class=p >}</span>

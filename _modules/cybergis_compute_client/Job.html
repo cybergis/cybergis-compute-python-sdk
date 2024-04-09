@@ -4,6 +4,7 @@
 <span class=kn >import</span> <span class=nn >json</span>
 <span class=kn >from</span> <span class=nn >os</span> <span class=kn >import</span> <span class=n >system</span><span class=p >,</span> <span class=n >name</span>
 <span class=kn >from</span> <span class=nn >IPython.display</span> <span class=kn >import</span> <span class=n >display</span><span class=p >,</span> <span class=n >clear_output</span><span class=p >,</span> <span class=n >Markdown</span>
+<span class=kn >import</span> <span class=nn >ipywidgets</span> <span class=k >as</span> <span class=nn >widgets</span>
 
 
 <div class=viewcode-block  id=Job ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.Job.Job">[docs]</a><span class=k >class</span> <span class=nc >Job</span><span class=p >:</span>
@@ -161,11 +162,21 @@
             <span class=nb >print</span><span class=p >(</span><span class=s1 >'📮 Job ID: '</span> <span class=o >+</span> <span class=bp >self</span><span class=o >.</span><span class=n >id</span><span class=p >)</span>
             <span class=k >if</span> <span class=s1 >'slurmId'</span> <span class=ow >in</span> <span class=n >status</span><span class=p >:</span>
                 <span class=nb >print</span><span class=p >(</span><span class=s1 >'🤖 Slurm ID: '</span> <span class=o >+</span> <span class=nb >str</span><span class=p >(</span><span class=n >status</span><span class=p >[</span><span class=s1 >'slurmId'</span><span class=p >]))</span>
+
+            <span class=k >def</span> <span class=nf >markdown_widget</span><span class=p >(</span><span class=n >text</span><span class=p >):</span>
+                <span class=n >out</span> <span class=o >=</span> <span class=n >widgets</span><span class=o >.</span><span class=n >Output</span><span class=p >()</span>
+                <span class=k >with</span> <span class=n >out</span><span class=p >:</span>
+                    <span class=n >display</span><span class=p >(</span><span class=n >Markdown</span><span class=p >(</span><span class=n >text</span><span class=p >))</span>
+                <span class=k >return</span> <span class=n >out</span>
+            <span class=n >markdown</span> <span class=o >=</span> <span class=n >MarkdownTable</span><span class=o >.</span><span class=n >render</span><span class=p >(</span><span class=n >events</span><span class=p >,</span> <span class=n >headers</span><span class=p >)</span>
+            <span class=n >markdown_table</span> <span class=o >=</span> <span class=n >markdown_widget</span><span class=p >(</span><span class=n >markdown</span><span class=p >)</span>
+            <span class=n >table_exp</span> <span class=o >=</span> <span class=n >widgets</span><span class=o >.</span><span class=n >Accordion</span><span class=p >(</span><span class=n >children</span><span class=o >=</span><span class=p >[</span><span class=n >markdown_table</span><span class=p >],</span> <span class=n >selected_index</span><span class=o >=</span><span class=kc >None</span><span class=p >)</span>
+            <span class=n >table_exp</span><span class=o >.</span><span class=n >set_title</span><span class=p >(</span><span class=mi >0</span><span class=p >,</span> <span class=s2 >"See events"</span><span class=p >)</span>
             <span class=k >if</span> <span class=nb >len</span><span class=p >(</span><span class=n >events</span><span class=p >)</span> <span class=o >&gt;</span> <span class=mi >0</span><span class=p >:</span>
                 <span class=k >if</span> <span class=bp >self</span><span class=o >.</span><span class=n >isJupyter</span><span class=p >:</span>
-                    <span class=n >display</span><span class=p >(</span><span class=n >Markdown</span><span class=p >(</span><span class=n >MarkdownTable</span><span class=o >.</span><span class=n >render</span><span class=p >(</span><span class=n >events</span><span class=p >,</span> <span class=n >headers</span><span class=p >)))</span>
+                    <span class=n >display</span><span class=p >(</span><span class=n >table_exp</span><span class=p >)</span>
                 <span class=k >else</span><span class=p >:</span>
-                    <span class=nb >print</span><span class=p >(</span><span class=n >MarkdownTable</span><span class=o >.</span><span class=n >render</span><span class=p >(</span><span class=n >events</span><span class=p >,</span> <span class=n >headers</span><span class=p >))</span>
+                    <span class=nb >print</span><span class=p >(</span><span class=n >markdown</span><span class=p >)</span>
 
             <span class=k >if</span> <span class=ow >not</span> <span class=n >isEnd</span><span class=p >:</span>
                 <span class=n >time</span><span class=o >.</span><span class=n >sleep</span><span class=p >(</span><span class=n >refreshRateInSeconds</span><span class=p >)</span></div>
@@ -214,12 +225,21 @@
             <span class=nb >print</span><span class=p >(</span><span class=s1 >'📮 Job ID: '</span> <span class=o >+</span> <span class=bp >self</span><span class=o >.</span><span class=n >id</span><span class=p >)</span>
             <span class=k >if</span> <span class=s1 >'slurmId'</span> <span class=ow >in</span> <span class=n >status</span><span class=p >:</span>
                 <span class=nb >print</span><span class=p >(</span><span class=s1 >'🤖 Slurm ID: '</span> <span class=o >+</span> <span class=nb >str</span><span class=p >(</span><span class=n >status</span><span class=p >[</span><span class=s1 >'slurmId'</span><span class=p >]))</span>
+
+            <span class=k >def</span> <span class=nf >markdown_widget</span><span class=p >(</span><span class=n >text</span><span class=p >):</span>
+                <span class=n >out</span> <span class=o >=</span> <span class=n >widgets</span><span class=o >.</span><span class=n >Output</span><span class=p >()</span>
+                <span class=k >with</span> <span class=n >out</span><span class=p >:</span>
+                    <span class=n >display</span><span class=p >(</span><span class=n >Markdown</span><span class=p >(</span><span class=n >text</span><span class=p >))</span>
+                <span class=k >return</span> <span class=n >out</span>
+            <span class=n >markdown</span> <span class=o >=</span> <span class=n >MarkdownTable</span><span class=o >.</span><span class=n >render</span><span class=p >(</span><span class=n >logs</span><span class=p >,</span> <span class=n >headers</span><span class=p >)</span>
+            <span class=n >markdown_table</span> <span class=o >=</span> <span class=n >markdown_widget</span><span class=p >(</span><span class=n >markdown</span><span class=p >)</span>
+            <span class=n >table_exp</span> <span class=o >=</span> <span class=n >widgets</span><span class=o >.</span><span class=n >Accordion</span><span class=p >(</span><span class=n >children</span><span class=o >=</span><span class=p >[</span><span class=n >markdown_table</span><span class=p >],</span> <span class=n >selected_index</span><span class=o >=</span><span class=kc >None</span><span class=p >)</span>
+            <span class=n >table_exp</span><span class=o >.</span><span class=n >set_title</span><span class=p >(</span><span class=mi >0</span><span class=p >,</span> <span class=s2 >"See logs"</span><span class=p >)</span>
             <span class=k >if</span> <span class=nb >len</span><span class=p >(</span><span class=n >logs</span><span class=p >)</span> <span class=o >&gt;</span> <span class=mi >0</span><span class=p >:</span>
                 <span class=k >if</span> <span class=bp >self</span><span class=o >.</span><span class=n >isJupyter</span><span class=p >:</span>
-                    <span class=n >display</span><span class=p >(</span><span class=n >Markdown</span><span class=p >(</span><span class=n >MarkdownTable</span><span class=o >.</span><span class=n >render</span><span class=p >(</span><span class=n >logs</span><span class=p >,</span> <span class=n >headers</span><span class=p >)))</span>
+                    <span class=n >display</span><span class=p >(</span><span class=n >table_exp</span><span class=p >)</span>
                 <span class=k >else</span><span class=p >:</span>
-                    <span class=nb >print</span><span class=p >(</span><span class=n >MarkdownTable</span><span class=o >.</span><span class=n >render</span><span class=p >(</span><span class=n >logs</span><span class=p >,</span> <span class=n >headers</span><span class=p >))</span>
-
+                    <span class=nb >print</span><span class=p >(</span><span class=n >markdown</span><span class=p >)</span>
             <span class=k >if</span> <span class=ow >not</span> <span class=n >isEnd</span><span class=p >:</span>
                 <span class=n >time</span><span class=o >.</span><span class=n >sleep</span><span class=p >(</span><span class=n >refreshRateInSeconds</span><span class=p >)</span></div>
 

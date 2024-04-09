@@ -70,6 +70,7 @@
         <span class=c1 ># job</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >job</span> <span class=o >=</span> <span class=kc >None</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >recentDownloadPath</span> <span class=o >=</span> <span class=kc >None</span>
+        <span class=bp >self</span><span class=o >.</span><span class=n >simple</span> <span class=o >=</span> <span class=kc >False</span>
 
 <div class=viewcode-block  id=CyberGISCompute.encrypt_token ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.encrypt_token">[docs]</a>    <span class=k >def</span> <span class=nf >encrypt_token</span><span class=p >(</span><span class=bp >self</span><span class=p >,</span> <span class=n >token</span><span class=p >):</span>
 <span class=w >        </span><span class=sd >"""</span>
@@ -536,7 +537,7 @@
 <span class=sd >        """</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >show_ui</span><span class=p >(</span><span class=n >input_params</span><span class=p >,</span> <span class=n >defaultJob</span><span class=p >,</span> <span class=n >defaultDataFolder</span><span class=p >,</span> <span class=n >defaultRemoteResultFolder</span><span class=p >)</span></div>
 
-<div class=viewcode-block  id=CyberGISCompute.show_ui ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.show_ui">[docs]</a>    <span class=k >def</span> <span class=nf >show_ui</span><span class=p >(</span><span class=bp >self</span><span class=p >,</span> <span class=n >input_params</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span> <span class=n >defaultJob</span><span class=o >=</span><span class=s2 >"hello_world"</span><span class=p >,</span> <span class=n >defaultDataFolder</span><span class=o >=</span><span class=s2 >"./"</span><span class=p >,</span> <span class=n >defaultRemoteResultFolder</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span> <span class=n >jupyterhubApiToken</span><span class=o >=</span><span class=kc >None</span><span class=p >):</span>
+<div class=viewcode-block  id=CyberGISCompute.show_ui ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.show_ui">[docs]</a>    <span class=k >def</span> <span class=nf >show_ui</span><span class=p >(</span><span class=bp >self</span><span class=p >,</span> <span class=n >simple</span><span class=o >=</span><span class=kc >False</span><span class=p >,</span> <span class=n >input_params</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span> <span class=n >defaultJob</span><span class=o >=</span><span class=s2 >"hello_world"</span><span class=p >,</span> <span class=n >defaultDataFolder</span><span class=o >=</span><span class=s2 >"./"</span><span class=p >,</span> <span class=n >defaultRemoteResultFolder</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span> <span class=n >jupyterhubApiToken</span><span class=o >=</span><span class=kc >None</span><span class=p >):</span>
 <span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Displays the job submission UI</span>
 
@@ -548,6 +549,7 @@
 <span class=sd >        Returns:</span>
 <span class=sd >            None</span>
 <span class=sd >        """</span>
+        <span class=bp >self</span><span class=o >.</span><span class=n >simple</span> <span class=o >=</span> <span class=n >simple</span>
         <span class=k >if</span> <span class=p >(</span><span class=n >jupyterhubApiToken</span> <span class=ow >is</span> <span class=ow >not</span> <span class=kc >None</span><span class=p >):</span>
             <span class=bp >self</span><span class=o >.</span><span class=n >jupyterhubApiToken</span> <span class=o >=</span> <span class=n >jupyterhubApiToken</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >ui</span><span class=o >.</span><span class=n >defaultJobName</span> <span class=o >=</span> <span class=n >defaultJob</span>
