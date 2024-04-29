@@ -19,6 +19,12 @@
 <span class=kn >from</span> <span class=nn >IPython.display</span> <span class=kn >import</span> <span class=n >display</span><span class=p >,</span> <span class=n >Markdown</span><span class=p >,</span> <span class=n >Javascript</span>
 
 
+<span class=k >class</span> <span class=nc >ParamAccumulator</span><span class=p >:</span>
+    <span class=k >def</span> <span class=fm >__init__</span><span class=p >(</span><span class=bp >self</span><span class=p >,</span>
+                 <span class=n >params</span><span class=o >=</span><span class=p >{}):</span>
+        <span class=bp >self</span><span class=o >.</span><span class=n >params</span> <span class=o >=</span> <span class=n >params</span>
+
+
 <div class=viewcode-block  id=CyberGISCompute ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute">[docs]</a><span class=k >class</span> <span class=nc >CyberGISCompute</span><span class=p >:</span>
 <span class=w >    </span><span class=sd >"""CyberGISCompute class</span>
 <span class=sd >    An inteface that handles all interactions with the HPC backend</span>
@@ -216,6 +222,25 @@
 <span class=sd >        """</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >login</span><span class=p >()</span>
         <span class=k >return</span> <span class=n >Job</span><span class=p >(</span><span class=n >maintainer</span><span class=o >=</span><span class=n >maintainer</span><span class=p >,</span> <span class=n >hpc</span><span class=o >=</span><span class=n >hpc</span><span class=p >,</span> <span class=nb >id</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span> <span class=n >hpcUsername</span><span class=o >=</span><span class=n >hpcUsername</span><span class=p >,</span> <span class=n >hpcPassword</span><span class=o >=</span><span class=n >hpcPassword</span><span class=p >,</span> <span class=n >client</span><span class=o >=</span><span class=bp >self</span><span class=o >.</span><span class=n >client</span><span class=p >,</span> <span class=n >isJupyter</span><span class=o >=</span><span class=bp >self</span><span class=o >.</span><span class=n >isJupyter</span><span class=p >,</span> <span class=n >jupyterhubApiToken</span><span class=o >=</span><span class=bp >self</span><span class=o >.</span><span class=n >jupyterhubApiToken</span><span class=p >,</span> <span class=n >printJob</span><span class=o >=</span><span class=n >verbose</span><span class=p >)</span></div>
+
+    <span class=k >def</span> <span class=nf >run_job_using_params</span><span class=p >(</span><span class=bp >self</span><span class=p >,</span>
+                             <span class=n >input_params</span><span class=o >=</span><span class=p >[],</span>
+                             <span class=n >maintainer</span><span class=o >=</span><span class=s1 >'community_contribution'</span><span class=p >,</span>
+                             <span class=n >hpc</span><span class=o >=</span><span class=s2 >"keeling_community"</span><span class=p >,</span>
+                             <span class=n >hpcUsername</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span>
+                             <span class=n >hpcPassword</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span>
+                             <span class=n >localExecutableFolder</span><span class=o >=</span><span class=p >{</span><span class=s2 >"type"</span><span class=p >:</span> <span class=s2 >"git"</span><span class=p >,</span>
+                                                    <span class=s2 >"gitId"</span><span class=p >:</span> <span class=s2 >"hello_world"</span><span class=p >},</span>
+                             <span class=n >localDataFolder</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span>
+                             <span class=n >localResultFolder</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span>
+                             <span class=n >env</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span>
+                             <span class=n >slurm</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span>
+                             <span class=n >verbose</span><span class=o >=</span><span class=kc >True</span><span class=p >):</span>
+        <span class=k >for</span> <span class=n >params</span> <span class=ow >in</span> <span class=n >input_params</span><span class=p >:</span>
+            <span class=n >param_acc</span> <span class=o >=</span> <span class=n >ParamAccumulator</span><span class=p >(</span><span class=n >params</span><span class=p >)</span>
+            <span class=n >job</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >create_job</span><span class=p >(</span><span class=n >maintainer</span><span class=p >,</span> <span class=n >hpc</span><span class=p >,</span> <span class=n >hpcUsername</span><span class=p >,</span> <span class=n >hpcPassword</span><span class=p >)</span>
+            <span class=n >job</span><span class=o >.</span><span class=n >set</span><span class=p >(</span><span class=n >localExecutableFolder</span><span class=p >,</span> <span class=n >localDataFolder</span><span class=p >,</span> <span class=n >localResultFolder</span><span class=p >,</span> <span class=n >param_acc</span><span class=o >.</span><span class=n >params</span><span class=p >,</span> <span class=n >env</span><span class=p >,</span> <span class=n >slurm</span><span class=p >)</span>
+            <span class=n >job</span><span class=o >.</span><span class=n >submit</span><span class=p >()</span>
 
 <div class=viewcode-block  id=CyberGISCompute.get_job_by_id ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.CyberGISCompute.CyberGISCompute.get_job_by_id">[docs]</a>    <span class=k >def</span> <span class=nf >get_job_by_id</span><span class=p >(</span><span class=bp >self</span><span class=p >,</span> <span class=nb >id</span><span class=o >=</span><span class=kc >None</span><span class=p >,</span> <span class=n >verbose</span><span class=o >=</span><span class=kc >True</span><span class=p >):</span>
 <span class=w >        </span><span class=sd >"""</span>
