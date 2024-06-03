@@ -142,6 +142,7 @@
             <span class=k >return</span> <span class=bp >self</span><span class=o >.</span><span class=n >status</span><span class=p >(</span><span class=n >raw</span><span class=o >=</span><span class=kc >True</span><span class=p >)[</span><span class=s1 >'events'</span><span class=p >]</span>
 
         <span class=n >isEnd</span> <span class=o >=</span> <span class=kc >False</span>
+        <span class=n >jobFailure</span> <span class=o >=</span> <span class=kc >False</span>
         <span class=k >while</span> <span class=p >(</span><span class=ow >not</span> <span class=n >isEnd</span><span class=p >):</span>
             <span class=bp >self</span><span class=o >.</span><span class=n >_clear</span><span class=p >()</span>
             <span class=n >status</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >status</span><span class=p >(</span><span class=n >raw</span><span class=o >=</span><span class=kc >True</span><span class=p >)</span>
@@ -158,6 +159,8 @@
                 <span class=p >])</span>
                 <span class=n >isEnd</span> <span class=o >=</span> <span class=n >isEnd</span> <span class=ow >or</span> <span class=n >o</span><span class=p >[</span><span class=s1 >'type'</span><span class=p >]</span> <span class=o >==</span> <span class=s1 >'JOB_ENDED'</span> <span class=ow >or</span> <span class=n >o</span><span class=p >[</span>
                     <span class=s1 >'type'</span><span class=p >]</span> <span class=o >==</span> <span class=s1 >'JOB_FAILED'</span>
+                <span class=k >if</span> <span class=n >isEnd</span> <span class=ow >and</span> <span class=n >o</span><span class=p >[</span><span class=s1 >'type'</span><span class=p >]</span> <span class=o >==</span> <span class=s1 >'JOB_FAILED'</span><span class=p >:</span>
+                    <span class=n >jobFailure</span> <span class=o >=</span> <span class=kc >True</span>
 
             <span class=nb >print</span><span class=p >(</span><span class=s1 >'📮 Job ID: '</span> <span class=o >+</span> <span class=bp >self</span><span class=o >.</span><span class=n >id</span><span class=p >)</span>
             <span class=k >if</span> <span class=s1 >'slurmId'</span> <span class=ow >in</span> <span class=n >status</span><span class=p >:</span>
@@ -179,7 +182,8 @@
                     <span class=nb >print</span><span class=p >(</span><span class=n >markdown</span><span class=p >)</span>
 
             <span class=k >if</span> <span class=ow >not</span> <span class=n >isEnd</span><span class=p >:</span>
-                <span class=n >time</span><span class=o >.</span><span class=n >sleep</span><span class=p >(</span><span class=n >refreshRateInSeconds</span><span class=p >)</span></div>
+                <span class=n >time</span><span class=o >.</span><span class=n >sleep</span><span class=p >(</span><span class=n >refreshRateInSeconds</span><span class=p >)</span>
+        <span class=k >return</span> <span class=n >jobFailure</span></div>
 
 <div class=viewcode-block  id=Job.logs ><a class=viewcode-back  href="../../reference.html#cybergis_compute_client.Job.Job.logs">[docs]</a>    <span class=k >def</span> <span class=nf >logs</span><span class=p >(</span><span class=bp >self</span><span class=p >,</span> <span class=n >raw</span><span class=o >=</span><span class=kc >False</span><span class=p >,</span> <span class=n >liveOutput</span><span class=o >=</span><span class=kc >True</span><span class=p >,</span> <span class=n >refreshRateInSeconds</span><span class=o >=</span><span class=mi >15</span><span class=p >):</span>
 <span class=w >        </span><span class=sd >"""</span>
