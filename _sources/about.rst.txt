@@ -1,6 +1,8 @@
 About
 =====
 
+Check out our latest paper on CyberGIS-Compute in `SoftwareX <https://doi.org/10.1016/j.softx.2024.101691>`_.
+
 What is CyberGIS-Compute?
 -------------------------
 
@@ -50,19 +52,18 @@ Citing
 Below is an example reference for CyberGIS-Compute and bibtex entry::
 
 
-    @inproceedings{10.1145/3486189.3490017,
-        author = {Padmanabhan, Anand and Ziao, Ximo and Vandewalle, Rebecca C. and Baig, Furqan and Michel, Alexander and Li, Zhiyu and Wang, Shaowen},
-        title = {CyberGIS-Compute for Enabling Computationally Intensive Geospatial Research},
-        year = {2021},
-        isbn = {9781450391030},
-        publisher = {Association for Computing Machinery},
-        address = {New York, NY, USA},
-        url = {https://doi.org/10.1145/3486189.3490017},
-        doi = {10.1145/3486189.3490017},
-        booktitle = {Proceedings of the 3rd ACM SIGSPATIAL International Workshop on APIs and Libraries for Geospatial Data Science},
-        articleno = {3},
-        numpages = {2},
-        keywords = {CyberGIS, CyberGIS-Jupyter, GIScience, high performance computing},
-        location = {Beijing, China},
-        series = {SpatialAPI '21}
+    @article{michels_cybergis-compute_2024,
+        title = {{{CyberGIS-Compute}}: {{Middleware}} for Democratizing Scalable Geocomputation},
+        shorttitle = {{{CyberGIS-Compute}}},
+        author = {Michels, Alexander C. and Padmanabhan, Anand and Xiao, Zimo and Kotak, Mit and Baig, Furqan and Wang, Shaowen},
+        year = {2024},
+        month = may,
+        journal = {SoftwareX},
+        volume = {26},
+        pages = {101691},
+        issn = {2352-7110},
+        doi = {10.1016/j.softx.2024.101691},
+        copyright = {All rights reserved},
+        keywords = {CyberGIS,High-performance computing,Middleware,Scientific workflow}
     }
+
