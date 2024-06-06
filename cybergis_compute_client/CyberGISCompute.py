@@ -50,7 +50,7 @@ class CyberGISCompute:
 
     job = None
 
-    def __init__(self, url="cgjobsup.cigi.illinois.edu", port=443, protocol='HTTPS', suffix="", isJupyter=True):
+    def __init__(self, url="cgjobsup.cigi.illinois.edu", port=443, protocol='HTTPS', suffix="v2", isJupyter=True):
         """
         Initializes instance CyberGISCompute using inputs from the client
 

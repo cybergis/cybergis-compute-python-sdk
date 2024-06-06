@@ -17,11 +17,11 @@ sys.path.insert(0, os.path.abspath('../'))  # path to stuff
 
 # -- Project information -----------------------------------------------------
 project = 'CyberGIS-Compute Python SDK'
-copyright = '2022, CyberGIS Center'
+copyright = '2024, CyberGIS Center'
 author = 'CyberGIS Center'
 
 # The full version, including alpha/beta/rc tags
-release = 'v0.2.5'
+release = 'v0.2.6'
 
 
 # -- General configuration ---------------------------------------------------
