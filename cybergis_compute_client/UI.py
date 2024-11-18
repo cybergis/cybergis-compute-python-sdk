@@ -334,11 +334,9 @@ class UI:
             if self.slurm[i] is not None:
                 w.append(self.slurm[i])
         self.slurm['vbox'] = widgets.VBox(w)
-        self.slurm['allocation'] = widgets.HBox([widgets.Label("Allocation: "), widgets.Text(placeholder='(Optional) Specify Allocation', style=self.style)])
-        self.slurm['partition'] = widgets.HBox([widgets.Label("Partition: "), widgets.Text(placeholder='(Optional) Specify Partition', style=self.style)])
 
         # settings end
-        self.slurm['accordion'] = widgets.Accordion(children=(widgets.VBox(children=(self.slurm['description'], self.slurm['vbox'], widgets.Label("In most cases, specifying an allocation and partition is unnecessary. Do not input anything unless you have a non-default allocation and/or partition to specify."), self.slurm['allocation'], self.slurm['partition'])),), selected_index=None)
+        self.slurm['accordion'] = widgets.Accordion(children=(widgets.VBox(children=(self.slurm['description'], self.slurm['vbox'])),), selected_index=None)
         self.slurm['accordion'].set_title(0, 'Slurm Computing Configurations')
         with self.slurm['output']:
             display(self.slurm['accordion'])
@@ -1039,21 +1037,13 @@ class UI:
             dict : Information about the job submitted (template,
             computing resource used, slurm rules, param rules, user email)
         """
-        allocation = None
-        if self.slurm['allocation'].value != '':
-            allocation = self.slurm['allocation'].value
-        partition = None
-        if self.slurm['partition'].value != '':
-            partition = self.slurm['partition'].value
         out = {
             'job_template': self.jobTemplate['dropdown'].value,
             'computing_resource': self.computingResource['dropdown'].value,
             'slurm': {
                 'time': '01:00:00',
                 'num_of_task': 1,
-                'cpu_per_task': 1,
-                'allocation': allocation,
-                'partition': partition
+                'cpu_per_task': 1
             },
             'param': {},
             'email': self.email['text'].value if self.email[
