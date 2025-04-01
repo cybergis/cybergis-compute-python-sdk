@@ -233,8 +233,18 @@ class UI:
         """
         Display computing resources in a dropdown for the user to select
         """
+        
+        def button_callback(change):
+            try:
+                self.compute.client.request('POST', '/auth/request/addUser', {'user': self.compute.username, 'hpc': self.hpcName})
+                self.computingResource['return_status'] = 'request made successfully'
+            except Exception:
+                self.computingResource['return_status'] = 'request failed, try linking your ACCESS account first'
+            self.renderComputingResource()
+            
         if self.computingResource['output'] is None:
             self.computingResource['output'] = widgets.Output()
+        
         # create components
         self.computingResource['dropdown'] = widgets.Dropdown(
             options=[i for i in self.job['supported_hpc']],
@@ -249,8 +259,19 @@ class UI:
             0, 'Computing Resource')
         self.computingResource['dropdown'].observe(
             self.onComputingResourceDropdownChange(), names=['value'])
+        
+        self.computingResource['button'] = widgets.Button(
+            description="Request approval"
+        )
+        self.computingResource['button'].on_click(button_callback)
+        
         with self.computingResource['output']:
             display(self.computingResource['accordion'])
+            display('Some computing resources may require approval before being able to use it. To request approval for the currently selected resource, click the following button:')
+            display(self.computingResource['button'])
+            
+            if self.computingResource['return_status']:
+                display(self.computingResource['return_status'])
 
     def renderEmail(self):
         """
@@ -991,7 +1012,7 @@ class UI:
         # components
         self.jobTemplate = {'output': None}
         self.description = {'output': None}
-        self.computingResource = {'output': None}
+        self.computingResource = {'output': None, 'return_status': None}
         self.slurm = {'output': None}
         self.email = {'output': None}
         self.name = {'output': None}
