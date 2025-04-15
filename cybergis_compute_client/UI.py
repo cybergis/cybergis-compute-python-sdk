@@ -660,25 +660,37 @@ class UI:
         with self.folders['output']:
             display(Markdown("We will do our best to keep this data for 90 days, but cannot guarantee it won’t be deleted sooner."))
             display(Markdown("Please note that the renaming feature only allows for names made up of letters, numbers, and the characters ' . ' and ' _ '. Other characters will be removed from your input."))
+            
+            searchInput = widgets.Text(placeholder='Search folders by name...', description='Search:', disabled=False)
+            searchButton = widgets.Button(description="Search")
+            searchWidgets = widgets.HBox([searchInput, searchButton])
+            display(searchWidgets)
+            
+            searchTerm = getattr(self, 'folderSearchTerm', '').lower()
+            filteredFolders = folders["folder"]
+            if searchTerm:
+                filteredFolders = [folder for folder in folders["folder"] if folder['name'] and searchTerm in folder['name'].lower()]
+                display(Markdown(f"Found {len(filteredFolders)} results for '{searchTerm}'"))
+        
             pageNum = self.folderPage
             numFolders = self.foldersPerPage
             firstFolder = pageNum * numFolders
             lastFolder = firstFolder + numFolders
-            if (lastFolder >= len(folders["folder"])):
-                lastFolder = len(folders["folder"])
-            display(Markdown('<br> **Showing folders ' + str(firstFolder + 1) + ' to ' + str(lastFolder) + ' of ' + str(len(folders["folder"])) + ' for ' + self.compute.username.split('@', 1)[0] + '**'))
+            if (lastFolder >= len(filteredFolders)):
+                lastFolder = len(filteredFolders)
+            display(Markdown('<br> **Showing folders ' + str(firstFolder + 1) + ' to ' + str(lastFolder) + ' of ' + str(len(filteredFolders)) + ' for ' + self.compute.username.split('@', 1)[0] + '**'))
             backButton = widgets.Button(description="Previous Page")
             nextButton = widgets.Button(description="Next Page")
             pageButtons = widgets.HBox([backButton, nextButton])
             backButton.on_click(self.onPrevPageButton())
-            nextButton.on_click(self.onNextPageButton(len(folders["folder"])))
+            nextButton.on_click(self.onNextPageButton(len(filteredFolders)))
             display(pageButtons)
             listNames = []
             for i in folders["folder"]:
                 if i['name'] is not None:
                     listNames.append(i['name'])
             listNames = [*set(listNames)]
-            for i in list(reversed(folders["folder"]))[firstFolder:lastFolder]:
+            for i in list(reversed(filteredFolders))[firstFolder:lastFolder]:
                 headers = ['id', 'name', 'hpc', 'userId', 'isWritable', 'createdAt', 'updatedAt', 'deletedAt']
                 data = [[]]
                 for j in headers:
@@ -694,8 +706,17 @@ class UI:
                 renameButton.on_click(self.onRenameJobButton(i, nameSelect))
                 nameSelect.on_submit(self.onRenameJobButton(i, nameSelect))
                 display(renameWidgets)
-            display(Markdown('<br> **Showing folders ' + str(firstFolder + 1) + ' to ' + str(lastFolder) + ' of ' + str(len(folders["folder"])) + '**'))
+            display(Markdown('<br> **Showing folders ' + str(firstFolder + 1) + ' to ' + str(lastFolder) + ' of ' + str(len(filteredFolders)) + '**'))
             display(pageButtons)
+            
+            def on_search(b):
+                self.folderSearchTerm = searchInput.value
+                self.folderPage = 0  
+                self.folders['output'].clear_output()
+                self.renderFolders()
+        
+            searchButton.on_click(on_search)
+            searchInput.on_submit(on_search)
 
     def renderRecentlySubmittedJobs(self):
         """
