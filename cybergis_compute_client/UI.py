@@ -661,9 +661,11 @@ class UI:
             display(Markdown("We will do our best to keep this data for 90 days, but cannot guarantee it won’t be deleted sooner."))
             display(Markdown("Please note that the renaming feature only allows for names made up of letters, numbers, and the characters ' . ' and ' _ '. Other characters will be removed from your input."))
             
-            searchInput = widgets.Text(placeholder='Search folders by name...', description='Search:', disabled=False)
+            searchInput = widgets.Text(placeholder='Search folders by name...', disabled=False)
             searchButton = widgets.Button(description="Search")
-            searchWidgets = widgets.HBox([searchInput, searchButton])
+            clearButton = widgets.Button(description="Clear")
+            buttons = widgets.HBox([searchButton, clearButton])
+            searchWidgets = widgets.VBox([searchInput, buttons])
             display(searchWidgets)
             
             searchTerm = getattr(self, 'folderSearchTerm', '').lower()
@@ -714,8 +716,16 @@ class UI:
                 self.folderPage = 0  
                 self.folders['output'].clear_output()
                 self.renderFolders()
-        
+                
+            def on_clear(b):
+                self.folderSearchTerm = ''
+                searchInput.value = ''
+                self.folderPage = 0
+                self.folders['output'].clear_output()
+                self.renderFolders()
+
             searchButton.on_click(on_search)
+            clearButton.on_click(on_clear)
             searchInput.on_submit(on_search)
 
     def renderRecentlySubmittedJobs(self):
