@@ -4,7 +4,7 @@ import ipywidgets as widgets
 from ipyfilechooser import FileChooser
 from IPython.display import Markdown, display, clear_output
 from .MarkdownTable import MarkdownTable  # noqa
-from cybergis_compute_client import __version__
+import importlib.metadata as importlib_metadata
 
 
 class UI:
@@ -86,7 +86,7 @@ class UI:
             display(Markdown('A scalable middleware framework for enabling high-performance and data-intensive geospatial research and education on CyberGIS-Jupyter. [Click here for documentation.](https://cybergis.github.io/cybergis-compute-python-sdk/index.html)'))
             display(divider)
             display(Markdown('**Your CyberGIS-Compute Username:** ' + str(self.compute.username)))
-            display(Markdown('**Version:** ' + __version__))
+            display(Markdown('**Version:** ' + importlib_metadata.version("cybergis_compute_client")))
             self.renderAnnouncements()
             display(self.jobTemplate['output'])
             display(self.description['output'])
