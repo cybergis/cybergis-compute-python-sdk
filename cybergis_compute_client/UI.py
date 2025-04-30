@@ -1,9 +1,17 @@
+
+
+
+
 import os
 import math
 import ipywidgets as widgets
 from ipyfilechooser import FileChooser
 from IPython.display import Markdown, display, clear_output
 from .MarkdownTable import MarkdownTable  # noqa
+
+#my work
+from ._version import __version__
+
 
 
 class UI:
@@ -41,6 +49,7 @@ class UI:
     """
     def __init__(self, compute, defaultJobName="hello_world", defaultDataFolder="./", defaultRemoteResultFolder=None):
         self.compute = compute
+        self.input_params = {}
         self.style = {'description_width': 'auto'}
         self.layout = widgets.Layout(width='60%')
         self.jobs = None
@@ -81,6 +90,8 @@ class UI:
         # 1. job template
         job_config = widgets.Output()
         with job_config:
+            #My work
+            display(Markdown(f"**SDK Version:** {__version__}"))
             display(Markdown('# Welcome to CyberGIS-Compute'))
             display(Markdown('A scalable middleware framework for enabling high-performance and data-intensive geospatial research and education on CyberGIS-Jupyter. [Click here for documentation.](https://cybergis.github.io/cybergis-compute-python-sdk/index.html)'))
             display(divider)

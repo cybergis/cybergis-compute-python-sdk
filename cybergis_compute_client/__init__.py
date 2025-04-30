@@ -17,3 +17,4 @@ limitations under the License.
 """
 
 from .CyberGISCompute import CyberGISCompute # noqa F401
+from ._version import __version__
