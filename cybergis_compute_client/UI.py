@@ -55,7 +55,7 @@ class UI:
             'num_of_node', 'num_of_task', 'time',
             'cpu_per_task', 'memory_per_cpu', 'memory_per_gpu',
             'memory', 'gpus', 'gpus_per_node', 'gpus_per_socket',
-            'gpus_per_task', 'partition']
+            'gpus_per_task', 'partition', 'modules']
         self.slurm_integer_configs = [
             'num_of_node', 'num_of_task', 'time', 'cpu_per_task',
             'memory_per_cpu', 'memory_per_gpu', 'memory', 'gpus',
@@ -65,7 +65,7 @@ class UI:
         self.slurm_integer_none_unit_config = [
             'cpu_per_task', 'num_of_node', 'num_of_task', 'gpus',
             'gpus_per_node', 'gpus_per_socket', 'gpus_per_task']
-        self.slurm_string_option_configs = ['partition']
+        self.slurm_string_option_configs = ['partition', 'modules']
         self.globus_filename = None
         self.jupyter_globus = None
 
