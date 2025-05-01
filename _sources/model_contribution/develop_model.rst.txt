@@ -125,6 +125,7 @@ Slurm parameters can be added by adding a “slurm_input_rules” to the manifes
 * **gpus_per_socket (integerRule):** The number of GPUs required for the job on each socket included in the job's resource allocation.
 * **gpus_per_task (integerRule):** The number of GPUs required for the job on each task to be spawned in the job's resource allocation.
 * **partition (stringOptionRule):** The partition name on the HPC.
+* **modules (stringOptionRule):** The modules you would like to load on the HPC
 
 You can specify these SLURM parameters including a reasonable range for running your model. The UI will read from this manifest and populate widgets for users to specify SLURM settings. The widgets available for each SLURM parameter are::
 
@@ -143,6 +144,7 @@ You can specify these SLURM parameters including a reasonable range for running 
             "gpus_per_socket": integerRule, // number of GPU per socket, ie. SBATCH gpus-per-socket
             "gpus_per_task": integerRule,   // number of GPU per task, ie. SBATCH gpus-per-task
             "partition": stringOptionRule   // partition name on HPC, ie. SBATCH partition
+            "modules": stringOptionRule     // modules available on the HPC, i.e. "module load xxx yyy"
         }
     }
 
