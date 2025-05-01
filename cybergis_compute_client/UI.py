@@ -129,19 +129,27 @@ class UI:
         with user_folders:
             display(self.folders['output'])
 
+        # 6. access authentication
+        access_auth = widgets.Output()
+        with access_auth:
+            display("Authenticate with ACCESS with the following link: ")
+            display(Markdown(f"[Click here](https://cilogon.org/authorize?response_type=code&client_id=cilogon:/client_id/167328d1519f05439a31b20acd9bab28&redirect_uri={self.compute.url}/v2/auth/cilogon/callback&scope=openid+profile+email+org.cilogon.userinfo&idphint=https://access-ci.org/idp&state={self.compute.jupyterhubApiToken})"))
+
         # assemble into tabs
         self.tab = widgets.Tab(children=[
             job_config,
             job_status,
             download,
             job_refresh,
-            user_folders
+            user_folders,
+            access_auth
         ])
         self.tab.set_title(0, 'Job Configuration')
         self.tab.set_title(1, 'Your Job Status')
         self.tab.set_title(2, 'Download Job Result')
         self.tab.set_title(3, 'Your Jobs')
         self.tab.set_title(4, 'Past Results')
+        self.tab.set_title(5, "ACCESS login")
         display(self.tab)
 
     def renderComponents(self):
@@ -225,8 +233,18 @@ class UI:
         """
         Display computing resources in a dropdown for the user to select
         """
+
+        def button_callback(change):
+            try:
+                self.compute.client.request('POST', '/auth/request/addUser', {'user': self.compute.username, 'hpc': self.hpcName})
+                self.computingResource['return_status'] = 'request made successfully'
+            except Exception:
+                self.computingResource['return_status'] = 'request failed, try linking your ACCESS account first'
+            self.renderComputingResource()
+
         if self.computingResource['output'] is None:
             self.computingResource['output'] = widgets.Output()
+
         # create components
         self.computingResource['dropdown'] = widgets.Dropdown(
             options=[i for i in self.job['supported_hpc']],
@@ -241,8 +259,19 @@ class UI:
             0, 'Computing Resource')
         self.computingResource['dropdown'].observe(
             self.onComputingResourceDropdownChange(), names=['value'])
+
+        self.computingResource['button'] = widgets.Button(
+            description="Request approval"
+        )
+        self.computingResource['button'].on_click(button_callback)
+
         with self.computingResource['output']:
             display(self.computingResource['accordion'])
+            display('Some computing resources may require approval before being able to use it. To request approval for the currently selected resource, click the following button:')
+            display(self.computingResource['button'])
+
+            if self.computingResource['return_status']:
+                display(self.computingResource['return_status'])
 
     def renderEmail(self):
         """
@@ -985,7 +1014,7 @@ class UI:
         # components
         self.jobTemplate = {'output': None}
         self.description = {'output': None}
-        self.computingResource = {'output': None}
+        self.computingResource = {'output': None, 'return_status': None}
         self.slurm = {'output': None}
         self.email = {'output': None}
         self.name = {'output': None}

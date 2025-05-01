@@ -66,6 +66,7 @@ class CyberGISCompute:
         """
         self.client = Client(url=url, protocol=protocol,
                              port=port, suffix=suffix)
+        self.url = f"{protocol.lower()}://{url}"
         self.jupyterhubApiToken = None
         self.username = None
         self.isJupyter = isJupyter
